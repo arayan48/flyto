@@ -5,6 +5,38 @@ et les versions suivent [SemVer](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+**À lire avant de mettre à jour :** les envois demandent maintenant un compte, `FLYTO_ADMIN_PASS` et
+`FLYTO_UPLOAD_PASS` ne servent plus. Crée le premier administrateur avec `FLYTO_ADMIN_EMAIL` et
+`FLYTO_ADMIN_PASSWORD`, ou depuis `/setup` avec le code affiché dans les logs (voir docs/updating.md).
+
+### Ajouté
+- Comptes utilisateurs : connexion, inscription ouverte, sur invitation ou fermée, validation par un admin,
+  confirmation de l'e-mail, mot de passe oublié, double authentification TOTP avec codes de secours,
+  sessions visibles et révocables, export et suppression de ses données
+- Le téléchargement reste sans compte ; chaque transfert appartient à son auteur, personne d'autre ne peut
+  y ajouter de fichiers
+- Limite de 10 Go par envoi par défaut, et limites réglables par fichier, stockage total, nombre de transferts
+  actifs et de fichiers, pour tous ou par utilisateur
+- Administration complète dans `/admin` : tableau de bord avec graphiques, utilisateurs, transferts
+  (suspension, expiration, propriétaire, actions groupées), historique des téléchargements, invitations,
+  journal d'audit, réglages appliqués sans redémarrage, informations système et maintenance, exports CSV
+- Premier administrateur créé au déploiement (`FLYTO_ADMIN_EMAIL`), par l'assistant `/setup` ou par
+  `node cli.js admin create` ; commandes `node cli.js user …` pour dépanner un compte
+- E-mails (SMTP réglable dans `/admin` ou `FLYTO_SMTP_URL`) : bienvenue, invitation, réinitialisation,
+  confirmation, avertissement de téléchargement
+- Cache Redis facultatif (`FLYTO_REDIS_URL`) pour les sessions, les limites de tentatives et les statistiques,
+  service `redis` dans le `docker-compose.yml`
+- Bandeau d'annonce et mode maintenance, pages de conditions et de confidentialité, extensions refusées
+- Identité visuelle flyto : logo, favicons, icône d'application, image de partage, police DM Sans servie
+  par Flyto
+- Point de contrôle `/healthz`, utilisé par le `HEALTHCHECK` de l'image
+
+### Modifié
+- **Incompatible :** `FLYTO_ADMIN_PASS` et `FLYTO_UPLOAD_PASS` sont retirés, remplacés par les comptes
+- Le mot de passe obligatoire des transferts et les durées proposées sont vérifiés par le serveur
+- Les envois commencés puis abandonnés depuis 48 h sont supprimés et ne comptent plus dans les limites
+- Schéma de base versionné (table `schema_migrations`)
+
 ### Corrigé
 - Un envoi ne peut plus dépasser la taille annoncée à sa création (réponse 413) : envoyer plus d'octets
   que prévu permettait de contourner `FLYTO_MAX_FILE_SIZE` et de remplir le disque

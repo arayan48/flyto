@@ -42,6 +42,25 @@ node app.js
 Use `true` and `false` for yes/no options, e.g. `FLYTO_REQUIRE_BUCKET_PASSWORD=true`.
 Options without a default value (`maxFileSize`, the webhook urls…) accept a number or a plain string.
 
+## Accounts and administration
+
+Most behaviour (sign-up, quotas, retentions, security, SMTP, banner, maintenance mode) is changed at runtime
+in `/admin` > Settings and stored in the database. The config file and the environment only provide the
+defaults, e.g. `FLYTO_MAX_BUCKET_SIZE` (10 GiB when unset), `FLYTO_MAX_FILE_SIZE`, `FLYTO_RETENTIONS`,
+`FLYTO_DEFAULT_RETENTION`, `FLYTO_REQUIRE_BUCKET_PASSWORD`.
+
+| Variable | Purpose |
+| --- | --- |
+| `FLYTO_ADMIN_EMAIL`, `FLYTO_ADMIN_PASSWORD`, `FLYTO_ADMIN_NAME` | First admin account, created on start when there is no active admin |
+| `FLYTO_PUBLIC_URL` | Public address with sub-path, used in e-mails and share links |
+| `FLYTO_REDIS_URL` | Optional Redis cache, e.g. `redis://redis:6379` |
+| `FLYTO_SMTP_URL` | Outgoing mail, e.g. `smtps://user:pass@smtp.example.com:465` |
+| `FLYTO_MAIL_FROM` | Sender of the e-mails |
+
+`FLYTO_ADMIN_PASS` and `FLYTO_UPLOAD_PASS` were removed in 0.3.0. See [accounts.md](accounts.md).
+
+`GET /healthz` answers `{"status":"ok"}` once the database is reachable, for container health checks.
+
 ## SSL
 
 It's recommended to use Nginx for SSL termination, see [nginx-ssl-example.conf](https://github.com/arayan48/flyto/blob/main/docs/nginx-ssl-example.conf).

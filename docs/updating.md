@@ -20,6 +20,21 @@ indique le dépôt à surveiller (`proprietaire/depot`).
 Avant toute mise à jour, lis les notes de version : en 0.x, un changement de version mineure
 (`0.1` → `0.2`) peut demander une action de ta part, c'est alors écrit en tête des notes.
 
+## De la v0.2 à la v0.3 : les comptes
+
+La v0.3.0 remplace les mots de passe partagés par des comptes. `FLYTO_ADMIN_PASS` et `FLYTO_UPLOAD_PASS`
+ne servent plus (un avertissement s'affiche dans les logs s'ils sont encore là) :
+
+1. Ajoute `FLYTO_ADMIN_EMAIL` et `FLYTO_ADMIN_PASSWORD` (ou utilise la page `/setup` avec le code des logs),
+   et `FLYTO_PUBLIC_URL` pour les liens des e-mails.
+2. Facultatif : ajoute le service `redis` du nouveau `docker-compose.yml` et `FLYTO_REDIS_URL`.
+3. Après le démarrage, connecte-toi, puis règle dans `/admin` > Réglages les inscriptions
+   (sur invitation par défaut), les limites (10 Go par envoi) et l'envoi d'e-mails.
+
+Les transferts existants restent téléchargeables ; ils apparaissent comme anonymes dans `/admin`.
+Les nouvelles tables sont créées au démarrage. Pour revenir à la v0.2.0, l'ancienne image fonctionne
+toujours avec la même base (elle ignore les nouvelles tables).
+
 ## ZimaOS / CasaOS
 
 1. Ouvre l'app Flyto, puis **Paramètres** (icône engrenage).
