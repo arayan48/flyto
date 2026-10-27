@@ -39,6 +39,9 @@ node app.js
 
 > Environment parameters always have the highest priority.
 
+Use `true` and `false` for yes/no options, e.g. `FLYTO_REQUIRE_BUCKET_PASSWORD=true`.
+Options without a default value (`maxFileSize`, the webhook urls…) accept a number or a plain string.
+
 ## SSL
 
 It's recommended to use Nginx for SSL termination, see [nginx-ssl-example.conf](https://github.com/arayan48/flyto/blob/main/docs/nginx-ssl-example.conf).
@@ -62,7 +65,7 @@ At the time of writing, the POST body will contain a data structure resembling t
   "metadata": {
     "sid": "6055ab792b6c",
     "retention": 3600,
-    "password": "file password is in plaintext here",
+    "_password": true,
     "name": "test.png",
     "comment": "User individual file comment goes here",
     "type": "image/png",
@@ -74,17 +77,20 @@ At the time of writing, the POST body will contain a data structure resembling t
 ```
 
 * Note: this event will fire many times if a user uploads multiple files in a single session (`sid`), as each individual file is uploaded separately. You'll notice that the `sid` will remain the same, but the `key` will change for each file. 
-  * For file sync purposes (e.g. syncing client uploads to another service or long-term storage), you can reassemble a file fetch url with `https://<FLYTO_HOST>/${sid}++${key}`
+  * `_password` is only present when the upload is password protected, the password itself is never sent.
+  * For file sync purposes (e.g. syncing client uploads to another service or long-term storage), you can reassemble a file fetch url with `https://<FLYTO_HOST>/files/${sid}++${key}`
 
 ### fileDownloaded
 
-When a user attempts to download a file, if `fileDownloadedWebhook` is set in `config.<NODE_ENV>.js`, Flyto will make a POST request to that url.
+When a user has downloaded a file or a whole archive, if `fileDownloadedWebhook` is set in `config.<NODE_ENV>.js`, Flyto will make a POST request to that url.
 
 At the time of writing, the POST body will contain a data structure resembling this (serialized as json):
 ```json
 {
-   "sid": "6055ab792b6c",
-   "name": "test.png",
+   "fid": "6055ab792b6c",
+   "file": "test.png",
    "date": 1589276619415
 }
 ```
+
+`fid` is the upload id (`sid`). For an archive download, `file` is the archive name, e.g. `6055ab792b6c.zip`.
