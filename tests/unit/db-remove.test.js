@@ -17,6 +17,10 @@ class MemoryMetadata {
   async delete(fid) { this.files.delete(fid); }
   async fids() { return [...this.files.keys()]; }
   async importLegacyJson() { return 0; }
+  async transfers() { return []; }
+  async createTransfer() {}
+  async updateTransfer() {}
+  async deleteTransfer() {}
 }
 
 const KEY_A = '00000000-0000-4000-8000-00000000000a';
