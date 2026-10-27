@@ -118,6 +118,7 @@ jobs:
           sudo mkdir -p /tmp/flyto-data
           docker run -d --name flyto --network host --health-interval 2s \
             -e FLYTO_DB_URL=postgres://flyto@localhost:5432/flyto_test \
+            -e FLYTO_ADMIN_EMAIL=smoke@flyto.test -e FLYTO_ADMIN_PASSWORD=smoke-test-password \
             -v /tmp/flyto-data:/data flyto:test
           for i in $(seq 30); do
             [ "$(docker inspect -f '{{.State.Health.Status}}' flyto)" = healthy ] && break
@@ -125,12 +126,17 @@ jobs:
           done
           docker inspect -f '{{.State.Health.Status}}' flyto | grep -qx healthy
 
+          # uploads need an account, the admin comes from the environment
+          csrf=$(curl -fsS -c /tmp/jar -H 'Content-Type: application/json' \
+            -d '{"email":"smoke@flyto.test","password":"smoke-test-password"}' \
+            http://localhost:3000/api/auth/login | jq -r .csrf)
           meta="name $(printf a.txt | base64),sid $(printf smoke | base64),retention $(printf 3600 | base64)"
-          location=$(curl -fsS -D - -o /dev/null -X POST http://localhost:3000/files/ \
+          location=$(curl -fsS -b /tmp/jar -H "x-csrf-token: $csrf" -D - -o /dev/null -X POST http://localhost:3000/files/ \
             -H 'Tus-Resumable: 1.0.0' -H 'Upload-Length: 5' -H "Upload-Metadata: $meta" \
             | tr -d '\r' | sed -n 's/^[Ll]ocation: //p')
-          curl -fsS -X PATCH "http://localhost:3000$location" -H 'Tus-Resumable: 1.0.0' \
+          curl -fsS -b /tmp/jar -H "x-csrf-token: $csrf" -X PATCH "http://localhost:3000$location" -H 'Tus-Resumable: 1.0.0' \
             -H 'Upload-Offset: 0' -H 'Content-Type: application/offset+octet-stream' --data-binary hello
+          curl -fsS http://localhost:3000/healthz | grep -q '"status":"ok"'
           curl -fsS http://localhost:3000/smoke.json | grep -q a.txt
           test "$(docker exec flyto stat -c %U /proc/1)" = node
           sudo ls /tmp/flyto-data/smoke | grep -q .

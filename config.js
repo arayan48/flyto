@@ -39,13 +39,22 @@ const config = {
     "2419200": "4 Weeks",
     "4838400": "8 Weeks"
   },
-  // admin password, set to false to disable /admin page
-  // to enable /admin page set your password like this:
-  // "adminPass": "YourSecurePassword",
+  // public address used in e-mails and share links, e.g. https://files.example.com/
+  // keep empty to use the address of each request
+  "publicUrl": '',
+  // first admin account, created on start when no admin exists yet
+  "adminEmail": '',
+  "adminPassword": '',
+  "adminName": '',
+  // optional cache for sessions, rate limits and dashboards, e.g. redis://redis:6379
+  "redisUrl": '',
+  // outgoing mail, e.g. smtps://user:pass@smtp.example.com:465, can also be set in /admin
+  "smtpUrl": '',
+  "mailFrom": '',
+  // removed in 0.3.0, only read to warn about them: accounts replace both passwords
   "adminPass": false,
-  // upload password, set to false to disable
   "uploadPass": false,
-  // make the bucket-password field mandatory
+  // make the bucket-password field mandatory (default of the /admin setting)
   "requireBucketPassword": false,
   "defaultRetention": "604800",
   // expire every file after maxAge (eg never downloaded one-time files)
@@ -63,9 +72,9 @@ const config = {
   "fileUploadedWebhook": null,
   // Fallback language
   "defaultLanguage": "en",
-  // Limit upload size
-  "maxFileSize": null, // Math.pow(2, 30) * 2, // 2GB
-  "maxBucketSize": null, // Math.pow(2, 30) * 2, // 10GB
+  // Default upload limits in bytes, adjustable in /admin (10 GiB per transfer when unset)
+  "maxFileSize": null,
+  "maxBucketSize": null,
   "plugins": ['file-downloaded-webhook', 'file-uploaded-webhook'],
   // Disable the QR code button for download url sharing, set to true to disable
   "disableQrCode": false,

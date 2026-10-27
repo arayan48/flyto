@@ -12,8 +12,8 @@ module.exports = {
     "1209600": "2 Weeks"
   },
   "defaultRetention": "3600",
-  "adminPass": "admin",
-  "uploadPass": false,
+  "adminEmail": "admin@flyto.test",
+  "adminPassword": "flyto-dev-admin",
   "baseUrl": '/',
   "uploadAppPath": '/',
   // "maxFileSize": Math.pow(2, 20) * 15,

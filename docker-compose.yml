@@ -1,8 +1,10 @@
-# Flyto + PostgreSQL, one container each.
+# Flyto + PostgreSQL + Redis, one container each.
 # Works with plain `docker compose up -d` and imports as-is into ZimaOS / CasaOS
 # (App Store > Custom install > Import), which reads the x-casaos blocks.
 #
-# Before the first start, change POSTGRES_PASSWORD (in both services) and FLYTO_ADMIN_PASS.
+# Before the first start, change POSTGRES_PASSWORD (in both services), FLYTO_ADMIN_EMAIL,
+# FLYTO_ADMIN_PASSWORD and FLYTO_PUBLIC_URL. The admin account is created on the first start
+# only; leave both admin variables empty to create it from the /setup page instead.
 
 name: flyto
 
@@ -14,9 +16,14 @@ services:
     depends_on:
       database:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     environment:
       FLYTO_DB_URL: postgres://flyto:change-me@database:5432/flyto
-      FLYTO_ADMIN_PASS: change-me-too
+      FLYTO_REDIS_URL: redis://redis:6379
+      FLYTO_ADMIN_EMAIL: admin@example.com
+      FLYTO_ADMIN_PASSWORD: change-me-too
+      FLYTO_PUBLIC_URL: http://localhost:3000/
       TZ: Europe/Paris
     ports:
       - target: 3000
@@ -32,10 +39,22 @@ services:
           description:
             en_us: PostgreSQL connection URL (password must match the database service)
             fr_fr: URL de connexion PostgreSQL (le mot de passe doit être celui du service database)
-        - container: FLYTO_ADMIN_PASS
+        - container: FLYTO_ADMIN_EMAIL
           description:
-            en_us: Password for the /admin page
-            fr_fr: Mot de passe de la page /admin
+            en_us: E-mail of the first admin account, created on the first start
+            fr_fr: E-mail du premier compte administrateur, créé au premier démarrage
+        - container: FLYTO_ADMIN_PASSWORD
+          description:
+            en_us: Password of the first admin account (at least 10 characters), change it afterwards in My account
+            fr_fr: Mot de passe du premier administrateur (10 caractères minimum), à changer ensuite dans Mon compte
+        - container: FLYTO_PUBLIC_URL
+          description:
+            en_us: Public address of Flyto, used in e-mails and share links
+            fr_fr: Adresse publique de Flyto, utilisée dans les e-mails et les liens de partage
+        - container: FLYTO_REDIS_URL
+          description:
+            en_us: Redis cache for sessions, rate limits and dashboards
+            fr_fr: Cache Redis pour les sessions, les limites de tentatives et le tableau de bord
       ports:
         - container: "3000"
           description:
@@ -76,6 +95,18 @@ services:
             en_us: Database files
             fr_fr: Fichiers de la base de données
 
+  redis:
+    image: redis:8-alpine
+    container_name: flyto-redis
+    restart: unless-stopped
+    # a cache only: nothing is written to disk, the database stays the source of truth
+    command: ["redis-server", "--save", "", "--appendonly", "no", "--maxmemory", "64mb", "--maxmemory-policy", "allkeys-lru"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 x-casaos:
   architectures:
     - amd64
@@ -84,13 +115,13 @@ x-casaos:
   category: Utilities
   author: arayan48
   developer: arayan48
-  icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/psitransfer.png
+  icon: https://raw.githubusercontent.com/arayan48/flyto/main/public/assets/brand/app-icon-512.png
   tagline:
     en_us: Self-hosted file sharing, one link for everyone
     fr_fr: Partage de fichiers auto-hébergé, un lien pour tout le monde
   description:
-    en_us: Upload files and share them with a single link. Metadata is stored in PostgreSQL.
-    fr_fr: Envoyez des fichiers et partagez-les avec un seul lien. Les métadonnées sont stockées dans PostgreSQL.
+    en_us: Upload files with an account and share them with a single link, no account needed to download. Admin dashboard, quotas, invitations.
+    fr_fr: Envoyez des fichiers avec un compte et partagez-les avec un seul lien, sans compte pour télécharger. Tableau de bord d'administration, quotas, invitations.
   title:
     en_us: Flyto
   port_map: "3000"

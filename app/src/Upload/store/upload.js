@@ -100,13 +100,20 @@ export default {
   actions: {
     addFiles({ commit, state, rootState }, files) {
       if (rootState.disabled) return;
+      const blocked = String(rootState.config.blockedExtensions || '').split(/[\s,;]+/)
+        .map(e => e.trim().toLowerCase().replace(/^\./, '')).filter(Boolean);
       for (let i = 0; i < files.length; i++) {
         let error = false;
-        const { maxFileSize } = rootState.config;
+        const { maxFileSize, maxFiles } = rootState.config;
+        const ext = blocked.find(e => files[i].name.toLowerCase().endsWith('.' + e));
         if (maxFileSize && files[i].size > maxFileSize) {
           error = rootState.lang.fileSizeExceed
             .replace('%%', humanFileSize(files[i].size))
             .replace('%%', humanFileSize(maxFileSize))
+        } else if (ext) {
+          error = rootState.lang.errors.blockedExtension.replace('{extension}', ext);
+        } else if (maxFiles && state.files.length >= maxFiles) {
+          error = rootState.lang.errors.tooManyFiles.replace('{limit}', maxFiles);
         }
         // wrap, don't change the HTML5-File-API object
         commit('ADD_FILE', {
@@ -159,7 +166,7 @@ export default {
               type: file._File.type
             },
             headers: {
-              "x-passwd": encodeURIComponent(rootState.config.uploadPass || '')
+              "x-csrf-token": rootState.config.csrf || ''
             },
             parallelUploads: 1,
             chunkSize: 5000000,
@@ -178,7 +185,12 @@ export default {
             onError(error) {
               let jsonResMessage = null;
               try {
-                jsonResMessage = JSON.parse(error.originalResponse.getBody()).message;
+                const body = JSON.parse(error.originalResponse.getBody());
+                const known = body.error && rootState.lang.errors && rootState.lang.errors[body.error];
+                jsonResMessage = known
+                  ? known.replace('{limit}', body.limit > 10000 ? humanFileSize(body.limit) : body.limit)
+                    .replace('{extension}', body.extension || '')
+                  : body.message;
               }
               catch (e) {
               }
@@ -244,7 +256,7 @@ export default {
               if (state.files.every(f => f.uploaded)) {
                 fetch(state.uploadURI + '/' + state.sid + '?lock=yes', {
                   method: 'PATCH',
-                  headers: { 'x-passwd': encodeURIComponent(rootState.config.uploadPass || '') },
+                  headers: { 'x-csrf-token': rootState.config.csrf || '' },
                 });
                 commit('STATE', 'uploaded', { root: true });
               }

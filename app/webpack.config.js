@@ -20,6 +20,7 @@ module.exports = {
     upload: './src/upload.js',
     download: './src/download.js',
     admin: './src/admin.js',
+    account: './src/account.js',
   },
   output: {
     path: path.resolve(__dirname, '../public/app'),

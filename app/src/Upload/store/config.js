@@ -1,12 +1,16 @@
 import Vue from 'vue';
+import { setCsrf } from '../../common/api';
 
 export default {
   namespaced: true,
 
   state: {
-    uploadPassRequired: false,
-    uploadPass: null,
-
+    loginRequired: false,
+    maintenance: false,
+    user: null,
+    csrf: null,
+    limits: {},
+    usage: null,
   },
 
   mutations: {
@@ -18,27 +22,21 @@ export default {
   },
 
   actions: {
-    fetch({commit, state}) {
-      return new Promise((resolve, reject) => {
+    fetch({commit}) {
+      return new Promise((resolve) => {
         const xhr = new XMLHttpRequest();
         xhr.open('GET', 'config.json');
-        state.uploadPass && xhr.setRequestHeader('x-passwd', encodeURIComponent(state.uploadPass));
         xhr.onload = () => {
           if(xhr.status === 200) {
             try {
               const conf = JSON.parse(xhr.responseText);
               commit('SET', conf);
+              setCsrf(conf.csrf);
               commit('upload/RETENTION', conf.defaultRetention, {root:true});
             }
             catch(e) {
               commit('ERROR', `Config parse Error: ${e.message}`, {root: true});
             }
-          }
-          else if (xhr.status === 401 || xhr.status === 403) {
-            commit('SET', {uploadPassRequired: true, uploadPass: null});
-            const e = new Error('Password required');
-            e.code = "PWDREQ";
-            reject(e);
           }
           else {
             commit('ERROR', `Config load error: ${xhr.status} ${xhr.statusText}`, {root: true});

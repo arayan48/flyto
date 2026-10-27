@@ -1,7 +1,7 @@
 <template lang="pug">
   .upload-app#uploadApp
     a.btn.btn-sm.btn-info.btn-new-session(
-      v-if='!showLogin',
+      v-if='!showLogin && !maintenance',
       @click='newSession()',
       @keydown.enter.prevent='newSession()',
       @keydown.space.prevent='newSession()',
@@ -15,16 +15,18 @@
       strong
         icon.fa-fw(name="exclamation-triangle")
         |  {{ error }}
-    form.well.upload-uploadPassword(v-if='showLogin', @submit.prevent='setUploadPass()')
-      h3 {{ $root.lang.uploadPassword }}
-      .form-group
-        input.form-control(type='password', v-model='uploadPassword', autofocus)
-      p.text-danger(v-show='uploadPasswordWrong')
-        strong {{ $root.lang.accessDenied }}
-      |
-      button.uploadPass.btn.btn-primary(:disabled='uploadPassword.length<1', type="submit")
-        icon.fa-fw(name="key")
+    .well.upload-login(v-if='showLogin')
+      h3 {{ $root.lang.uploadLogin.title }}
+      p {{ $root.lang.uploadLogin.text }}
+      p.text-muted {{ $root.lang.uploadLogin.downloadHint }}
+      a.btn.btn-primary(href="login")
+        icon.fa-fw(name="sign-in-alt")
         |  {{ $root.lang.login }}
+      |
+      a.btn.btn-default(href="register", v-if="registrationMode === 'open'") {{ $root.lang.nav.register }}
+    .alert.alert-warning(v-else-if="maintenance")
+      strong {{ $root.lang.maintenanceTitle }}
+      |  {{ maintenanceMessage || $root.lang.maintenanceDefault }}
     div(v-else-if="$root.configFetched")
       .well(v-show="state === 'uploaded'")
         .pull-right.btn-group.upload-success-btns
@@ -71,6 +73,10 @@
           files
         .col-sm-5
           settings
+          p.text-muted.small.upload-quota(v-if="state === 'new' && user && (limits.transfer || limits.storage)")
+            template(v-if="limits.transfer") {{ $root.lang.quota.perTransfer }} {{ humanFileSize(limits.transfer) }}
+            template(v-if="limits.transfer && limits.storage")  · 
+            template(v-if="limits.storage") {{ $root.lang.quota.storage }} {{ humanFileSize(usage.storage) }} / {{ humanFileSize(limits.storage) }}
           .text-right(v-show='showUploadBtn')
             button#uploadBtn.btn.btn-lg.btn-success(@click="$store.dispatch('upload/upload')")
               icon.fa-fw(name="upload")
@@ -95,6 +101,7 @@
   import 'vue-awesome/icons/envelope';
   import 'vue-awesome/icons/qrcode';
   import 'vue-awesome/icons/exclamation-triangle';
+  import 'vue-awesome/icons/sign-in-alt';
   import { humanFileSize } from "./Upload/store/upload";
 
 
@@ -107,15 +114,13 @@
     },
 
     data() {
-      return {
-        uploadPassword: '',
-        uploadPasswordWrong: null,
-      }
+      return {}
     },
 
     computed: {
       ...mapState(['state']),
-      ...mapState('config', ['uploadPassRequired', 'uploadPass', 'requireBucketPassword', 'disableQrCode']),
+      ...mapState('config', ['loginRequired', 'maintenance', 'maintenanceMessage', 'registrationMode', 'user',
+        'limits', 'usage', 'requireBucketPassword', 'disableQrCode']),
       ...mapState('upload', ['sid', 'files', 'password']),
       ...mapGetters(['error', 'disabled']),
       ...mapGetters('upload', ['percentUploaded', 'shareUrl', 'bucketSize', 'bytesUploaded']),
@@ -125,7 +130,7 @@
           && this.$store.state.config.mailTemplate.replace('%%URL%%', this.shareUrl);
       },
       showLogin() {
-        return this.uploadPassRequired && this.uploadPasswordWrong !== false;
+        return this.loginRequired;
       },
       showUploadBtn() {
         return this.files.length
@@ -148,20 +153,6 @@
       newSession() {
         if (!confirm(this.$root.lang.createNewUploadSession)) return;
         document.location.reload();
-      },
-      async setUploadPass() {
-        try {
-          this.$store.commit('config/SET', {uploadPass: this.uploadPassword});
-          await this.$store.dispatch('config/fetch');
-          this.uploadPasswordWrong = false;
-        } catch(e) {
-          if(e.code === 'PWDREQ') {
-            this.uploadPassword = '';
-            this.uploadPasswordWrong = true;
-          } else {
-            console.error(e);
-          }
-        }
       },
       showQrCode() {
         const qrcode = new Encoder({level: 'H'}).encode(new Byte(this.shareUrl));

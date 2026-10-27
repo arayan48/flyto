@@ -1,0 +1,13 @@
+doctype html
+html(lang=lang.langCode)
+  head
+    include partials/head
+    include partials/head_custom
+  body
+    .container
+      include partials/header
+      #account
+    include partials/footer
+    script FLYTO_PAGE = '#{page}';
+    script(src='app/common.js')
+    script(src='app/account.js')

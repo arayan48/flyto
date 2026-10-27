@@ -1,0 +1,36 @@
+<template lang="pug">
+  .auth-box
+    .well
+      h3 {{ $t('auth.verifyTitle') }}
+      p(v-if="state === 'pending'")
+        icon(name="spinner", spin="")
+      template(v-else-if="state === 'ok'")
+        p.text-success {{ $t('auth.verifyDone', { email }) }}
+        a.btn.btn-primary(:href="$root.session.user ? 'account' : 'login'") {{ $t('auth.continue') }}
+      template(v-else)
+        .alert.alert-danger {{ $t('errors.invalidToken') }}
+        a.btn.btn-default(href="login") {{ $t('auth.loginButton') }}
+</template>
+
+<script>
+  import 'vue-awesome/icons/spinner';
+  import { post } from '../common/api';
+
+  export default {
+    name: 'Verify',
+    data() {
+      return { state: 'pending', email: '' };
+    },
+    // the link only opens the page, the POST confirms: mail scanners following links do not
+    async mounted() {
+      const parts = document.location.pathname.split('/').filter(Boolean);
+      try {
+        const res = await post('auth/verify', { token: decodeURIComponent(parts[parts.length - 1] || '') });
+        this.email = res.email;
+        this.state = 'ok';
+      } catch (e) {
+        this.state = 'error';
+      }
+    },
+  };
+</script>
