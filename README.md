@@ -11,6 +11,7 @@ Une alternative à WeTransfer qui tourne chez toi.
 * Aperçu des fichiers dans le navigateur
 * Base de données SQLite intégrée (métadonnées des fichiers et historique des téléchargements)
 * Page `/admin` avec la liste des envois et le nombre de téléchargements (activée si `FLYTO_ADMIN_PASS` est défini)
+* Avertissement dans `/admin` quand une nouvelle version est publiée ([mettre à jour](docs/updating.md))
 
 ## Démarrage rapide
 
@@ -53,6 +54,7 @@ Les anciennes variables `PSITRANSFER_*` sont encore acceptées.
 | `FLYTO_UPLOAD_PASS` | Mot de passe pour déposer des fichiers. **À définir si Flyto est exposé sur Internet**, sinon n'importe qui peut remplir ton disque |
 | `FLYTO_ADMIN_PASS` | Mot de passe de la page `/admin` |
 | `FLYTO_DEFAULT_RETENTION` | Durée de conservation par défaut, en secondes |
+| `FLYTO_UPDATE_CHECK` | `false` pour ne plus vérifier les nouvelles versions sur GitHub |
 
 Tu peux aussi créer un `config.production.js` (voir `config.dev.js`).
 
