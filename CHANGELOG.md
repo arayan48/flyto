@@ -5,6 +5,10 @@ et les versions suivent [SemVer](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+### Corrigé
+- Un envoi ne peut plus dépasser la taille annoncée à sa création (réponse 413) : envoyer plus d'octets
+  que prévu permettait de contourner `FLYTO_MAX_FILE_SIZE` et de remplir le disque
+
 ## [0.2.0] - 2026-10-27
 
 **À lire avant de mettre à jour depuis la v0.1.0 :** Flyto a maintenant besoin d'une base PostgreSQL
