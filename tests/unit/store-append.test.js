@@ -75,3 +75,21 @@ test('append rejects when the request stream breaks instead of hanging', async (
   assert.strictEqual((await store.info(FID)).offset, 2);
   fs.rmSync(dir, { recursive: true, force: true });
 });
+
+test('append refuses a body larger than the announced Upload-Length', async () => {
+  const { dir, store } = await setup(6);
+  await store.append(FID, Readable.from([Buffer.from('abcd')]), 0);
+  await assert.rejects(store.append(FID, Readable.from([Buffer.from('efgh')]), 4, { contentLength: 4 }), { status: 413 });
+  assert.strictEqual(fs.readFileSync(store.getFilename(FID), 'utf8'), 'abcd');
+  fs.rmSync(dir, { recursive: true, force: true });
+});
+
+test('append stops writing once a body without Content-Length goes past Upload-Length', async () => {
+  const { dir, store } = await setup(6);
+  const chunks = [Buffer.from('abc'), Buffer.from('def'), Buffer.from('ghi')];
+  await assert.rejects(store.append(FID, Readable.from(chunks), 0), { status: 413 });
+  // writes in flight may be dropped, the client resumes from the reported offset
+  const written = fs.readFileSync(store.getFilename(FID), 'utf8');
+  assert.ok('abcdef'.startsWith(written), written);
+  fs.rmSync(dir, { recursive: true, force: true });
+});
