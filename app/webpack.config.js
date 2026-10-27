@@ -73,7 +73,8 @@ module.exports = {
         test: /\.css$/,
         use: [
           'vue-style-loader',
-          'css-loader',
+          // vue-style-loader expects the CommonJS export, with an ES module it injects nothing
+          { loader: 'css-loader', options: { esModule: false } },
         ]
       },
       {

@@ -99,7 +99,7 @@ export default {
 
   actions: {
     addFiles({ commit, state, rootState }, files) {
-      if (state.disabled) return;
+      if (rootState.disabled) return;
       for (let i = 0; i < files.length; i++) {
         let error = false;
         const { maxFileSize } = rootState.config;
@@ -242,7 +242,10 @@ export default {
                 }
               });
               if (state.files.every(f => f.uploaded)) {
-                fetch(state.uploadURI + '/' + state.sid + '?lock=yes', { method: 'PATCH' });
+                fetch(state.uploadURI + '/' + state.sid + '?lock=yes', {
+                  method: 'PATCH',
+                  headers: { 'x-passwd': encodeURIComponent(rootState.config.uploadPass || '') },
+                });
                 commit('STATE', 'uploaded', { root: true });
               }
             }
