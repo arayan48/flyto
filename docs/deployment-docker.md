@@ -13,7 +13,7 @@ With an existing database:
 ```bash
 docker run -d -v $PWD/data:/data -p 3000:3000 \
   -e FLYTO_DB_URL=postgres://flyto:secret@db-host:5432/flyto \
-  ghcr.io/arayan48/flyto:v0.1.0
+  ghcr.io/arayan48/flyto:v0.2.0
 ```
 The above command starts the Flyto Docker container and 
  * `-d` puts the process into background (daemon mode)
