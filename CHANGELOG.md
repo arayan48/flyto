@@ -15,6 +15,8 @@ et les versions suivent [SemVer](https://semver.org/lang/fr/).
   dont l'identifiant contient des majuscules ou des tirets
 - Les fichiers dont l'envoi n'est pas terminé ne sont plus proposés au téléchargement
 - La liste des fichiers envoyée au navigateur ne contient plus l'empreinte du mot de passe
+- Envois : un morceau renvoyé deux fois n'est plus ajouté en double au fichier (réponse 409 comme le prévoit
+  le protocole tus), et un envoi coupé en cours de route ne laisse plus de fichier ouvert sur le serveur
 
 ## [0.1.0] - 2026-10-27
 
