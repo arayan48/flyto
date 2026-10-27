@@ -3,7 +3,6 @@ const fs = require('fs');
 const config = require('./config');
 const app = require('./lib/endpoints');
 const eventBus = require('./lib/eventBus');
-const updateCheck = require('./lib/updateCheck');
 
 /**
  * Naming:
@@ -34,8 +33,6 @@ if(config.sslPort && config.sslKeyFile && config.sslCertFile) {
       eventBus.emit('listen', httpsServer);
     });
 }
-
-updateCheck.start(config);
 
 
 // graceful shutdown

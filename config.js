@@ -71,9 +71,6 @@ const config = {
   "plugins": ['file-downloaded-webhook', 'file-uploaded-webhook'],
   // Disable the QR code button for download url sharing, set to true to disable
   "disableQrCode": false,
-  // check GitHub for new releases and announce them on /admin and in the logs
-  "updateCheck": true,
-  "updateCheckRepo": 'arayan48/flyto',
 };
 
 // Load NODE_ENV specific config
