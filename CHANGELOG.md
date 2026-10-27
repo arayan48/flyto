@@ -5,6 +5,11 @@ et les versions suivent [SemVer](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+### Corrigé
+- `docker-compose.yml` : les trois conteneurs sont sur le réseau `bridge` par défaut, celui que choisit
+  ZimaOS. Flyto joint PostgreSQL et Redis par la passerelle `172.17.0.1`, où leurs ports sont publiés
+  uniquement. Avant, Flyto se retrouvait seul en `bridge` et ne trouvait plus `database` ni `redis`.
+
 ## [0.3.0] - 2026-10-27
 
 **À lire avant de mettre à jour depuis la v0.2.0 :** les envois demandent maintenant un compte,

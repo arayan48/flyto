@@ -5,6 +5,10 @@
 # Before the first start, change POSTGRES_PASSWORD (in both services), FLYTO_ADMIN_EMAIL,
 # FLYTO_ADMIN_PASSWORD and FLYTO_PUBLIC_URL. The admin account is created on the first start
 # only; leave both admin variables empty to create it from the /setup page instead.
+#
+# All three containers use Docker's default bridge network, the one ZimaOS selects. Container
+# names don't resolve there, so Flyto reaches PostgreSQL and Redis through the bridge gateway
+# (172.17.0.1, check with `ip addr show docker0`), where their ports are published and nowhere else.
 
 name: flyto
 
@@ -13,14 +17,15 @@ services:
     image: ghcr.io/arayan48/flyto:v0.3.0
     container_name: flyto
     restart: unless-stopped
+    network_mode: bridge
     depends_on:
       database:
         condition: service_healthy
       redis:
         condition: service_healthy
     environment:
-      FLYTO_DB_URL: postgres://flyto:change-me@database:5432/flyto
-      FLYTO_REDIS_URL: redis://redis:6379
+      FLYTO_DB_URL: postgres://flyto:change-me@172.17.0.1:5432/flyto
+      FLYTO_REDIS_URL: redis://172.17.0.1:6379
       FLYTO_ADMIN_EMAIL: admin@example.com
       FLYTO_ADMIN_PASSWORD: change-me-too
       FLYTO_PUBLIC_URL: http://localhost:3000/
@@ -70,10 +75,16 @@ services:
     image: postgres:17-alpine
     container_name: flyto-database
     restart: unless-stopped
+    network_mode: bridge
     environment:
       POSTGRES_USER: flyto
       POSTGRES_PASSWORD: change-me
       POSTGRES_DB: flyto
+    ports:
+      - target: 5432
+        published: "5432"
+        host_ip: 172.17.0.1
+        protocol: tcp
     volumes:
       - type: bind
         source: /DATA/AppData/flyto/postgres
@@ -99,6 +110,12 @@ services:
     image: redis:8-alpine
     container_name: flyto-redis
     restart: unless-stopped
+    network_mode: bridge
+    ports:
+      - target: 6379
+        published: "6379"
+        host_ip: 172.17.0.1
+        protocol: tcp
     # a cache only: nothing is written to disk, the database stays the source of truth
     command: ["redis-server", "--save", "", "--appendonly", "no", "--maxmemory", "64mb", "--maxmemory-policy", "allkeys-lru"]
     healthcheck:

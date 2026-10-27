@@ -53,7 +53,7 @@ defaults, e.g. `FLYTO_MAX_BUCKET_SIZE` (10 GiB when unset), `FLYTO_MAX_FILE_SIZE
 | --- | --- |
 | `FLYTO_ADMIN_EMAIL`, `FLYTO_ADMIN_PASSWORD`, `FLYTO_ADMIN_NAME` | First admin account, created on start when there is no active admin |
 | `FLYTO_PUBLIC_URL` | Public address with sub-path, used in e-mails and share links |
-| `FLYTO_REDIS_URL` | Optional Redis cache, e.g. `redis://redis:6379` |
+| `FLYTO_REDIS_URL` | Optional Redis cache, e.g. `redis://172.17.0.1:6379` |
 | `FLYTO_SMTP_URL` | Outgoing mail, e.g. `smtps://user:pass@smtp.example.com:465` |
 | `FLYTO_MAIL_FROM` | Sender of the e-mails |
 

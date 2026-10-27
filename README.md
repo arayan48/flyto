@@ -80,7 +80,7 @@ Les anciennes variables `PSITRANSFER_*` sont encore acceptées.
 | `FLYTO_DB_URL` | URL PostgreSQL (`postgres://user:pass@hote:5432/base`), **obligatoire** |
 | `FLYTO_ADMIN_EMAIL`, `FLYTO_ADMIN_PASSWORD` | Premier compte administrateur, créé au démarrage s'il n'y en a aucun |
 | `FLYTO_PUBLIC_URL` | Adresse publique (`https://fichiers.exemple.fr/`), utilisée dans les e-mails et les liens |
-| `FLYTO_REDIS_URL` | Cache Redis facultatif (`redis://redis:6379`) |
+| `FLYTO_REDIS_URL` | Cache Redis facultatif (`redis://172.17.0.1:6379`) |
 | `FLYTO_SMTP_URL` | Envoi d'e-mails (`smtps://user:pass@smtp.exemple.fr:465`), réglable aussi dans `/admin` |
 | `FLYTO_MAIL_FROM` | Expéditeur des e-mails |
 | `FLYTO_DEFAULT_RETENTION` | Durée de conservation par défaut, en secondes |
