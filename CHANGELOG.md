@@ -5,6 +5,10 @@ et les versions suivent [SemVer](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+### Modifié
+- **Incompatible :** PostgreSQL devient la seule base de métadonnées, `FLYTO_DB_URL` est obligatoire.
+  Le support SQLite et `FLYTO_DB_FILE` sont retirés ; un `flyto.sqlite` existant n'est pas importé
+
 ## [0.1.0] - 2026-10-27
 
 Première version de Flyto, basée sur PsiTransfer.

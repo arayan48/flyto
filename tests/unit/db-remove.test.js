@@ -8,14 +8,23 @@ const os = require('os');
 
 const Store = require('../../lib/store');
 const DB = require('../../lib/db');
-const MetadataDb = require('../../lib/metadataDb');
+
+// in-memory stand-in for MetadataDb, these tests only exercise the DB index
+class MemoryMetadata {
+  constructor() { this.files = new Map(); }
+  async get(fid) { return this.files.has(fid) ? structuredClone(this.files.get(fid)) : null; }
+  async set(fid, data) { this.files.set(fid, structuredClone(data)); }
+  async delete(fid) { this.files.delete(fid); }
+  async fids() { return [...this.files.keys()]; }
+  async importLegacyJson() { return 0; }
+}
 
 const KEY_A = '00000000-0000-4000-8000-00000000000a';
 const KEY_B = '00000000-0000-4000-8000-00000000000b';
 
 async function setup() {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'psi-db-'));
-  const store = new Store(dir, new MetadataDb(path.join(dir, 'flyto.sqlite')));
+  const store = new Store(dir, new MemoryMetadata());
   const db = new DB(dir, store);
   await db.init();
   fs.mkdirSync(path.join(dir, 'bucket'));

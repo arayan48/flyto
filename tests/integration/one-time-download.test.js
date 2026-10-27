@@ -6,10 +6,14 @@ const os = require('os');
 const http = require('node:http');
 const { createHash } = require('node:crypto');
 
+const { url, skip } = require('../helpers/db');
+const { test, before, after } = require('node:test');
+if (skip) return test('one-time download', { skip });
+process.env.FLYTO_DB_URL = url;
+
 const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'flyto-onetime-'));
 process.env.FLYTO_UPLOAD_DIR = tmpDir;
 
-const { test, before, after } = require('node:test');
 const assert = require('node:assert');
 
 const tusMeta = require('../../lib/tusboy/tus-metadata');

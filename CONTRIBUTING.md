@@ -84,6 +84,8 @@ cd app && npm run build
 ```
 
 La CI lance les mêmes commandes sur chaque PR. Une PR rouge n'est pas fusionnée.
+Sans `FLYTO_TEST_DB_URL`, les tests qui ont besoin de PostgreSQL sont sautés en local ; la CI les lance
+avec un conteneur PostgreSQL.
 
 ## Versions et releases
 
