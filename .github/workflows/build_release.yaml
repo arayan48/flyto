@@ -60,7 +60,7 @@ jobs:
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: bundle
-          path: _releases/psitransfer-${{ github.ref_name }}.tar.gz
+          path: _releases/flyto-${{ github.ref_name }}.tar.gz
           if-no-files-found: error
 
   docker:
@@ -70,8 +70,6 @@ jobs:
       contents: read
       packages: write
     uses: ./.github/workflows/docker.yaml
-    secrets:
-      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
 
   npm_publish:
     name: NPM publish
@@ -95,7 +93,7 @@ jobs:
       - name: NPM deploy
         run: |
           mkdir _pkg
-          tar xzf "psitransfer-$GITHUB_REF_NAME.tar.gz" -C _pkg --strip 1
+          tar xzf "flyto-$GITHUB_REF_NAME.tar.gz" -C _pkg --strip 1
           cd _pkg
           # Keep prereleases (v1.2.3-rc1) off the "latest" dist-tag
           if [[ "$GITHUB_REF_NAME" == *-* ]]; then
@@ -216,4 +214,4 @@ jobs:
           prerelease: ${{ contains(github.ref_name, '-') }}
           body: ${{ steps.build_changelog.outputs.changelog }}
           fail_on_unmatched_files: true
-          files: psitransfer-${{ github.ref_name }}.tar.gz
+          files: flyto-${{ github.ref_name }}.tar.gz

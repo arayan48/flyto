@@ -40,8 +40,8 @@ module.exports = {
   mailDownloadNotification: "檔案被下載時通知我。",
   mailSendBtn: "傳送電子郵件",
   mailsSent: "電子郵件已傳送",
-  mailSubjectUploader: "PsiTransfer 檔案上傳",
-  mailSubjectDownloader: "PsiTransfer 檔案下載",
+  mailSubjectUploader: "Flyto 檔案上傳",
+  mailSubjectDownloader: "Flyto 檔案下載",
   mailSubjectFileDownloaded: "檔案已被下載",
   retentions: {
     "one-time": "單次下載",

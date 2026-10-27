@@ -1,17 +1,17 @@
 [Unit]
-Description=PsiTransfer
-Documentation=https://github.com/psi-4ward/psitransfer
+Description=Flyto
+Documentation=https://github.com/arayan48/flyto
 After=network.target
 
 [Service]
 Type=simple
-User=psitransfer
+User=flyto
 Restart=on-failure
 
 Environment=NODE_ENV=production
-Environment=PSITRANSFER_PORT=8080
+Environment=FLYTO_PORT=8080
 
-WorkingDirectory=/opt/psitransfer
+WorkingDirectory=/opt/flyto
 ExecStart=/usr/bin/node app.js
 
 [Install]

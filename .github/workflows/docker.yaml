@@ -1,11 +1,8 @@
 name: Docker
 
-# Reusable workflow, called from CI (master -> latest) and Build and Release (tags -> versions)
+# Reusable workflow, called from CI (main -> latest) and Build and Release (tags -> versions)
 on:
   workflow_call:
-    secrets:
-      DOCKERHUB_TOKEN:
-        required: true
 
 permissions: {}
 
@@ -27,13 +24,12 @@ jobs:
         uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302 # v6.2.0
         with:
           images: |
-            psitrax/psitransfer
-            ghcr.io/psi-4ward/psitransfer
-          # latest tracks master, releases only get version tags
+            ghcr.io/${{ github.repository_owner }}/flyto
+          # latest tracks main, releases only get version tags
           flavor: |
             latest=false
           tags: |
-            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/master' }}
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
             type=semver,pattern=v{{version}}
             type=semver,pattern=v{{major}}.{{minor}}
             type=semver,pattern=v{{major}}
@@ -43,12 +39,6 @@ jobs:
 
       - name: Setup Docker buildx
         uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
-
-      - name: Login to DockerHub
-        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
-        with:
-          username: psitrax
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0

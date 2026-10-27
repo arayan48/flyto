@@ -32,4 +32,4 @@ new Vue({
   render: h => h(Download)
 });
 
-window.PSITRANSFER_VERSION = PSITRANSFER_VERSION;
+window.FLYTO_VERSION = FLYTO_VERSION;

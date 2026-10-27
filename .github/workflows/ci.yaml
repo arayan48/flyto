@@ -3,7 +3,7 @@ name: CI
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
 
 permissions: {}
@@ -61,7 +61,7 @@ jobs:
   docker:
     name: Docker latest
     needs: [ test, build_frontend ]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     # Don't let parallel pushes race for the latest tag
     concurrency:
       group: docker-latest
@@ -70,5 +70,3 @@ jobs:
       contents: read
       packages: write
     uses: ./.github/workflows/docker.yaml
-    secrets:
-      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}

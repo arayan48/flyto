@@ -13,10 +13,10 @@ RUN npm run build
 
 FROM node:26-alpine
 
-ENV PSITRANSFER_UPLOAD_DIR=/data \
+ENV FLYTO_UPLOAD_DIR=/data \
     NODE_ENV=production
 
-LABEL maintainer="Christoph Wiechert <wio@psitrax.de>"
+LABEL maintainer="arayan48 <arabirayanma@gmail.com>"
 
 RUN apk add --no-cache tzdata
 

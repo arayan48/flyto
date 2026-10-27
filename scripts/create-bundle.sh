@@ -16,12 +16,12 @@ npm run build
 
 
 echo
-echo "### Bundling to _releases/psitransfer-$NAME.tar.gz"
+echo "### Bundling to _releases/flyto-$NAME.tar.gz"
 echo "======================================================"
 cd $DIR/..
 mkdir -p _releases
 
-tar -czf _releases/psitransfer-$NAME.tar.gz --transform "s~^~psitransfer-$NAME/~" \
+tar -czf _releases/flyto-$NAME.tar.gz --transform "s~^~flyto-$NAME/~" \
   LICENSE \
   README.md \
   Dockerfile \

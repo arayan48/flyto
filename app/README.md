@@ -1,4 +1,4 @@
-# PsiTransfer Upload / Download App
+# Flyto Upload / Download App
 
 ## Build Setup
 

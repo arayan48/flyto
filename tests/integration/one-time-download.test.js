@@ -6,8 +6,8 @@ const os = require('os');
 const http = require('node:http');
 const { createHash } = require('node:crypto');
 
-const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'psitransfer-onetime-'));
-process.env.PSITRANSFER_UPLOAD_DIR = tmpDir;
+const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'flyto-onetime-'));
+process.env.FLYTO_UPLOAD_DIR = tmpDir;
 
 const { test, before, after } = require('node:test');
 const assert = require('node:assert');

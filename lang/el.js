@@ -40,8 +40,8 @@ module.exports = {
   mailDownloadNotification: "Ειδοποίησέ με όταν γίνει λήψη ενός αρχείου.",
   mailSendBtn: "Αποστολή E-Mail",
   mailsSent: "Τα e-mails έχουν σταλεί.",
-  mailSubjectUploader: "PsiTransfer Μεταφόρτωση Αρχείων",
-  mailSubjectDownloader: "PsiTransfer Λήψη Αρχείων",
+  mailSubjectUploader: "Flyto Μεταφόρτωση Αρχείων",
+  mailSubjectDownloader: "Flyto Λήψη Αρχείων",
   mailSubjectFileDownloaded: "Έγινε λήψη του αρχείου",
   retentions: {
     "one-time": "λήψη μίας φοράς",

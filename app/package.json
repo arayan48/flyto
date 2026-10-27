@@ -1,8 +1,8 @@
 {
-  "name": "psitransfer",
-  "description": "A Vue.js project",
+  "name": "flyto",
+  "description": "Flyto frontend",
   "version": "0.0.0",
-  "author": "Christoph Wiechert <wio@psitrax.de>",
+  "author": "arayan48 <arabirayanma@gmail.com>",
   "private": true,
   "scripts": {
     "dev": "cross-env NODE_ENV=development webpack-dev-server",

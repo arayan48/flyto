@@ -40,8 +40,8 @@ module.exports = {
   mailDownloadNotification: "Notificar-me quando um arquivo for baixado.",
   mailSendBtn: "Enviar e-mail",
   mailsSent: "Os e-mails foram enviados.",
-  mailSubjectUploader: "PsiTransfer File-Upload",
-  mailSubjectDownloader: "PsiTransfer File-Download",
+  mailSubjectUploader: "Flyto File-Upload",
+  mailSubjectDownloader: "Flyto File-Download",
   mailSubjectFileDownloaded: "O arquivo foi baixado",
   retentions: {
     "one-time": "baixar uma única vez",

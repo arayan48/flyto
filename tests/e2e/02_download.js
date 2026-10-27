@@ -2,9 +2,9 @@ import { Selector } from 'testcafe';
 import { clearDownloadedFile, compareFiles, sharedData, waitForFileDownload } from './helper';
 
 const pwdField = Selector('.well input[type=password]');
-const fileToDownload = 'psitransfer.gif';
+const fileToDownload = 'flyto.gif';
 
-fixture('PsiTransfer Download')
+fixture('Flyto Download')
 
 test.before(async t => {
   clearDownloadedFile(fileToDownload)

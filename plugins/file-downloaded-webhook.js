@@ -1,4 +1,4 @@
-const debug = require('debug')('psitransfer:plugin:file-downloaded-webook');
+const debug = require('debug')('flyto:plugin:file-downloaded-webook');
 const axios = require('axios');
 
 module.exports = function setupFileDownloadedWebhook(eventBus, app, config, db) {

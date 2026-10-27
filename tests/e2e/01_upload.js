@@ -7,7 +7,7 @@ const passwordField = Selector('#password');
 const retentionField = Selector('#retention');
 const uploadBtn = Selector('#uploadBtn');
 
-fixture`PsiTransfer Upload`
+fixture`Flyto Upload`
   .page`${uploadUrl}`;
 
 test('Upload', async t => {
@@ -35,11 +35,11 @@ test('Upload', async t => {
     .setFilesToUpload(fileInputField, [
       '../../LICENSE',
       '../../Dockerfile',
-      '../../docs/psitransfer.gif',
+      '../../docs/flyto.gif',
     ])
     .expect(Selector('.upload-files table tr').count).eql(3)
     .expect(fileInputFiles()).contains('LICENSE')
-    .expect(fileInputFiles()).contains('psitransfer.gif');
+    .expect(fileInputFiles()).contains('flyto.gif');
 
   // Remove file
   await t
