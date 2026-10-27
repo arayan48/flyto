@@ -58,3 +58,13 @@ test('update status is returned to the admin', async () => {
   assert.strictEqual(body.repo, 'arayan48/flyto');
   assert.strictEqual(body.enabled, true);
 });
+
+test('pages show the running version in the footer', async () => {
+  const { version } = require('../../package.json');
+  for (const page of ['/', '/admin']) {
+    const res = await get(page);
+    assert.strictEqual(res.status, 200);
+    assert.ok(res.body.includes(`Flyto v${ version }`), page);
+    assert.ok(res.body.includes(`/arayan48/flyto/releases/tag/v${ version }`), page);
+  }
+});
