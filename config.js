@@ -7,6 +7,8 @@ const fsp = require('fs-promise');
 // or use ENV-VARS like FLYTO_PORT=8000 (legacy PSITRANSFER_ prefix still accepted)
 const config = {
   "uploadDir": path.resolve(__dirname + '/data'),
+  // SQLite metadata database, defaults to <uploadDir>/flyto.sqlite
+  "dbFile": '',
   // set to serve Flyto from a sub-path
   "baseUrl": '/',
   // use to set custom upload url (subfolder to baseUrl)
@@ -93,6 +95,7 @@ for (let k in config) {
   }
 }
 
+if (!config.dbFile) config.dbFile = path.join(config.uploadDir, 'flyto.sqlite');
 if (!config.baseUrl.endsWith('/')) config.baseUrl = config.baseUrl + '/';
 if (!config.uploadAppPath.endsWith('/')) config.uploadAppPath = config.uploadAppPath + '/';
 

@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 const http = require('node:http');
+const { DatabaseSync } = require('node:sqlite');
 
 const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'flyto-int-'));
 process.env.FLYTO_UPLOAD_DIR = tmpDir;
@@ -54,7 +55,10 @@ test('store.info error that is not NotFound yields 500 (instanceof guard)', asyn
   const bucketDir = path.join(tmpDir, sid);
   const fileBase = path.join(bucketDir, UUID);
   fs.mkdirSync(bucketDir, { recursive: true });
-  fs.writeFileSync(`${fileBase}.json`, '{ not json', 'utf8');
+  const metadata = new DatabaseSync(path.join(tmpDir, 'flyto.sqlite'));
+  metadata.prepare('INSERT INTO files (fid, sid, file_key, data, updated_at) VALUES (?, ?, ?, ?, ?)')
+    .run(`${sid}++${UUID}`, sid, UUID, '{ not json', Date.now());
+  metadata.close();
   fs.writeFileSync(fileBase, '', 'utf8');
 
   const server = http.createServer(app);
