@@ -10,6 +10,7 @@ Restart=on-failure
 
 Environment=NODE_ENV=production
 Environment=FLYTO_PORT=8080
+Environment=FLYTO_DB_URL=postgres://flyto:secret@localhost:5432/flyto
 
 WorkingDirectory=/opt/flyto
 ExecStart=/usr/bin/node app.js

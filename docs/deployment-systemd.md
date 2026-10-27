@@ -3,6 +3,8 @@
 You can also install Flyto as (Linux) system service. Most distributions
 use Systemd as main init system. You should **not** run Flyto with root privileges!
 
+Flyto needs Node.js 24 or newer and a PostgreSQL database.
+
 **Preparation**
 
 ```bash
@@ -11,10 +13,10 @@ mkdir -p /opt/flyto
 cd /opt/flyto
 
 # Download and extract a prebuild
-curl -sL https://github.com/arayan48/flyto/releases/download/1.1.0-beta/flyto-1.1.0-beta.tar.gz | tar xz --strip 1
+curl -sL https://github.com/arayan48/flyto/releases/download/v0.1.0/flyto-v0.1.0.tar.gz | tar xz --strip 1
 
 # Install dependencies
-npm install --production
+npm ci --omit=dev
 
 # Add a user flyto
 sudo useradd --system flyto
@@ -26,7 +28,7 @@ sudo chown -R flyto:flyto /opt/flyto
 **Systemd unit file**
 
 Grab the [flyto.service](https://github.com/arayan48/flyto/blob/main/docs/flyto.service)
-sample file, put it in `/etc/systemd/system/` and adjust to your needs.
+sample file, put it in `/etc/systemd/system/` and adjust to your needs, at least `FLYTO_DB_URL`.
 
 ```bash
 cd /etc/systemd/system

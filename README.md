@@ -15,29 +15,43 @@ Une alternative à WeTransfer qui tourne chez toi.
 
 ## Démarrage rapide
 
+### Docker Compose
+
+Le [`docker-compose.yml`](docker-compose.yml) lance Flyto et sa base PostgreSQL.
+Change les mots de passe qu'il contient, puis :
+
+```bash
+docker compose up -d
+```
+
+Voir [Base de données](#base-de-données) pour les dossiers à sauvegarder.
+
 ### Docker
+
+Avec une base PostgreSQL déjà en place :
 
 ```bash
 docker run -p 3000:3000 \
+  -e FLYTO_DB_URL=postgres://flyto:secret@hote-postgres:5432/flyto \
   -e FLYTO_ADMIN_PASS=change-moi \
   -e FLYTO_UPLOAD_PASS=change-moi-aussi \
   -v $PWD/data:/data \
-  ghcr.io/arayan48/flyto
-# le volume de données doit appartenir à l'UID 1000
-sudo chown -R 1000 $PWD/data
+  ghcr.io/arayan48/flyto:v0.1.0
 ```
+
+Au démarrage, le conteneur donne le dossier de données à l'utilisateur `node` (UID 1000) qui fait tourner Flyto.
 
 ### Depuis les sources
 
-Node.js 24 ou plus récent est requis.
+Node.js 24 ou plus récent et une base PostgreSQL sont requis.
 
 ```bash
 # Interface
-cd app && npm install && npm run build && cd ..
+cd app && npm ci && npm run build && cd ..
 
 # Serveur
-npm install
-npm start
+npm ci --omit=dev
+FLYTO_DB_URL=postgres://flyto:secret@localhost:5432/flyto npm start
 ```
 
 ## Configuration
@@ -55,7 +69,8 @@ Les anciennes variables `PSITRANSFER_*` sont encore acceptées.
 | `FLYTO_DEFAULT_RETENTION` | Durée de conservation par défaut, en secondes |
 | `FLYTO_UPDATE_CHECK` | `false` pour ne plus vérifier les nouvelles versions sur GitHub |
 
-Tu peux aussi créer un `config.production.js` (voir `config.dev.js`).
+Pour les options oui/non, utilise `true` ou `false`. Tu peux aussi créer un `config.production.js`
+(voir `config.dev.js` et [docs/configuration.md](docs/configuration.md)).
 
 ### Base de données
 
