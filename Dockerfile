@@ -18,7 +18,7 @@ ENV FLYTO_UPLOAD_DIR=/data \
 
 LABEL maintainer="arayan48 <arabirayanma@gmail.com>"
 
-RUN apk add --no-cache tzdata
+RUN apk add --no-cache tzdata su-exec
 
 WORKDIR /app
 
@@ -35,12 +35,14 @@ COPY lang lang
 COPY plugins plugins
 COPY public public
 COPY --from=frontend /build/public/app public/app
+COPY docker-entrypoint.sh /usr/local/bin/flyto-entrypoint.sh
 
 EXPOSE 3000
 VOLUME ["/data"]
 
-USER node
+# Starts as root only to fix the ownership of /data, the app runs as node
+ENTRYPOINT ["flyto-entrypoint.sh"]
 
-# HEALTHCHECK CMD wget -O /dev/null -q http://localhost:3000
+HEALTHCHECK --start-period=20s CMD wget -q -O /dev/null "http://127.0.0.1:${FLYTO_PORT:-3000}${FLYTO_BASE_URL%/}/robots.txt" || exit 1
 
 CMD ["node", "app.js"]

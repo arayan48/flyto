@@ -74,6 +74,71 @@ jobs:
         working-directory: app
         run: npm run build
 
+  docker_build:
+    name: Docker image
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: flyto
+          POSTGRES_HOST_AUTH_METHOD: trust
+          POSTGRES_DB: flyto_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U flyto -d flyto_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup Docker buildx
+        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+
+      - name: Build Docker image
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: .
+          file: Dockerfile
+          load: true
+          tags: flyto:test
+          cache-from: type=gha
+
+      # A fresh bind mount belongs to root, like on ZimaOS
+      - name: Smoke test
+        run: |
+          sudo mkdir -p /tmp/flyto-data
+          docker run -d --name flyto --network host --health-interval 2s \
+            -e FLYTO_DB_URL=postgres://flyto@localhost:5432/flyto_test \
+            -v /tmp/flyto-data:/data flyto:test
+          for i in $(seq 30); do
+            [ "$(docker inspect -f '{{.State.Health.Status}}' flyto)" = healthy ] && break
+            sleep 2
+          done
+          docker inspect -f '{{.State.Health.Status}}' flyto | grep -qx healthy
+
+          meta="name $(printf a.txt | base64),sid $(printf smoke | base64),retention $(printf 3600 | base64)"
+          location=$(curl -fsS -D - -o /dev/null -X POST http://localhost:3000/files/ \
+            -H 'Tus-Resumable: 1.0.0' -H 'Upload-Length: 5' -H "Upload-Metadata: $meta" \
+            | tr -d '\r' | sed -n 's/^[Ll]ocation: //p')
+          curl -fsS -X PATCH "http://localhost:3000$location" -H 'Tus-Resumable: 1.0.0' \
+            -H 'Upload-Offset: 0' -H 'Content-Type: application/offset+octet-stream' --data-binary hello
+          curl -fsS http://localhost:3000/smoke.json | grep -q a.txt
+          test "$(docker exec flyto stat -c %U /proc/1)" = node
+          sudo ls /tmp/flyto-data/smoke | grep -q .
+
+      - name: Container logs
+        if: always()
+        run: docker logs flyto || true
+
   docker:
     name: Docker latest
     needs: [ test, build_frontend ]

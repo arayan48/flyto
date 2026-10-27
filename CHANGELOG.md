@@ -24,6 +24,9 @@ et les versions suivent [SemVer](https://semver.org/lang/fr/).
 - Les styles propres aux pages (affichage mobile de l'envoi, bandeau de mise à jour de `/admin`) n'étaient pas appliqués
 - Au démarrage, Flyto attend d'avoir chargé la liste des fichiers avant d'accepter des connexions
   (les liens répondaient « introuvable » pendant ce temps)
+- Image Docker : un dossier de données créé par Docker (bind mount, ZimaOS) appartient à root et Flyto ne pouvait
+  pas y écrire ; le conteneur corrige maintenant les droits au démarrage puis lance Flyto en utilisateur `node`.
+  L'image déclare aussi un `HEALTHCHECK`
 
 ## [0.1.0] - 2026-10-27
 

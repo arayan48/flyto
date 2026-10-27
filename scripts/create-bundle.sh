@@ -26,6 +26,7 @@ tar -czf _releases/flyto-$NAME.tar.gz --transform "s~^~flyto-$NAME/~" \
   README.md \
   Dockerfile \
   .dockerignore \
+  docker-entrypoint.sh \
   app.js \
   cli.js \
   config.js \
