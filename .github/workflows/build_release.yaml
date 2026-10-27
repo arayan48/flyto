@@ -173,7 +173,7 @@ jobs:
               ],
               "label_extractor": [
                 {
-                  "pattern": "^(build|chore|ci|docs|feat|fix|bug|perf|cleanup|refactor|revert|style|test|deps){1}(\\([\\w\\-\\.]+\\))?(!):",
+                  "pattern": "^(build|chore|ci|docs|feat|fix|bug|perf|cleanup|refactor|revert|style|test|deps){1}(\\([\\w\\-\\.]+\\))?(!):[\\s\\S]*",
                   "on_property": "title",
                   "target": "breaking"
                 },
