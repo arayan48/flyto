@@ -41,3 +41,13 @@ test('importLegacyJson moves sidecar files into the database', { skip }, async (
   assert.deepStrictEqual(await db.get(`abc++${ KEY }`), { metadata: { name: 'a.txt' } });
   assert.strictEqual(fs.existsSync(path.join(dir, 'abc', `${ KEY }.json`)), false);
 });
+
+test('startup retries an unreachable database until connectTimeout', async () => {
+  for (const url of ['postgres://flyto@127.0.0.1:1/flyto', 'postgres://flyto@flyto-missing.invalid/flyto']) {
+    const started = Date.now();
+    const unreachable = new MetadataDb(url, { connectTimeout: 1200 });
+    await assert.rejects(unreachable.ready, e => ['ECONNREFUSED', 'ENOTFOUND', 'EAI_AGAIN'].includes(e.code));
+    assert.ok(Date.now() - started >= 1200, url);
+    await unreachable.close();
+  }
+});
