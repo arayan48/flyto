@@ -18,6 +18,21 @@
         icon.fa-fw(name="sign-in-alt")
         |  login
 
+    .alert.alert-warning.update-notice(v-if="loggedIn && update && update.updateAvailable && dismissed !== update.latest")
+      a.close(@click="dismissUpdate()", :title="lang.updateLater")
+        icon(name="times")
+      strong
+        icon.fa-fw(name="arrow-circle-up")
+        |  {{ lang.updateAvailable }} {{ update.latest }}
+      |  ({{ lang.updateInstalled }} v{{ update.current }})
+      p {{ lang.updateAdvice }}
+      p
+        a.btn.btn-sm.btn-warning(:href="update.url", target="_blank", rel="noopener") {{ lang.updateReleaseNotes }}
+        |
+        a.btn.btn-sm.btn-default(:href="'https://github.com/' + update.repo + '/blob/main/docs/updating.md'", target="_blank", rel="noopener")
+          icon.fa-fw(name="external-link-alt")
+          |  {{ lang.updateHowTo }}
+
     div(v-if="loggedIn")
       table.table.table-hover
         thead
@@ -57,6 +72,9 @@
           tr
             td(colspan="3")
             td.text-right(colspan="2") Sum: {{ humanFileSize(sizeSum) }}
+      p.text-muted.text-right.small(v-if="update")
+        | Flyto v{{ update.current }}
+        template(v-if="update.enabled && update.checkedAt && !update.updateAvailable")  · {{ lang.upToDate }}
 
 </template>
 
@@ -66,6 +84,19 @@
   import 'vue-awesome/icons/sync-alt';
   import 'vue-awesome/icons/sign-in-alt';
   import 'vue-awesome/icons/key';
+  import 'vue-awesome/icons/arrow-circle-up';
+  import 'vue-awesome/icons/external-link-alt';
+  import 'vue-awesome/icons/times';
+
+  const dismissKey = 'flyto.dismissedUpdate';
+
+  function readDismissed() {
+    try {
+      return localStorage.getItem(dismissKey);
+    } catch(e) {
+      return null;
+    }
+  }
 
 
   export default {
@@ -80,8 +111,20 @@
         error: '',
         passwordWrong: false,
         expand: false,
-        sizeSum: 0
+        sizeSum: 0,
+        update: null,
+        dismissed: readDismissed(),
+        lang: {}
       }
+    },
+
+    created() {
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', 'lang.json');
+      xhr.onload = () => {
+        if(xhr.status === 200) this.lang = JSON.parse(xhr.responseText);
+      };
+      xhr.send();
     },
 
     methods: {
@@ -103,6 +146,7 @@
               this.error = '';
               this.passwordWrong = false;
               this.expandDb();
+              this.fetchUpdate();
             }
             catch(e) {
               this.error = e.toString();
@@ -113,6 +157,23 @@
           }
         };
         xhr.send();
+      },
+
+      fetchUpdate() {
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', 'admin/update.json');
+        xhr.setRequestHeader("x-passwd", encodeURIComponent(this.password));
+        xhr.onload = () => {
+          if(xhr.status === 200) this.update = JSON.parse(xhr.responseText);
+        };
+        xhr.send();
+      },
+
+      dismissUpdate() {
+        this.dismissed = this.update.latest;
+        try {
+          localStorage.setItem(dismissKey, this.dismissed);
+        } catch(e) {}
       },
 
       expandDb() {
@@ -178,5 +239,14 @@
   }
   tfoot {
     font-weight: bold;
+  }
+  .update-notice p:last-child {
+    margin-bottom: 0;
+  }
+  .update-notice .close {
+    cursor: pointer;
+  }
+  .update-notice .btn + .btn {
+    margin-left: 6px;
   }
 </style>

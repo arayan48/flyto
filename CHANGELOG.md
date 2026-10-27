@@ -13,6 +13,8 @@ Première version de Flyto, basée sur PsiTransfer.
 - Métadonnées des fichiers dans une base SQLite (`flyto.sqlite`) au lieu des fichiers `.json` à côté des envois
 - Option PostgreSQL pour les métadonnées (`FLYTO_DB_URL`)
 - `docker-compose.yml` prêt à importer dans ZimaOS / CasaOS
+- Vérification des nouvelles versions sur GitHub : avertissement dans `/admin` et dans les logs,
+  désactivable avec `FLYTO_UPDATE_CHECK=false` ([guide de mise à jour](docs/updating.md))
 
 ### Modifié
 - Le projet devient Flyto : nom, image Docker, variables d'environnement `FLYTO_*`

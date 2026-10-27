@@ -55,4 +55,11 @@ module.exports = {
     "4838400": "8 semaines"
   },
   uploadPassword: "Mot de passe d'accès au téléversement",
+  updateAvailable: "Une nouvelle version de Flyto est disponible :",
+  updateInstalled: "installée",
+  updateAdvice: "Veuillez faire la mise à jour pour profiter des derniers correctifs et nouveautés.",
+  updateReleaseNotes: "Voir les nouveautés",
+  updateHowTo: "Comment mettre à jour",
+  updateLater: "Plus tard",
+  upToDate: "à jour",
 }

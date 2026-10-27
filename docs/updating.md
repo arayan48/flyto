@@ -1,0 +1,62 @@
+# Mettre à jour Flyto
+
+## Être prévenu
+
+Toutes les 12 heures, Flyto demande à GitHub quelle est la dernière version publiée
+(`https://api.github.com/repos/arayan48/flyto/releases/latest`). Si elle est plus récente que celle
+qui tourne :
+
+* un bandeau s'affiche en haut de la page `/admin`, avec un lien vers les nouveautés ;
+* une ligne est écrite dans les logs du conteneur :
+  `Flyto v0.2.0 is available (running v0.1.0): https://github.com/arayan48/flyto/releases/tag/v0.2.0`
+
+Le bouton « Plus tard » masque le bandeau jusqu'à la version suivante. Les pré-versions (`v0.2.0-rc.1`)
+ne déclenchent pas d'avertissement.
+
+La requête n'envoie rien d'autre que le numéro de version dans l'en-tête `User-Agent`.
+Pour la couper, mets `FLYTO_UPDATE_CHECK=false`. Si tu maintiens un fork, `FLYTO_UPDATE_CHECK_REPO`
+indique le dépôt à surveiller (`proprietaire/depot`).
+
+Avant toute mise à jour, lis les notes de version : en 0.x, un changement de version mineure
+(`0.1` → `0.2`) peut demander une action de ta part, c'est alors écrit en tête des notes.
+
+## ZimaOS / CasaOS
+
+1. Ouvre l'app Flyto, puis **Paramètres** (icône engrenage).
+2. Dans le champ de l'image, remplace le tag par la nouvelle version, par exemple
+   `ghcr.io/arayan48/flyto:v0.2.0`.
+3. Enregistre : ZimaOS télécharge l'image et redémarre le conteneur.
+
+Les fichiers et la base restent dans `/DATA/AppData/flyto`, ils ne sont pas touchés.
+
+## Docker Compose
+
+Dans `docker-compose.yml`, change le tag de l'image (`ghcr.io/arayan48/flyto:v0.2.0`), puis :
+
+```bash
+docker compose pull
+docker compose up -d
+```
+
+Avec le tag `latest` ou `v0`, seules les deux commandes suffisent.
+
+## Docker
+
+```bash
+docker pull ghcr.io/arayan48/flyto:v0.2.0
+docker stop flyto && docker rm flyto
+```
+
+Relance ensuite le conteneur avec la même commande `docker run` qu'avant, en changeant seulement le tag.
+Les données sont dans le volume `/data`, elles sont conservées.
+
+## Depuis les sources
+
+```bash
+git fetch --tags
+git checkout v0.2.0
+npm ci
+cd app && npm ci && npm run build && cd ..
+```
+
+Puis redémarre le service (`systemctl restart flyto` si tu suis [deployment-systemd.md](deployment-systemd.md)).
