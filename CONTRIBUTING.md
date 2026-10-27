@@ -99,7 +99,8 @@ ou qu'un correctif important doit sortir.
 ### Publier une release
 
 1. Mettre à jour [CHANGELOG.md](CHANGELOG.md) : déplacer le contenu de « Non publié » sous la nouvelle version
-2. Mettre à jour la version de l'image dans [docker-compose.yml](docker-compose.yml)
+2. Mettre à jour la version dans `package.json` et `app/package.json` (`npm version X.Y.Z --no-git-tag-version`),
+   et le tag de l'image dans [docker-compose.yml](docker-compose.yml)
 3. Committer via une PR `chore(release): vX.Y.Z` et la fusionner
 4. Taguer `main` et pousser le tag :
 
