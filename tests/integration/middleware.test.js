@@ -4,12 +4,16 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 const http = require('node:http');
-const { DatabaseSync } = require('node:sqlite');
+const { Pool } = require('pg');
+
+const { url, skip } = require('../helpers/db');
+const { test, after } = require('node:test');
+if (skip) return test('middleware', { skip });
+process.env.FLYTO_DB_URL = url;
 
 const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'flyto-int-'));
 process.env.FLYTO_UPLOAD_DIR = tmpDir;
 
-const { test, after } = require('node:test');
 const assert = require('node:assert');
 
 const tusMeta = require('../../lib/tusboy/tus-metadata');
@@ -55,10 +59,12 @@ test('store.info error that is not NotFound yields 500 (instanceof guard)', asyn
   const bucketDir = path.join(tmpDir, sid);
   const fileBase = path.join(bucketDir, UUID);
   fs.mkdirSync(bucketDir, { recursive: true });
-  const metadata = new DatabaseSync(path.join(tmpDir, 'flyto.sqlite'));
-  metadata.prepare('INSERT INTO files (fid, sid, file_key, data, updated_at) VALUES (?, ?, ?, ?, ?)')
-    .run(`${sid}++${UUID}`, sid, UUID, '{ not json', Date.now());
-  metadata.close();
+  // a scalar instead of an object makes store.info throw a TypeError
+  const pool = new Pool({ connectionString: url });
+  await pool.query(`
+    INSERT INTO files (fid, sid, file_key, data, updated_at) VALUES ($1, $2, $3, '"corrupt"', $4)
+    ON CONFLICT (fid) DO UPDATE SET data = excluded.data`, [`${sid}++${UUID}`, sid, UUID, Date.now()]);
+  await pool.end();
   fs.writeFileSync(fileBase, '', 'utf8');
 
   const server = http.createServer(app);

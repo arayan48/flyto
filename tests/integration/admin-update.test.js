@@ -5,11 +5,15 @@ const path = require('path');
 const os = require('os');
 const http = require('node:http');
 
+const { url, skip } = require('../helpers/db');
+const { test, before, after } = require('node:test');
+if (skip) return test('admin update', { skip });
+process.env.FLYTO_DB_URL = url;
+
 const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'flyto-int-'));
 process.env.FLYTO_UPLOAD_DIR = tmpDir;
 process.env.FLYTO_ADMIN_PASS = 'secret';
 
-const { test, before, after } = require('node:test');
 const assert = require('node:assert');
 
 const app = require('../../lib/endpoints');

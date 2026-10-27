@@ -7,9 +7,7 @@ const fsp = require('fs-promise');
 // or use ENV-VARS like FLYTO_PORT=8000 (legacy PSITRANSFER_ prefix still accepted)
 const config = {
   "uploadDir": path.resolve(__dirname + '/data'),
-  // SQLite metadata database, defaults to <uploadDir>/flyto.sqlite
-  "dbFile": '',
-  // use PostgreSQL instead of SQLite, e.g. postgres://flyto:secret@database:5432/flyto
+  // PostgreSQL for the metadata (required), e.g. postgres://flyto:secret@database:5432/flyto
   "dbUrl": '',
   // set to serve Flyto from a sub-path
   "baseUrl": '/',
@@ -100,7 +98,6 @@ for (let k in config) {
   }
 }
 
-if (!config.dbFile) config.dbFile = path.join(config.uploadDir, 'flyto.sqlite');
 if (!config.baseUrl.endsWith('/')) config.baseUrl = config.baseUrl + '/';
 if (!config.uploadAppPath.endsWith('/')) config.uploadAppPath = config.uploadAppPath + '/';
 

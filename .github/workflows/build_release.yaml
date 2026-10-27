@@ -13,6 +13,20 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: flyto
+          POSTGRES_HOST_AUTH_METHOD: trust
+          POSTGRES_DB: flyto_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U flyto -d flyto_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -30,6 +44,8 @@ jobs:
 
       - name: Run tests
         run: npm test
+        env:
+          FLYTO_TEST_DB_URL: postgres://flyto@localhost:5432/flyto_test
 
   bundle:
     name: Build bundle
