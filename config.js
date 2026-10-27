@@ -9,6 +9,8 @@ const config = {
   "uploadDir": path.resolve(__dirname + '/data'),
   // SQLite metadata database, defaults to <uploadDir>/flyto.sqlite
   "dbFile": '',
+  // use PostgreSQL instead of SQLite, e.g. postgres://flyto:secret@database:5432/flyto
+  "dbUrl": '',
   // set to serve Flyto from a sub-path
   "baseUrl": '/',
   // use to set custom upload url (subfolder to baseUrl)

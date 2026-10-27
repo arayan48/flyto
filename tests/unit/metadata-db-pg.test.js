@@ -1,0 +1,46 @@
+'use strict';
+
+const { test, before, after, beforeEach } = require('node:test');
+const assert = require('node:assert');
+const fs = require('fs');
+const os = require('os');
+const path = require('path');
+
+const PgMetadataDb = require('../../lib/metadataDbPg');
+
+// e.g. FLYTO_TEST_DB_URL=postgres://flyto:flyto@localhost:5432/flyto_test
+const url = process.env.FLYTO_TEST_DB_URL;
+const skip = url ? false : 'FLYTO_TEST_DB_URL not set';
+const KEY = '00000000-0000-4000-8000-000000000001';
+
+let db;
+before(() => { if (url) db = new PgMetadataDb(url); });
+after(async () => { if (db) await db.close(); });
+beforeEach(async () => { if (db) await db._query('TRUNCATE files, downloads'); });
+
+test('set/get/delete round-trips file metadata', { skip }, async () => {
+  const fid = `abc++${ KEY }`;
+  await db.set(fid, { metadata: { name: 'a.txt' }, isPartial: true });
+  assert.deepStrictEqual(await db.get(fid), { metadata: { name: 'a.txt' }, isPartial: true });
+  await db.set(fid, { metadata: { name: 'a.txt' } });
+  assert.deepStrictEqual(await db.get(fid), { metadata: { name: 'a.txt' } });
+  assert.deepStrictEqual(await db.fids(), [fid]);
+  await db.delete(fid);
+  assert.strictEqual(await db.get(fid), null);
+});
+
+test('logDownload counts downloads per file', { skip }, async () => {
+  await db.logDownload('abc', KEY, 'a.txt');
+  await db.logDownload('abc', KEY, 'a.txt');
+  assert.deepStrictEqual(await db.downloadCounts(), { abc: { [KEY]: 2 } });
+});
+
+test('importLegacyJson moves sidecar files into the database', { skip }, async () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'flyto-metadata-pg-'));
+  fs.mkdirSync(path.join(dir, 'abc'));
+  fs.writeFileSync(path.join(dir, 'abc', KEY), 'hello');
+  fs.writeFileSync(path.join(dir, 'abc', `${ KEY }.json`), JSON.stringify({ metadata: { name: 'a.txt' } }));
+  assert.strictEqual(await db.importLegacyJson(dir), 1);
+  assert.deepStrictEqual(await db.get(`abc++${ KEY }`), { metadata: { name: 'a.txt' } });
+  assert.strictEqual(fs.existsSync(path.join(dir, 'abc', `${ KEY }.json`)), false);
+});
