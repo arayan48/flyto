@@ -13,27 +13,30 @@ const updateCheck = require('./lib/updateCheck');
  */
 
 let server;
-if(config.port) {
-  // HTTP Server
-  server = app.listen(config.port, config.iface, () => {
-    console.log(`Flyto listening on http://${config.iface}:${config.port}`);
-    eventBus.emit('listen', server);
-  });
-}
-
 let httpsServer;
-if(config.sslPort && config.sslKeyFile && config.sslCertFile) {
-  // HTTPS Server
-  const sslOpts = {
-    key: fs.readFileSync(config.sslKeyFile),
-    cert: fs.readFileSync(config.sslCertFile)
-  };
-  httpsServer = https.createServer(sslOpts, app)
-    .listen(config.sslPort, config.iface, () => {
-      console.log(`Flyto listening on https://${config.iface}:${config.sslPort}`);
-      eventBus.emit('listen', httpsServer);
+
+app.ready.then(() => {
+  if(config.port) {
+    // HTTP Server
+    server = app.listen(config.port, config.iface, () => {
+      console.log(`Flyto listening on http://${config.iface}:${config.port}`);
+      eventBus.emit('listen', server);
     });
-}
+  }
+
+  if(config.sslPort && config.sslKeyFile && config.sslCertFile) {
+    // HTTPS Server
+    const sslOpts = {
+      key: fs.readFileSync(config.sslKeyFile),
+      cert: fs.readFileSync(config.sslCertFile)
+    };
+    httpsServer = https.createServer(sslOpts, app)
+      .listen(config.sslPort, config.iface, () => {
+        console.log(`Flyto listening on https://${config.iface}:${config.sslPort}`);
+        eventBus.emit('listen', httpsServer);
+      });
+  }
+});
 
 updateCheck.start(config);
 
@@ -42,6 +45,7 @@ updateCheck.start(config);
 function shutdown() {
   console.log('Flyto shutting down...');
   eventBus.emit('shutdown', server || httpsServer);
+  if(!server && !httpsServer) process.exit(0);
   if(server) {
     server.close(() => {
       server = false;
