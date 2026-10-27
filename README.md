@@ -36,7 +36,7 @@ docker run -p 3000:3000 \
   -e FLYTO_ADMIN_PASS=change-moi \
   -e FLYTO_UPLOAD_PASS=change-moi-aussi \
   -v $PWD/data:/data \
-  ghcr.io/arayan48/flyto:v0.1.0
+  ghcr.io/arayan48/flyto:v0.2.0
 ```
 
 Au démarrage, le conteneur donne le dossier de données à l'utilisateur `node` (UID 1000) qui fait tourner Flyto.

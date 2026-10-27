@@ -5,6 +5,12 @@ et les versions suivent [SemVer](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+## [0.2.0] - 2026-10-27
+
+**À lire avant de mettre à jour depuis la v0.1.0 :** Flyto a maintenant besoin d'une base PostgreSQL
+(`FLYTO_DB_URL`). Le `docker-compose.yml` fournit le service `database`. Les métadonnées rangées dans
+`flyto.sqlite` par la v0.1.0 ne sont pas reprises : les envois existants n'apparaîtront plus.
+
 ### Ajouté
 - Le pied de page affiche la version de Flyto, avec un lien vers ses notes de version
 
@@ -46,5 +52,6 @@ Première version de Flyto, basée sur PsiTransfer.
 - Le projet devient Flyto : nom, image Docker, variables d'environnement `FLYTO_*`
   (l'ancien préfixe `PSITRANSFER_` est encore lu)
 
-[Non publié]: https://github.com/arayan48/flyto/compare/v0.1.0...HEAD
+[Non publié]: https://github.com/arayan48/flyto/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/arayan48/flyto/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/arayan48/flyto/releases/tag/v0.1.0
