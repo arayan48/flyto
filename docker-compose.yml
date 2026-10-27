@@ -1,0 +1,98 @@
+# Flyto + PostgreSQL, one container each.
+# Works with plain `docker compose up -d` and imports as-is into ZimaOS / CasaOS
+# (App Store > Custom install > Import), which reads the x-casaos blocks.
+#
+# Before the first start, change POSTGRES_PASSWORD (in both services) and FLYTO_ADMIN_PASS.
+
+name: flyto
+
+services:
+  flyto:
+    image: ghcr.io/arayan48/flyto:latest
+    container_name: flyto
+    restart: unless-stopped
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      FLYTO_DB_URL: postgres://flyto:change-me@database:5432/flyto
+      FLYTO_ADMIN_PASS: change-me-too
+      TZ: Europe/Paris
+    ports:
+      - target: 3000
+        published: "3000"
+        protocol: tcp
+    volumes:
+      - type: bind
+        source: /DATA/AppData/flyto/data
+        target: /data
+    x-casaos:
+      envs:
+        - container: FLYTO_DB_URL
+          description:
+            en_us: PostgreSQL connection URL (password must match the database service)
+            fr_fr: URL de connexion PostgreSQL (le mot de passe doit être celui du service database)
+        - container: FLYTO_ADMIN_PASS
+          description:
+            en_us: Password for the /admin page
+            fr_fr: Mot de passe de la page /admin
+      ports:
+        - container: "3000"
+          description:
+            en_us: Web UI
+            fr_fr: Interface web
+      volumes:
+        - container: /data
+          description:
+            en_us: Uploaded files
+            fr_fr: Fichiers envoyés
+
+  database:
+    image: postgres:17-alpine
+    container_name: flyto-database
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: flyto
+      POSTGRES_PASSWORD: change-me
+      POSTGRES_DB: flyto
+    volumes:
+      - type: bind
+        source: /DATA/AppData/flyto/postgres
+        target: /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U flyto -d flyto"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    x-casaos:
+      envs:
+        - container: POSTGRES_PASSWORD
+          description:
+            en_us: Database password (must match FLYTO_DB_URL)
+            fr_fr: Mot de passe de la base (doit correspondre à FLYTO_DB_URL)
+      volumes:
+        - container: /var/lib/postgresql/data
+          description:
+            en_us: Database files
+            fr_fr: Fichiers de la base de données
+
+x-casaos:
+  architectures:
+    - amd64
+    - arm64
+  main: flyto
+  category: Utilities
+  author: arayan48
+  developer: arayan48
+  icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/psitransfer.png
+  tagline:
+    en_us: Self-hosted file sharing, one link for everyone
+    fr_fr: Partage de fichiers auto-hébergé, un lien pour tout le monde
+  description:
+    en_us: Upload files and share them with a single link. Metadata is stored in PostgreSQL.
+    fr_fr: Envoyez des fichiers et partagez-les avec un seul lien. Les métadonnées sont stockées dans PostgreSQL.
+  title:
+    en_us: Flyto
+  port_map: "3000"
+  scheme: http
+  index: /
