@@ -5,9 +5,12 @@ et les versions suivent [SemVer](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
-**À lire avant de mettre à jour :** les envois demandent maintenant un compte, `FLYTO_ADMIN_PASS` et
-`FLYTO_UPLOAD_PASS` ne servent plus. Crée le premier administrateur avec `FLYTO_ADMIN_EMAIL` et
-`FLYTO_ADMIN_PASSWORD`, ou depuis `/setup` avec le code affiché dans les logs (voir docs/updating.md).
+## [0.3.0] - 2026-10-27
+
+**À lire avant de mettre à jour depuis la v0.2.0 :** les envois demandent maintenant un compte,
+`FLYTO_ADMIN_PASS` et `FLYTO_UPLOAD_PASS` ne servent plus. Crée le premier administrateur avec
+`FLYTO_ADMIN_EMAIL` et `FLYTO_ADMIN_PASSWORD`, ou depuis `/setup` avec le code affiché dans les logs
+(voir docs/updating.md).
 
 ### Ajouté
 - Comptes utilisateurs : connexion, inscription ouverte, sur invitation ou fermée, validation par un admin,
@@ -90,6 +93,7 @@ Première version de Flyto, basée sur PsiTransfer.
 - Le projet devient Flyto : nom, image Docker, variables d'environnement `FLYTO_*`
   (l'ancien préfixe `PSITRANSFER_` est encore lu)
 
-[Non publié]: https://github.com/arayan48/flyto/compare/v0.2.0...HEAD
+[Non publié]: https://github.com/arayan48/flyto/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/arayan48/flyto/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/arayan48/flyto/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/arayan48/flyto/releases/tag/v0.1.0
