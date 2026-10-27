@@ -12,8 +12,7 @@ module.exports = {
     "1209600": "2 Weeks"
   },
   "defaultRetention": "3600",
-  "adminPass": "admin",
-  "uploadPass": false,
+  // first admin: FLYTO_ADMIN_EMAIL / FLYTO_ADMIN_PASSWORD, or /setup with the code from the logs
   "baseUrl": '/',
   "uploadAppPath": '/',
   // "maxFileSize": Math.pow(2, 20) * 15,

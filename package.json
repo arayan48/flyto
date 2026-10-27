@@ -13,6 +13,7 @@
   "bugs": "https://github.com/arayan48/flyto/issues",
   "main": "app.js",
   "dependencies": {
+    "@fontsource-variable/dm-sans": "^5.3.0",
     "@node-rs/argon2": "^2.0.2",
     "archiver": "^8.0.0",
     "axios": "^1.16.1",
@@ -25,8 +26,10 @@
     "http-errors": "^2.0.1",
     "method-override": "^3.0.0",
     "morgan": "^1.10.1",
+    "nodemailer": "^10.2.1",
     "pg": "^8.23.1",
     "pug": "^3.0.4",
+    "redis": "^6.3.0",
     "tar-stream": "^3.2.0",
     "to-object-reducer": "^1.0.1"
   },

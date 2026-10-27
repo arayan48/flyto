@@ -1,38 +1,26 @@
-import Vue from 'vue';
+import Vue, { baseURI } from './common/vue-setup';
 import Admin from './Admin.vue';
-import Icon from 'vue-awesome/components/Icon'
-
-function parseDate(str) {
-  if(!str) return str;
-  return new Date(str);
-}
-
-function formatDate(dt) {
-  if(dt === null) return "";
-  const f = function(d) {
-    return d < 10 ? '0' + d : d;
-  };
-  return dt.getFullYear() + '-' + f(dt.getMonth() + 1) + '-' + f(dt.getDate()) + ' ' + f(dt.getHours()) + ':' + f(dt.getMinutes());
-}
-function isDate(d) {
-  return Object.prototype.toString.call(d) === '[object Date]';
-}
-
-Vue.filter('date', function(val, format) {
-  if(!isDate(val)) {
-    val = parseDate(val);
-  }
-  return isDate(val) ? formatDate(val, format) : val;
-});
-
-Vue.component('icon', Icon);
+import { httpGet } from './common/util';
+import { get, setCsrf } from './common/api';
 
 new Vue({
   el: '#admin',
   data: {
-    baseURI: document.head.getElementsByTagName('base')[0].href
+    baseURI: baseURI(),
+    lang: {},
+    session: null,
+    error: '',
   },
-  render: h => h(Admin)
+  render: h => h(Admin),
+  async beforeCreate() {
+    try {
+      this.lang = await httpGet('lang.json');
+      this.session = await get('session');
+      setCsrf(this.session.csrf);
+    } catch (e) {
+      this.error = e.message || String(e);
+    }
+  },
 });
 
 window.FLYTO_VERSION = FLYTO_VERSION;

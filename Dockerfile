@@ -43,6 +43,6 @@ VOLUME ["/data"]
 # Starts as root only to fix the ownership of /data, the app runs as node
 ENTRYPOINT ["flyto-entrypoint.sh"]
 
-HEALTHCHECK --start-period=20s CMD wget -q -O /dev/null "http://127.0.0.1:${FLYTO_PORT:-3000}${FLYTO_BASE_URL%/}/robots.txt" || exit 1
+HEALTHCHECK --start-period=20s CMD wget -q -O /dev/null "http://127.0.0.1:${FLYTO_PORT:-3000}${FLYTO_BASE_URL%/}/healthz" || exit 1
 
 CMD ["node", "app.js"]

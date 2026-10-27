@@ -7,7 +7,7 @@ const http = require('node:http');
 const { Pool } = require('pg');
 
 const { url, skip } = require('../helpers/db');
-const { test, after } = require('node:test');
+const { test, before, after } = require('node:test');
 if (skip) return test('middleware', { skip });
 process.env.FLYTO_DB_URL = url;
 
@@ -49,6 +49,11 @@ function request(port, method, pathname, headers = {}, body = null) {
     req.end();
   });
 }
+
+before(async () => {
+  await app.ready;
+  await app.ctx.settings.update({ anonymousUpload: true });
+});
 
 after(() => {
   fs.rmSync(tmpDir, { recursive: true, force: true });

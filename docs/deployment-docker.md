@@ -13,6 +13,8 @@ With an existing database:
 ```bash
 docker run -d -v $PWD/data:/data -p 3000:3000 \
   -e FLYTO_DB_URL=postgres://flyto:secret@db-host:5432/flyto \
+  -e FLYTO_ADMIN_EMAIL=me@example.com -e FLYTO_ADMIN_PASSWORD='a long password' \
+  -e FLYTO_PUBLIC_URL=https://files.example.com/ \
   ghcr.io/arayan48/flyto:v0.2.0
 ```
 The above command starts the Flyto Docker container and 
@@ -20,6 +22,8 @@ The above command starts the Flyto Docker container and
  * `-v` mounts the data volume into the container, it is handed over to the `node` user (UID 1000) on start
  * `-p` forwards the traffic from port 3000 into the container
  * `-e FLYTO_DB_URL` points to the PostgreSQL database
+ * `-e FLYTO_ADMIN_EMAIL` / `FLYTO_ADMIN_PASSWORD` create the first admin account (or open `/setup`
+   with the code printed in `docker logs`), see [accounts.md](accounts.md)
 
 **Protipp**: There are several [container tags](https://github.com/arayan48/flyto/pkgs/container/flyto)
 if you want to use a specific version. E.g. `v1` is always the latest stable `1.x.x` and `v1.1`

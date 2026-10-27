@@ -71,6 +71,9 @@ function archiveUrl(sid, fids, format) {
 }
 
 before(async () => {
+  await app.ready;
+  // these tests are about downloads, not accounts
+  await app.ctx.settings.update({ anonymousUpload: true });
   server = http.createServer(app);
   await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
   port = server.address().port;

@@ -218,6 +218,12 @@
               this.needsPassword = true;
             }
             this.loading = false;
+          } else if (xhr.status === 451) {
+            this.error = this.$root.lang.transferSuspended;
+            this.loading = false;
+          } else if (xhr.status === 429) {
+            this.error = this.$root.lang.tooManyAttempts;
+            this.loading = false;
           } else {
             this.error = `${ xhr.status } ${ xhr.statusText }: ${ xhr.responseText }`;
           }

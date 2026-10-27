@@ -3,22 +3,26 @@
 Partage de fichiers auto-hébergé : tu déposes tes fichiers, tu obtiens **un seul lien** à envoyer à qui tu veux.
 Une alternative à WeTransfer qui tourne chez toi.
 
-* Pas de compte côté destinataires
+* Comptes pour envoyer, **aucun compte pour télécharger** : le lien suffit
+* Jusqu'à 10 Go par envoi par défaut, quotas réglables (par envoi, par fichier, stockage total, nombre de transferts) pour tout le monde ou par utilisateur
 * Fichiers de toutes tailles, envois et téléchargements reprenables ([tus.io](https://tus.io)), découpés en morceaux de 5 Mo
 * Expiration au choix, ou suppression après un seul téléchargement
 * Mot de passe sur le lien de téléchargement (tous caractères acceptés : accents, `€`, émojis…)
 * Téléchargement de tout le lot en `.zip` ou `.tar.gz`
 * Aperçu des fichiers dans le navigateur
 * Métadonnées des fichiers et historique des téléchargements dans PostgreSQL
-* Page `/admin` avec la liste des envois et le nombre de téléchargements (activée si `FLYTO_ADMIN_PASS` est défini)
+* Inscription ouverte, sur invitation ou fermée, validation des comptes, double authentification (TOTP), sessions révocables
+* Administration complète dans `/admin` : tableau de bord, utilisateurs, transferts, téléchargements, invitations,
+  journal d'audit, réglages en direct, maintenance ([détails](docs/accounts.md))
+* Cache Redis facultatif pour les sessions, les limites de tentatives et le tableau de bord
 * Avertissement dans `/admin` quand une nouvelle version est publiée ([mettre à jour](docs/updating.md))
 
 ## Démarrage rapide
 
 ### Docker Compose
 
-Le [`docker-compose.yml`](docker-compose.yml) lance Flyto et sa base PostgreSQL.
-Change les mots de passe qu'il contient, puis :
+Le [`docker-compose.yml`](docker-compose.yml) lance Flyto, sa base PostgreSQL et un cache Redis.
+Change les mots de passe qu'il contient, l'e-mail de l'administrateur et l'adresse publique, puis :
 
 ```bash
 docker compose up -d
@@ -33,11 +37,21 @@ Avec une base PostgreSQL déjà en place :
 ```bash
 docker run -p 3000:3000 \
   -e FLYTO_DB_URL=postgres://flyto:secret@hote-postgres:5432/flyto \
-  -e FLYTO_ADMIN_PASS=change-moi \
-  -e FLYTO_UPLOAD_PASS=change-moi-aussi \
+  -e FLYTO_ADMIN_EMAIL=moi@exemple.fr \
+  -e FLYTO_ADMIN_PASSWORD='un mot de passe long' \
+  -e FLYTO_PUBLIC_URL=https://fichiers.exemple.fr/ \
   -v $PWD/data:/data \
   ghcr.io/arayan48/flyto:v0.2.0
 ```
+
+### Premier administrateur
+
+Trois façons de créer le compte qui administre l'instance :
+
+1. **Au déploiement** : `FLYTO_ADMIN_EMAIL` et `FLYTO_ADMIN_PASSWORD` créent le compte au premier démarrage
+   (ignorés ensuite, et refusés s'ils gardent les valeurs d'exemple du compose).
+2. **Assistant** : sans ces variables, les logs affichent un code d'installation ; ouvre `/setup` et saisis-le.
+3. **Ligne de commande**, à tout moment : `docker exec -it flyto node cli.js admin create --email moi@exemple.fr`
 
 Au démarrage, le conteneur donne le dossier de données à l'utilisateur `node` (UID 1000) qui fait tourner Flyto.
 
@@ -64,30 +78,38 @@ Les anciennes variables `PSITRANSFER_*` sont encore acceptées.
 | `FLYTO_PORT` | Port d'écoute (par défaut `3000`) |
 | `FLYTO_UPLOAD_DIR` | Dossier des fichiers envoyés (par défaut `./data`, `/data` en Docker) |
 | `FLYTO_DB_URL` | URL PostgreSQL (`postgres://user:pass@hote:5432/base`), **obligatoire** |
-| `FLYTO_UPLOAD_PASS` | Mot de passe pour déposer des fichiers. **À définir si Flyto est exposé sur Internet**, sinon n'importe qui peut remplir ton disque |
-| `FLYTO_ADMIN_PASS` | Mot de passe de la page `/admin` |
+| `FLYTO_ADMIN_EMAIL`, `FLYTO_ADMIN_PASSWORD` | Premier compte administrateur, créé au démarrage s'il n'y en a aucun |
+| `FLYTO_PUBLIC_URL` | Adresse publique (`https://fichiers.exemple.fr/`), utilisée dans les e-mails et les liens |
+| `FLYTO_REDIS_URL` | Cache Redis facultatif (`redis://redis:6379`) |
+| `FLYTO_SMTP_URL` | Envoi d'e-mails (`smtps://user:pass@smtp.exemple.fr:465`), réglable aussi dans `/admin` |
+| `FLYTO_MAIL_FROM` | Expéditeur des e-mails |
 | `FLYTO_DEFAULT_RETENTION` | Durée de conservation par défaut, en secondes |
 | `FLYTO_UPDATE_CHECK` | `false` pour ne plus vérifier les nouvelles versions sur GitHub |
+
+Le reste (inscriptions, quotas, durées proposées, sécurité, SMTP, bandeau, maintenance…) se règle en direct
+dans `/admin` > Réglages ; les variables d'environnement n'en donnent que les valeurs par défaut.
 
 Pour les options oui/non, utilise `true` ou `false`. Tu peux aussi créer un `config.production.js`
 (voir `config.dev.js` et [docs/configuration.md](docs/configuration.md)).
 
 ### Base de données
 
-Flyto range les métadonnées des fichiers et l'historique des téléchargements dans PostgreSQL ;
-les tables sont créées au démarrage. Les fichiers eux-mêmes restent sur le disque, dans `FLYTO_UPLOAD_DIR`.
+Flyto range dans PostgreSQL les métadonnées des fichiers, les comptes, les sessions, les réglages,
+le journal d'audit et l'historique des envois et téléchargements ; le schéma est créé et mis à jour au démarrage
+(migrations numérotées). Les fichiers eux-mêmes restent sur le disque, dans `FLYTO_UPLOAD_DIR`.
 Sans `FLYTO_DB_URL`, Flyto refuse de démarrer.
 
-Le [`docker-compose.yml`](docker-compose.yml) lance deux services, `flyto` et `database` (PostgreSQL 17),
-et s'importe tel quel dans ZimaOS / CasaOS (App Store > installation personnalisée > importer).
-Change `POSTGRES_PASSWORD`, le mot de passe dans `FLYTO_DB_URL` et `FLYTO_ADMIN_PASS` avant le premier démarrage.
+Le [`docker-compose.yml`](docker-compose.yml) lance trois services, `flyto`, `database` (PostgreSQL 17)
+et `redis` (cache sans persistance), et s'importe tel quel dans ZimaOS / CasaOS
+(App Store > installation personnalisée > importer). Change `POSTGRES_PASSWORD`, le mot de passe dans
+`FLYTO_DB_URL`, `FLYTO_ADMIN_EMAIL`, `FLYTO_ADMIN_PASSWORD` et `FLYTO_PUBLIC_URL` avant le premier démarrage.
 
 ```bash
 docker compose up -d
 ```
 
 Les fichiers sont dans `/DATA/AppData/flyto/data`, la base dans `/DATA/AppData/flyto/postgres` :
-sauvegarde les deux.
+sauvegarde les deux. Redis ne contient qu'un cache, rien à sauvegarder.
 
 Au premier démarrage, les anciens fichiers de métadonnées `<id>.json` (format PsiTransfer) sont importés
 dans la base puis supprimés. Un fichier `flyto.sqlite` laissé par la v0.1.0 n'est pas repris.
