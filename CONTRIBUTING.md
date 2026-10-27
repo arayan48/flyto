@@ -113,7 +113,6 @@ Le tag déclenche [build_release.yaml](.github/workflows/build_release.yaml), qu
 
 * relance les tests
 * construit l'image Docker `ghcr.io/arayan48/flyto:v1.3.0` (amd64 et arm64), plus `v1.3` et `v1`
-* publie le paquet npm
 * crée la release GitHub avec l'archive et les notes générées depuis les commits
 
 Un tag avec un suffixe (`v1.3.0-rc.1`) produit une pré-release, sans toucher aux tags stables.
