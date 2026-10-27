@@ -81,20 +81,29 @@ if (process.env.NODE_ENV && fsp.existsSync(envConfFile)) {
 }
 
 // Load config from ENV VARS
-let envName;
+// "true" and "false" are booleans, anything else keeps the type of the default value
+function parseEnv(value, current) {
+  if (value === 'false') return false;
+  if (value === 'true' && typeof current !== 'string') return true;
+  if (typeof current === 'number') return parseInt(value, 10);
+  if (Array.isArray(current)) return value.split(',');
+  if (current === null) {
+    // unset by default: numbers such as maxFileSize or strings such as webhook urls
+    try {
+      return JSON.parse(value);
+    } catch (e) {
+      return value;
+    }
+  }
+  if (typeof current === 'object') return JSON.parse(value);
+  return value;
+}
+
 for (let k in config) {
   const suffix = k.replace(/([A-Z])/g, $1 => "_" + $1).toUpperCase();
-  envName = process.env['FLYTO_' + suffix] ? 'FLYTO_' + suffix : 'PSITRANSFER_' + suffix;
+  const envName = process.env['FLYTO_' + suffix] ? 'FLYTO_' + suffix : 'PSITRANSFER_' + suffix;
   if (process.env[envName]) {
-    if (typeof config[k] === 'number') {
-      config[k] = parseInt(process.env[envName], 10);
-    } else if (Array.isArray(config[k])) {
-      config[k] = process.env[envName].split(',');
-    } else if (typeof config[k] === 'object') {
-      config[k] = JSON.parse(process.env[envName]);
-    } else {
-      config[k] = process.env[envName];
-    }
+    config[k] = parseEnv(process.env[envName], config[k]);
   }
 }
 

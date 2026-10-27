@@ -23,7 +23,6 @@ async function setup(uploadLength) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'flyto-append-'));
   const store = new Store(dir, new MemoryMetadata());
   await store.create(FID, { uploadLength, metadata: {} });
-  fs.writeFileSync(store.getFilename(FID), '');
   return { dir, store };
 }
 
@@ -36,6 +35,20 @@ test('append completes the upload once all bytes are written', async () => {
   assert.strictEqual(res.offset, 6);
   assert.ok(!('isPartial' in res.upload));
   assert.strictEqual(fs.readFileSync(store.getFilename(FID), 'utf8'), 'abcdef');
+  fs.rmSync(dir, { recursive: true, force: true });
+});
+
+test('a new upload reports offset 0 before any data', async () => {
+  const { dir, store } = await setup(6);
+  assert.strictEqual((await store.info(FID)).offset, 0);
+  fs.rmSync(dir, { recursive: true, force: true });
+});
+
+test('append to an unknown upload is not found and writes nothing', async () => {
+  const { dir, store } = await setup(6);
+  const fid = 'bucket++00000000-0000-4000-8000-000000000002';
+  await assert.rejects(store.append(fid, Readable.from([Buffer.from('abc')]), 0), { status: 404 });
+  assert.ok(!fs.existsSync(store.getFilename(fid)));
   fs.rmSync(dir, { recursive: true, force: true });
 });
 
