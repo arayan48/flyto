@@ -17,6 +17,11 @@ et les versions suivent [SemVer](https://semver.org/lang/fr/).
 - La liste des fichiers envoyée au navigateur ne contient plus l'empreinte du mot de passe
 - Envois : un morceau renvoyé deux fois n'est plus ajouté en double au fichier (réponse 409 comme le prévoit
   le protocole tus), et un envoi coupé en cours de route ne laisse plus de fichier ouvert sur le serveur
+- Variables d'environnement : `false` désactive bien une option (`FLYTO_REQUIRE_BUCKET_PASSWORD=false` l'activait),
+  une URL de webhook ne fait plus planter le démarrage, `FLYTO_TRUST_PROXY=true` est accepté
+  et `forceHttps: true` dans un fichier de config redirige vers la bonne adresse
+- Avec `FLYTO_UPLOAD_PASS`, l'envoi terminé est bien verrouillé (la requête de verrouillage n'avait pas le mot de passe)
+- Les styles propres aux pages (affichage mobile de l'envoi, bandeau de mise à jour de `/admin`) n'étaient pas appliqués
 
 ## [0.1.0] - 2026-10-27
 
