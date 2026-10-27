@@ -98,3 +98,22 @@ test('parseCookies', () => {
 test('setup codes are easy to type', () => {
   assert.match(setupCode(), /^[A-HJ-NP-Z2-9]{4}(-[A-HJ-NP-Z2-9]{4}){3}$/);
 });
+
+test('rateLimit counts per IP, or per key only when a key is given', async () => {
+  const createAuth = require('../../lib/auth');
+  const auth = createAuth({ sessions: null, settings: null, cache: new Cache('') });
+  const call = async (mw, email) => {
+    let status = 200;
+    const res = { set() {}, status(s) { status = s; return this; }, json() {} };
+    await mw({ ip: '1.2.3.4', body: { email } }, res, () => {});
+    return status;
+  };
+  const perIp = auth.rateLimit('t-ip', 2, 60);
+  assert.deepStrictEqual([await call(perIp), await call(perIp), await call(perIp)], [200, 200, 429]);
+
+  const perAccount = auth.rateLimit('t-acc', 2, 60, req => req.body.email);
+  const statuses = [];
+  for (const email of ['a@x', 'a@x', 'b@x', 'b@x', 'a@x']) statuses.push(await call(perAccount, email));
+  // other accounts from the same IP are not blocked by this limiter
+  assert.deepStrictEqual(statuses, [200, 200, 200, 200, 429]);
+});
