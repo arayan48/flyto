@@ -1,116 +1,95 @@
-# PsiTransfer
+# Flyto
 
-[![Current Release](https://img.shields.io/github/release/psi-4ward/psitransfer.svg)](https://github.com/psi-4ward/psitransfer/releases)
-[![Dependencies](https://david-dm.org/psi-4ward/psitransfer.svg)](https://david-dm.org/psi-4ward/psitransfer)
-[![Known Vulnerabilities](https://snyk.io/test/github/psi-4ward/psitransfer/badge.svg)](https://snyk.io/test/github/psi-4ward/psitransfer)
-[![Github Stars](https://img.shields.io/github/stars/psi-4ward/psitransfer.svg?style=social&label=Star)](https://github.com/psi-4ward/psitransfer)
-[![Docker Stars](https://img.shields.io/docker/stars/psitrax/psitransfer.svg)](https://hub.docker.com/r/psitrax/psitransfer/)
-[![Image Size](https://images.microbadger.com/badges/image/psitrax/psitransfer.svg)](https://microbadger.com/images/psitrax/psitransfer)
-[![Docker Pulls](https://img.shields.io/docker/pulls/psitrax/psitransfer.svg)](https://hub.docker.com/r/psitrax/psitransfer/)
-[![Docker Automated buil](https://img.shields.io/docker/automated/psitrax/psitransfer.svg)](https://hub.docker.com/r/psitrax/psitransfer/)
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RTWDCH74TJN54&item_name=psitransfer)
+Partage de fichiers auto-hébergé : tu déposes tes fichiers, tu obtiens **un seul lien** à envoyer à qui tu veux.
+Une alternative à WeTransfer qui tourne chez toi.
 
-Simple open source self-hosted file sharing solution.
-It's an alternative to paid services like Dropbox, WeTransfer.
+* Pas de compte côté destinataires
+* Fichiers de toutes tailles, envois et téléchargements reprenables ([tus.io](https://tus.io)), découpés en morceaux de 5 Mo
+* Expiration au choix, ou suppression après un seul téléchargement
+* Mot de passe sur le lien de téléchargement (tous caractères acceptés : accents, `€`, émojis…)
+* Téléchargement de tout le lot en `.zip` ou `.tar.gz`
+* Aperçu des fichiers dans le navigateur
+* Base de données SQLite intégrée (métadonnées des fichiers et historique des téléchargements)
+* Page `/admin` avec la liste des envois et le nombre de téléchargements (activée si `FLYTO_ADMIN_PASS` est défini)
 
-* No accounts, no logins
-* Mobile friendly responsive interface
-* Supports many and very big files (Streams ftw)
-* Resumable up- and downloads ([tus.io](https://tus.io))
-* Set an expire-time for your upload bucket
-* One-time downloads
-* Download all files as zip/tar.gz archive
-* Modal-style file preview
-* Requires Node >=7.4 or use `--harmony-async-await` flag
-* Password protected download list ([AES](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard))
-* `/admin` Page lists bucket information, [Screenshot](https://raw.githubusercontent.com/psi-4ward/psitransfer/master/docs/PsiTransfer-Admin.png) (_disabled until you set `adminPass` config value_)
-* Lightweight [Vue](https://vuejs.org) based frontend apps. Gzipped (on by default) less than 100k
-* Explicit named bucket IDs with query param `sid=<myBucketID>`
-
-**See the blog posts about PsiTransfer: https://psi.cx/tags/PsiTransfer/ and checkout the
-[Documentation](https://github.com/psi-4ward/psitransfer/tree/master/docs)**
-
-![Screenshot](https://raw.githubusercontent.com/psi-4ward/psitransfer/master/docs/psitransfer.gif)
-
-
-## Quickstart
+## Démarrage rapide
 
 ### Docker
-```bash
-$ docker run -p 0.0.0.0:3000:3000 -e PSITRANSFER_ADMIN_PASS=secret -v $PWD/data:/data psitrax/psitransfer
-# data volume needs UID 1000
-$ sudo chown -R 1000 $PWD/data
-```
-
-Specify the version by using [image tags](https://hub.docker.com/r/psitrax/psitransfer/tags/) e.g.:
-* `latest`: corresponds to master branch
-* `2`: latest stable `2.x.x`
-* `1.1`: latest stable `1.1.x`
-* `1.0.0`: exact version
-
-### Manual, precompiled
 
 ```bash
-# Be sure to have NodeJS >= 12
-$ node -v
-v12.4.0
-
-# Download and extract latest release package from
-# https://github.com/psi-4ward/psitransfer/releases
-
-# Install dependencies and start the app
-$ NODE_ENV=production npm install
-$ npm start
+docker run -p 3000:3000 \
+  -e FLYTO_ADMIN_PASS=change-moi \
+  -e FLYTO_UPLOAD_PASS=change-moi-aussi \
+  -v $PWD/data:/data \
+  ghcr.io/arayan48/flyto
+# le volume de données doit appartenir à l'UID 1000
+sudo chown -R 1000 $PWD/data
 ```
 
-### Manual, from source
+### Depuis les sources
+
+Node.js 24 ou plus récent est requis.
 
 ```bash
-# Compile the frontend apps
-$ cd app
-$ npm install
-$ npm run build
+# Interface
+cd app && npm install && npm run build && cd ..
 
-# Install dependencies
-$ cd ..
-$ npm install
-$ npm start
+# Serveur
+npm install
+npm start
 ```
 
-### Configuration
+## Configuration
 
-There are some configs in `config.js` like port and data-dir.
-You can:
-* Edit the `config.js` **(not recommend)**
-* Add a `config.production.js` where `production` is the value from `NODE_ENV`
-  See `config.dev.js`
-* Define environment Variables like `PSITRANSFER_UPLOAD_DIR` to set the upload directory
-* To secure your PsiTransfer if exposed to the internet from unwanted, non authorized uploads use the `PSITRANSFER_UPLOAD_PASS` environment variable
+Chaque option de [`config.js`](config.js) peut être définie par une variable d'environnement préfixée par `FLYTO_`.
+Les anciennes variables `PSITRANSFER_*` sont encore acceptées.
 
-### Customization
+| Variable | Rôle |
+| --- | --- |
+| `FLYTO_PORT` | Port d'écoute (par défaut `3000`) |
+| `FLYTO_UPLOAD_DIR` | Dossier des fichiers envoyés (par défaut `./data`, `/data` en Docker) |
+| `FLYTO_DB_FILE` | Fichier SQLite (par défaut `<FLYTO_UPLOAD_DIR>/flyto.sqlite`) |
+| `FLYTO_DB_URL` | URL PostgreSQL (`postgres://user:pass@hote:5432/base`). Si définie, remplace SQLite |
+| `FLYTO_UPLOAD_PASS` | Mot de passe pour déposer des fichiers. **À définir si Flyto est exposé sur Internet**, sinon n'importe qui peut remplir ton disque |
+| `FLYTO_ADMIN_PASS` | Mot de passe de la page `/admin` |
+| `FLYTO_DEFAULT_RETENTION` | Durée de conservation par défaut, en secondes |
 
-`public/pug/upload.pug` and `download.pug` are kept simple.
-You can alter these files and add your logo and styles.
-Please keep a footnote like *Powered by PsiTransfer* :)
+Tu peux aussi créer un `config.production.js` (voir `config.dev.js`).
 
-### Debug
+### Base de données
 
-Psitransfer uses [debug](https://github.com/visionmedia/debug):
+Flyto range les métadonnées des fichiers et l'historique des téléchargements dans un fichier SQLite,
+via le module `node:sqlite` intégré à Node.js : il n'y a aucun serveur de base de données à installer.
+Les fichiers eux-mêmes restent sur le disque, dans `FLYTO_UPLOAD_DIR`.
+
+Au premier démarrage, les anciens fichiers de métadonnées `<id>.json` (format PsiTransfer) sont importés
+dans la base puis supprimés.
+
+Pour sauvegarder Flyto, copie le dossier de données en entier : il contient les fichiers et `flyto.sqlite`.
+
+#### PostgreSQL dans un conteneur séparé
+
+Avec `FLYTO_DB_URL`, les métadonnées vont dans PostgreSQL au lieu de SQLite (les tables sont créées
+au démarrage). Le [`docker-compose.yml`](docker-compose.yml) lance deux services, `flyto` et `database`
+(PostgreSQL 17), et s'importe tel quel dans ZimaOS / CasaOS (App Store > installation personnalisée > importer).
+Change `POSTGRES_PASSWORD`, le mot de passe dans `FLYTO_DB_URL` et `FLYTO_ADMIN_PASS` avant le premier démarrage.
 
 ```bash
-DEBUG=psitransfer:* npm start
+docker compose up -d
 ```
 
-## Side notes
+Les fichiers sont dans `/DATA/AppData/flyto/data`, la base dans `/DATA/AppData/flyto/postgres` :
+sauvegarde les deux. Passer de SQLite à PostgreSQL ne migre pas les métadonnées existantes.
 
-* **There is no (end-to-end) payload encryption (yet)**.
-* `Download all as ZIP` does not support resuming the download.
+Pour lancer les tests PostgreSQL : `FLYTO_TEST_DB_URL=postgres://... npm run test:unit`.
 
-:star2: Contribution is highly welcome :metal:
+## Débogage
 
-Want to say thanks and buy me a beer? [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RTWDCH74TJN54&item_name=psitransfer)
+```bash
+DEBUG=flyto:* npm start
+```
 
+## Crédits et licence
 
-## License
-
-[BSD](LICENSE)
+Flyto est basé sur [PsiTransfer](https://github.com/psi-4ward/psitransfer) de Christoph Wiechert,
+distribué sous licence BSD 2-Clause. Voir [LICENSE](LICENSE).
