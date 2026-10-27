@@ -75,3 +75,25 @@ test('claim is exclusive until released', async () => {
     fs.rmSync(dir, { recursive: true, force: true });
   }
 });
+
+test('bucket ids that are Object.prototype keys are plain buckets', async () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'psi-db-'));
+  const db = new DB(dir, new Store(dir, new MemoryMetadata()));
+  await db.init();
+  for (const sid of ['__proto__', 'constructor', 'toString']) {
+    assert.strictEqual(db.get(sid), undefined);
+    db.add(sid, KEY_A, { metadata: { sid, key: KEY_A } });
+    assert.strictEqual(db.get(sid).length, 1);
+  }
+  assert.deepStrictEqual(Object.keys(JSON.parse(JSON.stringify(db.db))), ['__proto__', 'constructor', 'toString']);
+  fs.rmSync(dir, { recursive: true, force: true });
+});
+
+test('updating a file of a removed bucket is a no-op', async () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'psi-db-'));
+  const db = new DB(dir, new Store(dir, new MemoryMetadata()));
+  await db.init();
+  await db.updateLastDownload('gone', KEY_A);
+  await db.updateMetadata('gone', KEY_A, { foo: 1 });
+  fs.rmSync(dir, { recursive: true, force: true });
+});
