@@ -38,6 +38,8 @@ et les versions suivent [SemVer](https://semver.org/lang/fr/).
 - Schéma de base versionné (table `schema_migrations`)
 
 ### Corrigé
+- Au démarrage, Flyto attend PostgreSQL jusqu'à une minute au lieu de quitter aussitôt : sur ZimaOS et
+  CasaOS, qui ignorent `depends_on`, le premier lancement échouait avec `getaddrinfo ENOTFOUND database`.
 - Un envoi ne peut plus dépasser la taille annoncée à sa création (réponse 413) : envoyer plus d'octets
   que prévu permettait de contourner `FLYTO_MAX_FILE_SIZE` et de remplir le disque
 
