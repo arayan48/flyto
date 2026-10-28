@@ -9,6 +9,14 @@ et les versions suivent [SemVer](https://semver.org/lang/fr/).
 - Flyto est dans le store ZimaOS arayan48 (`https://arayan48.github.io/appstore/store.json`), mis à jour
   automatiquement à chaque release : la mise à jour se fait depuis l'App Store de ZimaOS
 
+### Corrigé
+- Un envoi ne peut plus choisir lui-même sa date d'expiration ni verrouiller son transfert : seuls le nom, le
+  commentaire, le type, la durée et le mot de passe sont repris de la page d'envoi
+- Les fichiers vides s'envoient et se téléchargent, ils restaient invisibles puis disparaissaient après 48 h
+- Changer l'expiration d'un transfert (ou le verrouiller) pendant un envoi ne bloque plus cet envoi
+- La reprise d'un envoi ne renvoie plus d'erreur sur un fichier déjà téléchargé ou verrouillé, et ne montre
+  plus l'empreinte du mot de passe
+
 ## [0.3.2] - 2026-10-28
 
 ### Corrigé

@@ -44,6 +44,14 @@ test('a new upload reports offset 0 before any data', async () => {
   fs.rmSync(dir, { recursive: true, force: true });
 });
 
+test('an empty upload is complete as soon as it is created', async () => {
+  const { dir, store } = await setup(0);
+  const info = await store.info(FID);
+  assert.ok(!('isPartial' in info));
+  assert.strictEqual(info.offset, 0);
+  fs.rmSync(dir, { recursive: true, force: true });
+});
+
 test('append to an unknown upload is not found and writes nothing', async () => {
   const { dir, store } = await setup(6);
   const fid = 'bucket++00000000-0000-4000-8000-000000000002';
