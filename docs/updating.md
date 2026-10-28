@@ -37,6 +37,17 @@ toujours avec la même base (elle ignore les nouvelles tables).
 
 ## ZimaOS / CasaOS
 
+### Installé depuis le store arayan48
+
+Si Flyto vient du store `https://arayan48.github.io/appstore/store.json`, chaque release met le store à jour
+quelques minutes après sa publication : l'App Store de ZimaOS propose alors la mise à jour de Flyto.
+
+Pour passer d'une installation importée à celle du store, désinstalle l'app Flyto **sans supprimer ses
+données**, puis installe-la depuis le store avec les mêmes mots de passe (`POSTGRES_PASSWORD` et
+`FLYTO_DB_URL`) : la base et les fichiers de `/DATA/AppData/flyto` sont repris.
+
+### Installé par import du docker-compose.yml
+
 1. Ouvre l'app Flyto, puis **Paramètres** (icône engrenage).
 2. Dans le champ de l'image, remplace le tag par la nouvelle version, par exemple
    `ghcr.io/arayan48/flyto:v0.3.2`.
