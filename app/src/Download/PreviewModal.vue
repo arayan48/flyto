@@ -14,7 +14,7 @@
             icon(name="undo-alt", flip="vertical")
     div(slot="body")
       div(v-if="current.previewType === 'image'", style="text-align:center")
-        img(:src="current.url", style="max-width: 100%; height:auto")
+        img(:src="current.url + '?preview'", style="max-width: 100%; height:auto")
       div(v-if="current.previewType === 'text'")
         pre(:style="{'white-space':lineWrap?'pre-wrap':'pre'}") {{ previewText }}
       p(v-if="current.previewType === false", style="text-align:center")
@@ -69,7 +69,7 @@
       getPreviewText() {
         this.previewText = '';
         const xhr = new XMLHttpRequest();
-        xhr.open('GET', this.current.url);
+        xhr.open('GET', this.current.url + '?preview');
         xhr.onload = () => {
           if(xhr.status === 200) {
             this.previewText = xhr.responseText

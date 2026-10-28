@@ -23,11 +23,17 @@ const TUS = { 'Tus-Resumable': '1.0.0' };
 let server;
 let port;
 
+// the uploader cookie of anonymous uploads, kept like a browser does
+let uploaderCookie = '';
+
 function request(method, pathname, headers = {}, body = null) {
   return new Promise((resolve, reject) => {
+    if (uploaderCookie) headers = { cookie: uploaderCookie, ...headers };
     const req = http.request(
       { hostname: '127.0.0.1', port, method, path: pathname, headers, agent: false },
       (res) => {
+        const set = (res.headers['set-cookie'] || []).find(c => c.startsWith('flyto_uploader='));
+        if (set) uploaderCookie = set.split(';')[0];
         const chunks = [];
         res.on('data', (c) => chunks.push(c));
         res.on('end', () => resolve({ status: res.statusCode, headers: res.headers, body: Buffer.concat(chunks) }));

@@ -35,6 +35,14 @@ test('"true" enables boolean options', () => {
   assert.strictEqual(config.disableQrCode, true);
 });
 
+test('on/off options also accept 0, no and off', () => {
+  for (const off of ['0', 'no', 'OFF', 'false']) {
+    assert.strictEqual(loadConfig({ FLYTO_UPDATE_CHECK: off }).updateCheck, false, off);
+  }
+  assert.strictEqual(loadConfig({ FLYTO_UPDATE_CHECK: '1' }).updateCheck, true);
+  assert.strictEqual(loadConfig({ FLYTO_DISABLE_QR_CODE: 'yes' }).disableQrCode, true);
+});
+
 test('options without default accept urls and numbers', () => {
   const config = loadConfig({
     FLYTO_FILE_DOWNLOADED_WEBHOOK: 'https://example.com/hook',
