@@ -5,6 +5,8 @@ et les versions suivent [SemVer](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+## [0.3.1] - 2026-10-28
+
 ### Corrigé
 - Le compose importé dans ZimaOS démarre : ZimaOS impose le bridge par défaut, où `database` et `redis`
   ne se résolvent pas, et Flyto les joint maintenant par des `links`
@@ -99,7 +101,8 @@ Première version de Flyto, basée sur PsiTransfer.
 - Le projet devient Flyto : nom, image Docker, variables d'environnement `FLYTO_*`
   (l'ancien préfixe `PSITRANSFER_` est encore lu)
 
-[Non publié]: https://github.com/arayan48/flyto/compare/v0.3.0...HEAD
+[Non publié]: https://github.com/arayan48/flyto/compare/v0.3.1...HEAD
+[0.3.1]: https://github.com/arayan48/flyto/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/arayan48/flyto/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/arayan48/flyto/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/arayan48/flyto/releases/tag/v0.1.0

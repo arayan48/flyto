@@ -41,7 +41,7 @@ docker run -p 3000:3000 \
   -e FLYTO_ADMIN_PASSWORD='un mot de passe long' \
   -e FLYTO_PUBLIC_URL=https://fichiers.exemple.fr/ \
   -v $PWD/data:/data \
-  ghcr.io/arayan48/flyto:v0.3.0
+  ghcr.io/arayan48/flyto:v0.3.1
 ```
 
 ### Premier administrateur
