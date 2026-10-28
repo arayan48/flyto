@@ -16,6 +16,13 @@ et les versions suivent [SemVer](https://semver.org/lang/fr/).
   d'un `/admin` rempli d'erreurs
 - Les pages d'erreur, les erreurs d'envoi et de téléchargement et le pied de page sont traduits ; en
   français, le site dit partout « envoi » et « Connexion », et le pied de page n'a plus de mots collés
+- Le `docker-compose.yml` ne met plus `http://localhost:3000/` comme adresse publique, qui cassait les liens
+  de « Mes transferts », de l'admin et des e-mails : vide par défaut sur un réseau local, et Flyto prévient
+  au démarrage si l'adresse publique pointe vers localhost
+
+### Ajouté
+- `FLYTO_TRUST_PROXY` dans le `docker-compose.yml` (et l'interface de ZimaOS), à mettre à `1` derrière un
+  reverse proxy ou un tunnel Cloudflare pour que les limites de tentatives restent propres à chaque visiteur
 
 ## [0.3.1] - 2026-10-28
 

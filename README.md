@@ -80,6 +80,7 @@ Les anciennes variables `PSITRANSFER_*` sont encore acceptées.
 | `FLYTO_DB_URL` | URL PostgreSQL (`postgres://user:pass@hote:5432/base`), **obligatoire** |
 | `FLYTO_ADMIN_EMAIL`, `FLYTO_ADMIN_PASSWORD` | Premier compte administrateur, créé au démarrage s'il n'y en a aucun |
 | `FLYTO_PUBLIC_URL` | Adresse publique (`https://fichiers.exemple.fr/`), utilisée dans les e-mails et les liens |
+| `FLYTO_TRUST_PROXY` | `1` derrière un reverse proxy ou un tunnel, sinon tous les visiteurs ont l'IP du proxy et partagent les mêmes limites de tentatives |
 | `FLYTO_REDIS_URL` | Cache Redis facultatif (`redis://redis:6379`) |
 | `FLYTO_SMTP_URL` | Envoi d'e-mails (`smtps://user:pass@smtp.exemple.fr:465`), réglable aussi dans `/admin` |
 | `FLYTO_MAIL_FROM` | Expéditeur des e-mails |
@@ -102,7 +103,10 @@ Sans `FLYTO_DB_URL`, Flyto refuse de démarrer.
 Le [`docker-compose.yml`](docker-compose.yml) lance trois services, `flyto`, `database` (PostgreSQL 17)
 et `redis` (cache sans persistance), et s'importe tel quel dans ZimaOS / CasaOS
 (App Store > installation personnalisée > importer). Change `POSTGRES_PASSWORD`, le mot de passe dans
-`FLYTO_DB_URL`, `FLYTO_ADMIN_EMAIL`, `FLYTO_ADMIN_PASSWORD` et `FLYTO_PUBLIC_URL` avant le premier démarrage.
+`FLYTO_DB_URL`, `FLYTO_ADMIN_EMAIL` et `FLYTO_ADMIN_PASSWORD` avant le premier démarrage.
+Sur un réseau local, `FLYTO_PUBLIC_URL` peut rester vide : les liens reprennent l'adresse utilisée pour ouvrir Flyto.
+Dès que Flyto passe par un nom de domaine, un reverse proxy ou un tunnel Cloudflare, mets son adresse publique
+dans `FLYTO_PUBLIC_URL` et `1` dans `FLYTO_TRUST_PROXY`.
 
 ```bash
 docker compose up -d

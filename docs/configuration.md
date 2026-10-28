@@ -52,7 +52,8 @@ defaults, e.g. `FLYTO_MAX_BUCKET_SIZE` (10 GiB when unset), `FLYTO_MAX_FILE_SIZE
 | Variable | Purpose |
 | --- | --- |
 | `FLYTO_ADMIN_EMAIL`, `FLYTO_ADMIN_PASSWORD`, `FLYTO_ADMIN_NAME` | First admin account, created on start when there is no active admin |
-| `FLYTO_PUBLIC_URL` | Public address with sub-path, used in e-mails and share links |
+| `FLYTO_PUBLIC_URL` | Public address with sub-path, used in e-mails and share links; when empty, links use the address of each request and e-mails sent without a session (password reset, confirmation) are not sent |
+| `FLYTO_TRUST_PROXY` | Set to `1` behind one reverse proxy or tunnel (Nginx, Cloudflare Tunnel…): otherwise every visitor has the proxy's IP and they all share the same login and password attempt limits |
 | `FLYTO_REDIS_URL` | Optional Redis cache, e.g. `redis://redis:6379` |
 | `FLYTO_SMTP_URL` | Outgoing mail, e.g. `smtps://user:pass@smtp.example.com:465` |
 | `FLYTO_MAIL_FROM` | Sender of the e-mails |
