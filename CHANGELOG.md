@@ -14,6 +14,8 @@ et les versions suivent [SemVer](https://semver.org/lang/fr/).
 - L'inscription explique quand une invitation n'est plus valide
 - Un admin sans double authentification, alors qu'elle est exigée, arrive sur la page qui l'active au lieu
   d'un `/admin` rempli d'erreurs
+- Les pages d'erreur, les erreurs d'envoi et de téléchargement et le pied de page sont traduits ; en
+  français, le site dit partout « envoi » et « Connexion », et le pied de page n'a plus de mots collés
 
 ## [0.3.1] - 2026-10-28
 

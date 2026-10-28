@@ -158,7 +158,7 @@ export default {
           commit('STATE', 'uploaded', { root: true });
         } else {
           commit('STATE', 'uploadError', { root: true });
-          commit('ERROR', 'Upload failed.', { root: true });
+          commit('ERROR', rootState.lang.uploadFailed, { root: true });
         }
       };
 
@@ -212,7 +212,7 @@ export default {
               }
               // browser is offline
               if (!navigator.onLine) {
-                commit('ERROR', 'You are offline. Your uploads will resume as soon as you are back online.', { root: true });
+                commit('ERROR', rootState.lang.uploadOffline, { root: true });
                 if (!onOnlineHandlerAttached) {
                   onOnlineHandlerAttached = true;
                   // attach onOnline handler

@@ -19,6 +19,7 @@ module.exports = {
   copyToClipboard: "Copy to clipboard",
   sendViaMail: "Send via E-Mail",
   showQrCode: "Show QR-Code",
+  qrCode: "QR code",
   uploadCompleted: "Upload completed",
   downloadLink: "Download Link",
   upload: "upload",
@@ -64,6 +65,8 @@ module.exports = {
   upToDate: "up to date",
   transferSuspended: "This transfer has been suspended by an administrator.",
   tooManyAttempts: "Too many attempts, try again in a few minutes.",
+  uploadOffline: "You are offline. The upload resumes as soon as you are back online.",
+  uploadFailed: "The upload failed.",
   maintenanceTitle: "Maintenance:",
   maintenanceDefault: "uploads are paused for a moment, downloads keep working.",
   uploadLogin: {
@@ -84,6 +87,7 @@ module.exports = {
     terms: "Terms",
     privacy: "Privacy",
     contact: "Contact",
+    basedOn: "based on",
   },
   errors: {
     forbidden: "Access denied.",
@@ -127,6 +131,7 @@ module.exports = {
     sessionNotFound: "Session not found.",
     transferNotFound: "Transfer not found.",
     fileNotFound: "File not found.",
+    invalidLink: "This link is not valid.",
     selfDemotion: "You cannot demote or disable your own account.",
     selfDelete: "Delete your own account from My account.",
     invalidDate: "Invalid date.",
