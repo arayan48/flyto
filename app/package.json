@@ -1,7 +1,7 @@
 {
   "name": "flyto",
   "description": "Flyto frontend",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "author": "arayan48 <arabirayanma@gmail.com>",
   "private": true,
   "scripts": {

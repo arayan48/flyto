@@ -22,7 +22,7 @@ Avant toute mise à jour, lis les notes de version : en 0.x, un changement de ve
 
 ## De la v0.2 à la v0.3 : les comptes
 
-La v0.3.1 remplace les mots de passe partagés par des comptes. `FLYTO_ADMIN_PASS` et `FLYTO_UPLOAD_PASS`
+La v0.3.0 remplace les mots de passe partagés par des comptes. `FLYTO_ADMIN_PASS` et `FLYTO_UPLOAD_PASS`
 ne servent plus (un avertissement s'affiche dans les logs s'ils sont encore là) :
 
 1. Ajoute `FLYTO_ADMIN_EMAIL` et `FLYTO_ADMIN_PASSWORD` (ou utilise la page `/setup` avec le code des logs),
@@ -39,14 +39,14 @@ toujours avec la même base (elle ignore les nouvelles tables).
 
 1. Ouvre l'app Flyto, puis **Paramètres** (icône engrenage).
 2. Dans le champ de l'image, remplace le tag par la nouvelle version, par exemple
-   `ghcr.io/arayan48/flyto:v0.3.1`.
+   `ghcr.io/arayan48/flyto:v0.3.2`.
 3. Enregistre : ZimaOS télécharge l'image et redémarre le conteneur.
 
 Les fichiers et la base restent dans `/DATA/AppData/flyto`, ils ne sont pas touchés.
 
 ## Docker Compose
 
-Dans `docker-compose.yml`, change le tag de l'image (`ghcr.io/arayan48/flyto:v0.3.1`), puis :
+Dans `docker-compose.yml`, change le tag de l'image (`ghcr.io/arayan48/flyto:v0.3.2`), puis :
 
 ```bash
 docker compose pull
@@ -58,7 +58,7 @@ Avec le tag `latest` ou `v0`, seules les deux commandes suffisent.
 ## Docker
 
 ```bash
-docker pull ghcr.io/arayan48/flyto:v0.3.1
+docker pull ghcr.io/arayan48/flyto:v0.3.2
 docker stop flyto && docker rm flyto
 ```
 
@@ -69,7 +69,7 @@ Les données sont dans le volume `/data`, elles sont conservées.
 
 ```bash
 git fetch --tags
-git checkout v0.3.1
+git checkout v0.3.2
 npm ci
 cd app && npm ci && npm run build && cd ..
 ```
