@@ -133,7 +133,9 @@
         return this.loginRequired;
       },
       showUploadBtn() {
+        // a refused file (too large, blocked type) has to be removed first
         return this.files.length
+          && !this.files.some(f => f.error)
           && !this.disabled
           && (this.requireBucketPassword && this.password || !this.requireBucketPassword)
       }
