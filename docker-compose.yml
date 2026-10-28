@@ -25,6 +25,8 @@ services:
       FLYTO_ADMIN_PASSWORD: change-me-too
       FLYTO_PUBLIC_URL: http://localhost:3000/
       TZ: Europe/Paris
+    networks:
+      - flyto
     ports:
       - target: 3000
         published: "3000"
@@ -70,6 +72,8 @@ services:
     image: postgres:17-alpine
     container_name: flyto-database
     restart: unless-stopped
+    networks:
+      - flyto
     environment:
       POSTGRES_USER: flyto
       POSTGRES_PASSWORD: change-me
@@ -99,6 +103,8 @@ services:
     image: redis:8-alpine
     container_name: flyto-redis
     restart: unless-stopped
+    networks:
+      - flyto
     # a cache only: nothing is written to disk, the database stays the source of truth
     command: ["redis-server", "--save", "", "--appendonly", "no", "--maxmemory", "64mb", "--maxmemory-policy", "allkeys-lru"]
     healthcheck:
@@ -106,6 +112,12 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
+# ZimaOS puts every service without an explicit network on the default bridge,
+# where the service names (database, redis) don't resolve
+networks:
+  flyto:
+    name: flyto
 
 x-casaos:
   architectures:
