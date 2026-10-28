@@ -5,6 +5,8 @@
 # Before the first start, change POSTGRES_PASSWORD (in both services), FLYTO_ADMIN_EMAIL,
 # FLYTO_ADMIN_PASSWORD and FLYTO_PUBLIC_URL. The admin account is created on the first start
 # only; leave both admin variables empty to create it from the /setup page instead.
+# POSTGRES_PASSWORD is applied only when the database is created: if /DATA/AppData/flyto/postgres
+# is kept from a previous install, the database keeps the password it had then.
 
 name: flyto
 
@@ -25,6 +27,12 @@ services:
       FLYTO_ADMIN_PASSWORD: change-me-too
       FLYTO_PUBLIC_URL: http://localhost:3000/
       TZ: Europe/Paris
+    # ZimaOS forces the default bridge, where service names don't resolve:
+    # legacy links add database and redis to this container's /etc/hosts
+    network_mode: bridge
+    links:
+      - database
+      - redis
     ports:
       - target: 3000
         published: "3000"
@@ -70,6 +78,7 @@ services:
     image: postgres:17-alpine
     container_name: flyto-database
     restart: unless-stopped
+    network_mode: bridge
     environment:
       POSTGRES_USER: flyto
       POSTGRES_PASSWORD: change-me
@@ -99,6 +108,7 @@ services:
     image: redis:8-alpine
     container_name: flyto-redis
     restart: unless-stopped
+    network_mode: bridge
     # a cache only: nothing is written to disk, the database stays the source of truth
     command: ["redis-server", "--save", "", "--appendonly", "no", "--maxmemory", "64mb", "--maxmemory-policy", "allkeys-lru"]
     healthcheck:
