@@ -23,7 +23,7 @@
               @input="$store.commit('upload/PASSWORD', $event.target.value)"
               :disabled='disabled'
               :placeholder="config.requireBucketPassword ? $root.lang.required : $root.lang.optional"
-              required="config.requireBucketPassword"
+              :required="config.requireBucketPassword"
             )
             span.input-group-addon(
               style='cursor: pointer'

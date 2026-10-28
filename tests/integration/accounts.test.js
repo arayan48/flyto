@@ -307,6 +307,19 @@ test('settings are validated', async () => {
   assert.strictEqual((await new Client().get('/api/session')).data.settings.siteName, 'Transferts');
 });
 
+test('an admin without 2FA is sent to turn it on when it is required', async () => {
+  await app.ctx.settings.update({ require2faForAdmins: true });
+  try {
+    const page = await admin.get('/admin');
+    assert.strictEqual(page.status, 302);
+    assert.match(page.headers.get('location'), /account#security$/);
+    assert.strictEqual((await admin.get('/api/admin/stats')).status, 403);
+  } finally {
+    await app.ctx.settings.update({ require2faForAdmins: false });
+  }
+  assert.strictEqual((await admin.get('/admin')).status, 200);
+});
+
 test('the dashboard and the journal answer', async () => {
   const stats = await admin.get('/api/admin/stats');
   assert.strictEqual(stats.status, 200);

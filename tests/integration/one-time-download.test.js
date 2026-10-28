@@ -188,12 +188,12 @@ test('HEAD does not consume a one-time file', async () => {
   assert.strictEqual((await request('HEAD', `/files/${ fid }`)).status, 404);
 });
 
-test('completed range request consumes a one-time file', async () => {
+test('range request on a one-time file gets the whole file', async () => {
   const fid = await upload('onetimerange', Buffer.from('0123456789abcdef'));
 
   const res = await request('GET', `/files/${ fid }`, { Range: 'bytes=0-9' });
-  assert.strictEqual(res.status, 206);
-  assert.strictEqual(res.body.toString(), '0123456789');
+  assert.strictEqual(res.status, 200);
+  assert.strictEqual(res.body.toString(), '0123456789abcdef');
 
   await tick();
   assert.strictEqual((await request('GET', `/files/${ fid }`)).status, 404);

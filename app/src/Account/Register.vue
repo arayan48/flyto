@@ -7,6 +7,7 @@
       a.btn.btn-default(href="login") {{ $t('auth.loginButton') }}
     .well(v-else-if="closed")
       h3 {{ $t('auth.registerTitle') }}
+      .alert.alert-danger(v-if="error") {{ error }}
       p {{ mode === 'invite' ? $t('auth.inviteOnly') : $t('auth.registrationClosed') }}
       a.btn.btn-default(href="login") {{ $t('auth.loginButton') }}
     form.well(v-else, @submit.prevent="submit")

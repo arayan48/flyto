@@ -147,8 +147,24 @@ export default {
       }
       if (onOnlineHandlerAttached) window.removeEventListener('online', onOnlineHandler);
 
+      // once no file is in flight: share what got through, refused files keep their error
+      const settle = () => {
+        if (state.files.some(f => !f.uploaded && !f.error)) return;
+        if (state.files.some(f => f.uploaded)) {
+          fetch(state.uploadURI + '/' + state.sid + '?lock=yes', {
+            method: 'PATCH',
+            headers: { 'x-csrf-token': rootState.config.csrf || '' },
+          });
+          commit('STATE', 'uploaded', { root: true });
+        } else {
+          commit('STATE', 'uploadError', { root: true });
+          commit('ERROR', 'Upload failed.', { root: true });
+        }
+      };
+
       // upload all files in parallel
       state.files.forEach(async file => {
+        if (file.uploaded) return;
         file.error = '';
         file._retries = 0;
         file._retryDelay = 500;
@@ -211,6 +227,7 @@ export default {
                     error: jsonResMessage || error.message || error.toString()
                   }
                 });
+                settle();
               }
               // Generic Error
               else {
@@ -220,10 +237,7 @@ export default {
                       error: jsonResMessage || error.message || error.toString()
                     }
                   });
-                  if (state.files.every(f => f.error)) {
-                    commit('STATE', 'uploadError', { root: true });
-                    commit('ERROR', 'Upload failed.', { root: true });
-                  }
+                  settle();
                   return;
                 }
 
@@ -250,16 +264,10 @@ export default {
               commit('UPDATE_FILE', {
                 file, data: {
                   uploaded: true,
-                  progress: { percentage: 100, humanFileSize: file.humanSize, bytesUploaded: file._File.size }
+                  progress: { percentage: 100, humanSize: file.humanSize, bytesUploaded: file._File.size }
                 }
               });
-              if (state.files.every(f => f.uploaded)) {
-                fetch(state.uploadURI + '/' + state.sid + '?lock=yes', {
-                  method: 'PATCH',
-                  headers: { 'x-csrf-token': rootState.config.csrf || '' },
-                });
-                commit('STATE', 'uploaded', { root: true });
-              }
+              settle();
             }
           }).start();
         }
