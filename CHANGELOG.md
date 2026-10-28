@@ -5,6 +5,8 @@ et les versions suivent [SemVer](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+## [0.3.2] - 2026-10-28
+
 ### Corrigé
 - Un envoi ne reste plus bloqué quand un fichier est refusé (taille, type, quota) : le lien s'affiche pour les
   autres fichiers, et un fichier déjà signalé trop gros ou interdit doit être retiré avant d'envoyer
@@ -120,7 +122,8 @@ Première version de Flyto, basée sur PsiTransfer.
 - Le projet devient Flyto : nom, image Docker, variables d'environnement `FLYTO_*`
   (l'ancien préfixe `PSITRANSFER_` est encore lu)
 
-[Non publié]: https://github.com/arayan48/flyto/compare/v0.3.1...HEAD
+[Non publié]: https://github.com/arayan48/flyto/compare/v0.3.2...HEAD
+[0.3.2]: https://github.com/arayan48/flyto/compare/v0.3.1...v0.3.2
 [0.3.1]: https://github.com/arayan48/flyto/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/arayan48/flyto/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/arayan48/flyto/compare/v0.1.0...v0.2.0
