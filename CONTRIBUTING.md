@@ -117,6 +117,11 @@ Le tag déclenche [build_release.yaml](.github/workflows/build_release.yaml), qu
 * relance les tests
 * construit l'image Docker `ghcr.io/arayan48/flyto:v1.3.0` (amd64 et arm64), plus `v1.3` et `v1`
 * crée la release GitHub avec l'archive et les notes générées depuis les commits
+* pointe `Apps/Flyto` du store [arayan48/appstore](https://github.com/arayan48/appstore) sur la release
+  (avec la clé de déploiement du secret `APPSTORE_DEPLOY_KEY`), ce qui republie le store
+
+Le compose du store est une copie de [docker-compose.yml](docker-compose.yml) au format du store v2 : quand une
+variable ou un service change ici, reporter le changement dans `Apps/Flyto/docker-compose.yml` du store.
 
 Un tag avec un suffixe (`v1.3.0-rc.1`) produit une pré-release, sans toucher aux tags stables.
 
@@ -135,7 +140,8 @@ Un serveur de production n'utilise jamais `latest`.
 Le serveur ne reçoit que des releases.
 
 1. Publier la release (voir plus haut) et attendre la fin du workflow
-2. Dans ZimaOS, ouvrir l'app Flyto, remplacer le tag de l'image par la nouvelle version, enregistrer
+2. Dans l'App Store de ZimaOS, mettre à jour Flyto (installé depuis le store), ou ouvrir l'app Flyto,
+   remplacer le tag de l'image par la nouvelle version et enregistrer (installé par import)
 3. Vérifier que la page d'accueil et `/admin` répondent
 
 En cas de problème, revenir au tag précédent : les données (`/DATA/AppData/flyto`) ne sont pas touchées

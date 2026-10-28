@@ -102,7 +102,10 @@ Sans `FLYTO_DB_URL`, Flyto refuse de démarrer.
 
 Le [`docker-compose.yml`](docker-compose.yml) lance trois services, `flyto`, `database` (PostgreSQL 17)
 et `redis` (cache sans persistance), et s'importe tel quel dans ZimaOS / CasaOS
-(App Store > installation personnalisée > importer). Change `POSTGRES_PASSWORD`, le mot de passe dans
+(App Store > installation personnalisée > importer). Flyto est aussi dans le store
+[arayan48/appstore](https://github.com/arayan48/appstore) : ajoute la source
+`https://arayan48.github.io/appstore/store.json` dans l'App Store de ZimaOS pour l'installer et le mettre à jour
+de là. Change `POSTGRES_PASSWORD`, le mot de passe dans
 `FLYTO_DB_URL`, `FLYTO_ADMIN_EMAIL` et `FLYTO_ADMIN_PASSWORD` avant le premier démarrage.
 Sur un réseau local, `FLYTO_PUBLIC_URL` peut rester vide : les liens reprennent l'adresse utilisée pour ouvrir Flyto.
 Dès que Flyto passe par un nom de domaine, un reverse proxy ou un tunnel Cloudflare, mets son adresse publique

@@ -200,3 +200,35 @@ jobs:
           body: ${{ steps.build_changelog.outputs.changelog }}
           fail_on_unmatched_files: true
           files: flyto-${{ github.ref_name }}.tar.gz
+
+  appstore:
+    name: Update ZimaOS store
+    needs: [ release ]
+    if: ${{ !contains(github.ref_name, '-') }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Checkout store
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: arayan48/appstore
+          ssh-key: ${{ secrets.APPSTORE_DEPLOY_KEY }}
+          path: appstore
+
+      - name: Point Flyto at the release
+        run: scripts/update-appstore.sh "$GITHUB_REF_NAME" appstore
+
+      # the store's own Publish workflow rebuilds and deploys it on this push
+      - name: Push
+        working-directory: appstore
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "chore(flyto): $GITHUB_REF_NAME"
+          git push

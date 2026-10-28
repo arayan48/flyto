@@ -5,6 +5,10 @@ et les versions suivent [SemVer](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+### Ajouté
+- Flyto est dans le store ZimaOS arayan48 (`https://arayan48.github.io/appstore/store.json`), mis à jour
+  automatiquement à chaque release : la mise à jour se fait depuis l'App Store de ZimaOS
+
 ## [0.3.2] - 2026-10-28
 
 ### Corrigé
