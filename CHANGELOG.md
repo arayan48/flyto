@@ -5,6 +5,16 @@ et les versions suivent [SemVer](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+### Corrigé
+- Un envoi ne reste plus bloqué quand un fichier est refusé (taille, type, quota) : le lien s'affiche pour les
+  autres fichiers, et un fichier déjà signalé trop gros ou interdit doit être retiré avant d'envoyer
+- Un fichier à téléchargement unique est envoyé en entier : une reprise ou un gestionnaire de téléchargement
+  ne le supprime plus après le premier morceau, et les morceaux suivants ne comptent plus comme des téléchargements
+- Le mot de passe d'un envoi n'est marqué obligatoire que lorsque l'admin l'exige
+- L'inscription explique quand une invitation n'est plus valide
+- Un admin sans double authentification, alors qu'elle est exigée, arrive sur la page qui l'active au lieu
+  d'un `/admin` rempli d'erreurs
+
 ## [0.3.1] - 2026-10-28
 
 ### Corrigé
