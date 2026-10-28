@@ -2,9 +2,11 @@
 # Works with plain `docker compose up -d` and imports as-is into ZimaOS / CasaOS
 # (App Store > Custom install > Import), which reads the x-casaos blocks.
 #
-# Before the first start, change POSTGRES_PASSWORD (in both services), FLYTO_ADMIN_EMAIL,
-# FLYTO_ADMIN_PASSWORD and FLYTO_PUBLIC_URL. The admin account is created on the first start
-# only; leave both admin variables empty to create it from the /setup page instead.
+# Before the first start, change POSTGRES_PASSWORD (in both services), FLYTO_ADMIN_EMAIL and
+# FLYTO_ADMIN_PASSWORD. The admin account is created on the first start only; leave both admin
+# variables empty to create it from the /setup page instead.
+# FLYTO_PUBLIC_URL can stay empty on a local network (links use the address you browse with);
+# set it, and FLYTO_TRUST_PROXY to 1, once Flyto is reached through a domain, a reverse proxy or a tunnel.
 # POSTGRES_PASSWORD is applied only when the database is created: if /DATA/AppData/flyto/postgres
 # is kept from a previous install, the database keeps the password it had then.
 
@@ -25,7 +27,8 @@ services:
       FLYTO_REDIS_URL: redis://redis:6379
       FLYTO_ADMIN_EMAIL: admin@example.com
       FLYTO_ADMIN_PASSWORD: change-me-too
-      FLYTO_PUBLIC_URL: http://localhost:3000/
+      FLYTO_PUBLIC_URL: ""
+      FLYTO_TRUST_PROXY: ""
       TZ: Europe/Paris
     # ZimaOS forces the default bridge, where service names don't resolve:
     # legacy links add database and redis to this container's /etc/hosts
@@ -57,8 +60,12 @@ services:
             fr_fr: Mot de passe du premier administrateur (10 caractères minimum), à changer ensuite dans Mon compte
         - container: FLYTO_PUBLIC_URL
           description:
-            en_us: Public address of Flyto, used in e-mails and share links
-            fr_fr: Adresse publique de Flyto, utilisée dans les e-mails et les liens de partage
+            en_us: Public address of Flyto (https://files.example.com/), used in e-mails and share links; empty on a local network
+            fr_fr: Adresse publique de Flyto (https://fichiers.exemple.fr/), utilisée dans les e-mails et les liens ; vide sur un réseau local
+        - container: FLYTO_TRUST_PROXY
+          description:
+            en_us: 1 behind a reverse proxy or a Cloudflare tunnel, so that each visitor keeps its own IP; empty otherwise
+            fr_fr: 1 derrière un reverse proxy ou un tunnel Cloudflare, pour que chaque visiteur garde son adresse IP ; vide sinon
         - container: FLYTO_REDIS_URL
           description:
             en_us: Redis cache for sessions, rate limits and dashboards
