@@ -247,13 +247,13 @@ test('failed logins lock the account for a while', async () => {
 });
 
 test('failed logins long ago do not count toward the lock', async () => {
-  const created = await admin.post('/api/admin/users', { email: 'carol@flyto.test', password: PASSWORD });
+  const created = await admin.post('/api/admin/users', { email: 'erin@flyto.test', password: PASSWORD });
   assert.strictEqual(created.status, 201);
   const pool = new Pool({ connectionString: url });
   // one failure away from the lock, but a day ago
   await pool.query('UPDATE users SET failed_logins = 4, last_failed_login_at = $2 WHERE id = $1',
     [created.data.user.id, Date.now() - 86400000]);
-  assert.strictEqual((await new Client().login('carol@flyto.test', 'wrong password!')).status, 401);
+  assert.strictEqual((await new Client().login('erin@flyto.test', 'wrong password!')).status, 401);
   const { rows: [row] } = await pool.query('SELECT failed_logins, locked_until FROM users WHERE id = $1', [created.data.user.id]);
   await pool.end();
   assert.strictEqual(row.failed_logins, 1);
@@ -261,7 +261,7 @@ test('failed logins long ago do not count toward the lock', async () => {
 });
 
 test('admin forms refuse invalid values instead of failing', async () => {
-  const quota = await admin.post('/api/admin/users', { email: 'dave@flyto.test', quotaStorage: 'abc', sendEmail: false });
+  const quota = await admin.post('/api/admin/users', { email: 'frank@flyto.test', quotaStorage: 'abc', sendEmail: false });
   assert.strictEqual(quota.status, 400);
   assert.strictEqual(quota.data.error, 'invalidQuota');
   assert.strictEqual((await admin.post('/api/admin/invites/abc/revoke')).status, 404);
