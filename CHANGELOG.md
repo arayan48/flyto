@@ -6,8 +6,8 @@ et les versions suivent [SemVer](https://semver.org/lang/fr/).
 ## [Non publié]
 
 ### Corrigé
-- Le compose importé dans ZimaOS démarre : les trois services partagent un réseau nommé, ZimaOS les
-  mettait sur le bridge par défaut où `database` et `redis` ne se résolvent pas
+- Le compose importé dans ZimaOS démarre : ZimaOS impose le bridge par défaut, où `database` et `redis`
+  ne se résolvent pas, et Flyto les joint maintenant par des `links`
 
 ## [0.3.0] - 2026-10-27
 
