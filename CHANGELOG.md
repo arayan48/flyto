@@ -8,6 +8,8 @@ et les versions suivent [SemVer](https://semver.org/lang/fr/).
 ### Corrigé
 - Le compose importé dans ZimaOS démarre : ZimaOS impose le bridge par défaut, où `database` et `redis`
   ne se résolvent pas, et Flyto les joint maintenant par des `links`
+- Un mot de passe PostgreSQL refusé arrête Flyto avec un message qui explique pourquoi (base gardée d'une
+  installation précédente) et comment le corriger, au lieu d'une trace d'erreur brute
 
 ## [0.3.0] - 2026-10-27
 

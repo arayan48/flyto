@@ -51,3 +51,13 @@ test('startup retries an unreachable database until connectTimeout', async () =>
     await unreachable.close();
   }
 });
+
+test('a refused password fails at once with a hint about POSTGRES_PASSWORD', async () => {
+  const db = new MetadataDb('postgres://flyto:wrong@127.0.0.1:1/flyto', { connectTimeout: 60 * 1000 });
+  db.pool.connect = async () => { throw Object.assign(new Error('password authentication failed'), { code: '28P01' }); };
+  const started = Date.now();
+  await assert.rejects(db._migrate(), e => e.code === '28P01' && /ALTER USER flyto/.test(e.message));
+  assert.ok(Date.now() - started < 1000);
+  await db.ready.catch(() => {});
+  await db.close();
+});

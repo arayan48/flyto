@@ -5,6 +5,8 @@
 # Before the first start, change POSTGRES_PASSWORD (in both services), FLYTO_ADMIN_EMAIL,
 # FLYTO_ADMIN_PASSWORD and FLYTO_PUBLIC_URL. The admin account is created on the first start
 # only; leave both admin variables empty to create it from the /setup page instead.
+# POSTGRES_PASSWORD is applied only when the database is created: if /DATA/AppData/flyto/postgres
+# is kept from a previous install, the database keeps the password it had then.
 
 name: flyto
 
