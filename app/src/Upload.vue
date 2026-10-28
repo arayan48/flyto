@@ -41,7 +41,7 @@
             role="button"
           )
             icon.fa-fw(name="qrcode")
-            | QR-Code
+            |  {{ $root.lang.qrCode }}
           a.btn.btn-primary(
             :href="mailLnk",
             :title="$root.lang.sendViaMail",

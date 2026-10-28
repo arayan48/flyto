@@ -3,13 +3,13 @@ footer.footer
     span.text-muted
       if site.termsUrl
         a(href=site.termsUrl target='_blank' rel='noopener') #{lang.nav.terms}
-        |  ·
+        |  ·#{' '}
       if site.privacyUrl
         a(href=site.privacyUrl target='_blank' rel='noopener') #{lang.nav.privacy}
-        |  ·
+        |  ·#{' '}
       if site.contactEmail
         a(href='mailto:' + site.contactEmail) #{lang.nav.contact}
-        |  ·
+        |  ·#{' '}
       a(href=`https://github.com/${repo}/releases/tag/v${version}` target='_blank' rel='noopener') Flyto v#{version}
-      |  · basé sur
+      |  · #{lang.nav.basedOn}#{' '}
       a(href='https://github.com/psi-4ward/psitransfer' target='_blank' rel='noopener') PsiTransfer

@@ -225,7 +225,7 @@
             this.error = this.$root.lang.tooManyAttempts;
             this.loading = false;
           } else {
-            this.error = `${ xhr.status } ${ xhr.statusText }: ${ xhr.responseText }`;
+            this.error = xhr.status === 404 ? this.$root.lang.errors.transferNotFound : this.$root.lang.errors.serverError;
           }
         };
         xhr.send();
