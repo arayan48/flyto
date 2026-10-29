@@ -14,6 +14,9 @@ et les versions suivent [SemVer](https://semver.org/lang/fr/).
 - Fin d'envoi présentée comme un billet : lien, QR code sur le talon, copie et envoi par e-mail
 - Page de téléchargement : taille totale et date d'expiration du transfert, téléchargement de chaque fichier en un clic
 - Mon compte et l'administration reprennent la même interface, utilisable sur téléphone
+- Petites animations : barre de progression, fichiers ajoutés ou retirés, téléchargement, copie du lien, onglets
+  (coupées si le système demande moins d'animations)
+- Tailles lisibles (« 879 kB » au lieu de « 878.91 kB »), dates écrites dans la langue de la page
 
 ## [0.5.1] - 2026-10-29
 
