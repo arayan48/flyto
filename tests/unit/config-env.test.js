@@ -66,3 +66,9 @@ test('passwords, numbers, lists and objects keep their type', () => {
   assert.deepStrictEqual(config.retentions, { 3600: '1 Hour' });
   assert.strictEqual(config.defaultRetention, '3600');
 });
+
+test('a locale named like an Object.prototype key is not a language', () => {
+  const config = require('../../config');
+  for (const code of ['constructor', 'toString', '__proto__']) assert.strictEqual(config.languages[code], undefined);
+  assert.ok(config.languages.fr.langCode);
+});
