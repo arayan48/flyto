@@ -10,6 +10,9 @@ et les versions suivent [SemVer](https://semver.org/lang/fr/).
   webpack ; les fichiers servis portent un hash et sont mis en cache un an
 - Icônes Phosphor à la place de Font Awesome 4, seules celles utilisées sont embarquées
 - Internet Explorer n'est plus pris en charge (plus de polyfills)
+- La fenêtre d'aperçu garde le focus clavier, se ferme avec Échap et bloque le défilement de la page derrière
+- « Copier le lien » fonctionne aussi quand Flyto est ouvert en http sur le réseau local
+- Police système à la place de DM Sans, en attendant la nouvelle charte de l'interface
 
 ### Corrigé
 - Les onglets et les liens internes de /admin et de /account ramenaient à la page d'envoi au lieu de changer
