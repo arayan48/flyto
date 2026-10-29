@@ -64,7 +64,10 @@ test('a password protects the transfer', async ({ page }) => {
   const name = `locked-${ Date.now() }.txt`;
   await page.locator('#fileInput').setInputFiles({ name, mimeType: 'text/plain', buffer: Buffer.from('locked') });
   await page.locator('#uploadBtn').click();
-  const url = await page.locator('.share-link a').getAttribute('href', { timeout: 20000 });
+  // the link sits hidden in the page from the start, wait for the upload to show it
+  const link = page.locator('.share-link a');
+  await expect(link).toBeVisible({ timeout: 20000 });
+  const url = await link.getAttribute('href');
 
   await page.goto(url);
   const input = page.locator('input[type=password]');
