@@ -51,7 +51,8 @@
   import { get, patch, post } from '../common/api';
 
   const GROUPS = {
-    general: ['siteName', 'siteDescription', 'publicUrl', 'contactEmail', 'termsUrl', 'privacyUrl'],
+    general: ['siteName', 'siteDescription', 'publicUrl'],
+    legal: ['legalPublisher', 'contactEmail', 'legalHost', 'termsUrl', 'privacyUrl'],
     announcements: ['announcementText', 'announcementLevel', 'maintenanceMode', 'maintenanceMessage'],
     accounts: ['registrationMode', 'requireApproval', 'requireEmailVerification', 'allowedEmailDomains', 'notifyAdminsOnSignup'],
     security: ['passwordMinLength', 'sessionDays', 'loginMaxAttempts', 'lockoutMinutes', 'require2faForAdmins',
@@ -70,7 +71,7 @@
       return {
         schema: null, values: {}, original: {}, retentionLabels: {}, mail: {}, group: 'general', groups: GROUPS,
         groupNames: Object.keys(GROUPS), error: '', message: '', busy: false, testTo: '', testing: false,
-        textareas: ['siteDescription', 'announcementText', 'maintenanceMessage', 'allowedEmailDomains', 'blockedExtensions'],
+        textareas: ['siteDescription', 'announcementText', 'maintenanceMessage', 'allowedEmailDomains', 'blockedExtensions', 'legalHost'],
         bytes: ['maxTransferSize', 'maxFileSize', 'userStorageQuota', 'maxPreviewSize'],
       };
     },

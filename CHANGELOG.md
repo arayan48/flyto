@@ -5,6 +5,15 @@ et les versions suivent [SemVer](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+### Ajouté
+- Pages intégrées `/legal` (mentions légales) et `/privacy` (confidentialité), liées en bas de chaque page. Elles se
+  remplissent avec les réglages de l'instance (durées de conservation, adresses IP gardées ou non) ; l'éditeur,
+  l'hébergement et le contact se règlent dans /admin > Réglages > Mentions légales
+
+### Modifié
+- Le pied de page n'affiche plus « basé sur PsiTransfer » : le code a été largement réécrit. L'origine reste
+  mentionnée dans le README et dans LICENSE
+
 ## [0.6.0] - 2026-10-29
 
 ### Modifié

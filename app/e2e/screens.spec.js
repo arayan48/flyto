@@ -58,6 +58,11 @@ test('screens', async ({ page, browser }, testInfo) => {
   await shoot(visitor, testInfo, '08-preview');
   await visitor.keyboard.press('Escape');
 
+  await visitor.goto('legal');
+  await shoot(visitor, testInfo, '15-legal');
+  await visitor.goto('privacy');
+  await shoot(visitor, testInfo, '16-privacy');
+
   await visitor.goto('nope-nope-nope');
   await shoot(visitor, testInfo, '09-download-missing');
 
