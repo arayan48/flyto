@@ -99,7 +99,7 @@
     }
   }
   .ticket-main {
-    padding: 1.75rem;
+    padding: 1.25rem;
     min-width: 0;
   }
   .ticket-status {
@@ -119,9 +119,17 @@
   .share-link-url {
     display: block;
     color: var(--ink);
-    font-size: var(--text-lg);
+    font-size: var(--text-base);
     text-decoration: none;
     overflow-wrap: anywhere;
+  }
+  @media (min-width: 40rem) {
+    .share-link-url {
+      font-size: var(--text-lg);
+    }
+    .ticket-main {
+      padding: 1.75rem;
+    }
   }
   .share-link-url:hover {
     color: var(--accent-ink);

@@ -81,6 +81,7 @@ test('a password protects the transfer', async ({ page }) => {
 });
 
 test('every admin tab renders', async ({ page }) => {
+  await page.goto('admin');
   for (const tab of ['users', 'transfers', 'downloads', 'invites', 'audit', 'settings', 'system', 'dashboard']) {
     await page.locator(`.admin-tabs a[href="admin#/${ tab }"]`).click();
     await expect(page).toHaveURL(new RegExp(`/admin#/${ tab }$`));

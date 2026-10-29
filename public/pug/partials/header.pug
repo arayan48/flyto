@@ -4,7 +4,9 @@ header.site-header
       include logo
     nav.site-nav(aria-label=lang.nav.account)
       if user
-        a.site-nav-link(href='account' title=lang.nav.account) #{user.name || user.email}
+        a.site-nav-link(href='account' title=lang.nav.account)
+          span.site-nav-full #{user.name || user.email}
+          span.site-nav-short #{lang.nav.account}
         if user.role === 'admin'
           a.site-nav-link(href='admin') #{lang.nav.admin}
         form.site-logout(method='post' action='api/auth/logout')

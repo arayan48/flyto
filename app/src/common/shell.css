@@ -42,6 +42,17 @@
 .site-logout {
   margin: 0;
 }
+.site-nav-short {
+  display: none;
+}
+@media (max-width: 40rem) {
+  .site-nav-full {
+    display: none;
+  }
+  .site-nav-short {
+    display: inline;
+  }
+}
 .site-banners {
   display: grid;
   gap: .5rem;

@@ -10,6 +10,8 @@ async function shoot(page, testInfo, name) {
   await page.evaluate(() => document.fonts.ready);
   for (const colorScheme of ['light', 'dark']) {
     await page.emulateMedia({ colorScheme });
+    // buttons fade their colours, let them settle
+    await page.waitForTimeout(250);
     await page.screenshot({ path: `${ DIR }/${ testInfo.project.name }-${ colorScheme }-${ name }.png`, fullPage: true });
   }
   await page.emulateMedia({ colorScheme: 'light' });
