@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     p
-      a(href="#/users") ‹ {{ $t('admin.users.back') }}
+      a(href="admin#/users") ‹ {{ $t('admin.users.back') }}
     .alert.alert-danger(v-if="error") {{ error }}
     .alert.alert-success(v-if="message")
       | {{ message }}
@@ -84,7 +84,7 @@
                 tr(v-if="data.invitedBy")
                   th {{ $t('admin.users.invitedBy') }}
                   td
-                    a(:href="'#/users/' + data.invitedBy.id") {{ data.invitedBy.email }}
+                    a(:href="'admin#/users/' + data.invitedBy.id") {{ data.invitedBy.email }}
                 tr
                   th {{ $t('admin.users.lastLogin') }}
                   td {{ user.lastLoginAt | date }}

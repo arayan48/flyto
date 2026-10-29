@@ -52,7 +52,7 @@
               tr(v-for="row in transferRows", :key="row.key")
                 th {{ row.label }}
                 td.text-right
-                  a(:href="'#/transfers?status=' + row.key", v-if="row.link") {{ row.value }}
+                  a(:href="'admin#/transfers?status=' + row.key", v-if="row.link") {{ row.value }}
                   template(v-else) {{ row.value }}
           h4 {{ $t('admin.dashboard.totals') }}
           table.table.table-condensed.kv-table
@@ -70,7 +70,7 @@
             tbody
               tr(v-for="u in stats.topUsers", :key="u.id")
                 td
-                  a(:href="'#/users/' + u.id") {{ u.name || u.email }}
+                  a(:href="'admin#/users/' + u.id") {{ u.name || u.email }}
                   br
                   small.text-muted(v-if="u.name") {{ u.email }}
                 td.text-right {{ u.transfers }} {{ $t('admin.dashboard.transfersShort') }}
@@ -81,7 +81,7 @@
           | {{ $t('admin.dashboard.recent') }}
           |
           small
-            a(href="#/audit") {{ $t('admin.dashboard.seeAll') }}
+            a(href="admin#/audit") {{ $t('admin.dashboard.seeAll') }}
         audit-table(:items="stats.recent")
     p.text-muted(v-else-if="!error")
       icon(name="spinner", spin="")
@@ -105,13 +105,13 @@
       tiles() {
         const s = this.stats;
         const tiles = [
-          { label: this.$t('admin.dashboard.users'), value: s.users.total, href: '#/users',
+          { label: this.$t('admin.dashboard.users'), value: s.users.total, href: 'admin#/users',
             sub: this.$t('admin.dashboard.usersSub', { online: s.users.online, pending: s.users.pending, new30d: s.users.new30d }) },
-          { label: this.$t('admin.dashboard.activeTransfers'), value: s.transfers.active, href: '#/transfers',
+          { label: this.$t('admin.dashboard.activeTransfers'), value: s.transfers.active, href: 'admin#/transfers',
             sub: this.$t('admin.dashboard.filesSub', { files: s.transfers.files }) },
-          { label: this.$t('admin.dashboard.storage'), value: humanFileSize(s.transfers.storage), href: '#/transfers',
+          { label: this.$t('admin.dashboard.storage'), value: humanFileSize(s.transfers.storage), href: 'admin#/transfers',
             sub: s.disk ? this.$t('admin.dashboard.diskSub', { free: humanFileSize(s.disk.free), total: humanFileSize(s.disk.total) }) : '' },
-          { label: this.$t('admin.dashboard.today'), value: this.today.uploads + ' / ' + this.today.downloads, href: '#/downloads',
+          { label: this.$t('admin.dashboard.today'), value: this.today.uploads + ' / ' + this.today.downloads, href: 'admin#/downloads',
             sub: this.$t('admin.dashboard.todaySub') },
         ];
         if (s.disk && s.disk.total) tiles[2].percent = Math.round((s.disk.total - s.disk.free) / s.disk.total * 100);
@@ -132,15 +132,15 @@
         const lang = this.$root.lang.admin.warnings;
         if (!this.settings) return list;
         const v = this.settings.values;
-        if (v.maintenanceMode) list.push({ key: 'maintenance', text: lang.maintenance, link: lang.settingsLink, href: '#/settings' });
+        if (v.maintenanceMode) list.push({ key: 'maintenance', text: lang.maintenance, link: lang.settingsLink, href: 'admin#/settings' });
         if (!v.publicUrl) {
           list.push({ key: 'publicUrl', text: lang.publicUrl.replace('{url}', this.$root.baseURI), link: lang.usePublicUrl,
             action: () => this.setPublicUrl() });
         }
-        if (!this.settings.mail.enabled) list.push({ key: 'mail', text: lang.mail, link: lang.settingsLink, href: '#/settings' });
+        if (!this.settings.mail.enabled) list.push({ key: 'mail', text: lang.mail, link: lang.settingsLink, href: 'admin#/settings' });
         if (this.stats.users.pending) {
           list.push({ key: 'pending', text: lang.pending.replace('{count}', this.stats.users.pending), link: lang.review,
-            href: '#/users' });
+            href: 'admin#/users' });
         }
         const me = this.$root.session.user;
         if (me && !me.totpEnabled) list.push({ key: '2fa', text: lang.twoFactor, link: lang.enable, href: 'account#security' });

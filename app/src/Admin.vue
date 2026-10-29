@@ -4,7 +4,7 @@
     template(v-else-if="$root.session && $root.lang.admin")
       ul.nav.nav-tabs.admin-tabs
         li(v-for="t in tabs", :class="{active: route.tab === t}")
-          a(:href="'#/' + t") {{ $t('admin.tabs.' + t) }}
+          a(:href="'admin#/' + t") {{ $t('admin.tabs.' + t) }}
       dashboard(v-if="route.tab === 'dashboard'")
       users(v-else-if="route.tab === 'users' && !route.id")
       user-detail(v-else-if="route.tab === 'users'", :id="route.id", :key="route.id")

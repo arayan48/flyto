@@ -78,16 +78,19 @@ test('a password protects the transfer', async ({ page }) => {
 
 test('every admin tab renders', async ({ page }) => {
   await login(page);
-  for (const tab of ['dashboard', 'users', 'transfers', 'downloads', 'invites', 'audit', 'settings', 'system']) {
-    await page.goto(`admin#/${ tab }`);
-    await expect(page.locator('.admin-tabs li.active a')).toHaveAttribute('href', `#/${ tab }`);
+  for (const tab of ['users', 'transfers', 'downloads', 'invites', 'audit', 'settings', 'system', 'dashboard']) {
+    await page.locator(`.admin-tabs a[href="admin#/${ tab }"]`).click();
+    await expect(page).toHaveURL(new RegExp(`/admin#/${ tab }$`));
+    await expect(page.locator('.admin-tabs li.active a')).toHaveAttribute('href', `admin#/${ tab }`);
     await expect(page.locator('.admin-app > .alert-danger')).toHaveCount(0);
   }
 
-  await page.goto('admin#/users');
+  await page.locator('.admin-tabs a[href="admin#/users"]').click();
   await page.locator('tr.clickable', { hasText: ADMIN.email }).click();
-  await expect(page).toHaveURL(/#\/users\/\d+/);
+  await expect(page).toHaveURL(/\/admin#\/users\/\d+$/);
   await expect(page.locator('.admin-app')).toContainText(ADMIN.email);
+  await page.locator('a[href="admin#/users"]', { hasText: '‹' }).click();
+  await expect(page).toHaveURL(/\/admin#\/users$/);
 });
 
 test('my account lists the transfers and every tab renders', async ({ page }) => {
@@ -98,7 +101,8 @@ test('my account lists the transfers and every tab renders', async ({ page }) =>
   await page.goto('account');
   await expect(page.locator('.my-account')).toContainText(name);
   for (const tab of ['profile', 'security', 'sessions', 'data', 'transfers']) {
-    await page.locator(`.my-account .nav-tabs a[href="#${ tab }"]`).click();
-    await expect(page.locator('.my-account .nav-tabs li.active a')).toHaveAttribute('href', `#${ tab }`);
+    await page.locator(`.my-account .nav-tabs a[href="account#${ tab }"]`).click();
+    await expect(page).toHaveURL(new RegExp(`/account#${ tab }$`));
+    await expect(page.locator('.my-account .nav-tabs li.active a')).toHaveAttribute('href', `account#${ tab }`);
   }
 });

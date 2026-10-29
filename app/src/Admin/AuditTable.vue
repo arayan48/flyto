@@ -8,11 +8,11 @@
         td
           span.label(:class="labelClass(e.action)") {{ actionLabel(e.action) }}
         td
-          a(v-if="e.actorId", :href="'#/users/' + e.actorId") {{ e.actorEmail }}
+          a(v-if="e.actorId", :href="'admin#/users/' + e.actorId") {{ e.actorEmail }}
           span.text-muted(v-else) {{ e.actorEmail || '–' }}
         td
-          a(v-if="e.targetType === 'user' && e.targetId", :href="'#/users/' + e.targetId") {{ $t('admin.audit.user') }} {{ e.targetId }}
-          a(v-else-if="e.targetType === 'transfer' && e.targetId", :href="'#/transfers/' + e.targetId") {{ e.targetId }}
+          a(v-if="e.targetType === 'user' && e.targetId", :href="'admin#/users/' + e.targetId") {{ $t('admin.audit.user') }} {{ e.targetId }}
+          a(v-else-if="e.targetType === 'transfer' && e.targetId", :href="'admin#/transfers/' + e.targetId") {{ e.targetId }}
           span(v-else-if="e.targetId") {{ e.targetType }} {{ e.targetId }}
         td.small.text-muted.break-all {{ summary(e.details) }}
         td.small.text-muted {{ e.ip }}
