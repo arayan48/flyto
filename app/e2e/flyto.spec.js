@@ -1,16 +1,16 @@
-const { test, expect } = require('@playwright/test');
+const { test: base, expect } = require('@playwright/test');
 const fs = require('fs');
 
 const ADMIN = { email: 'admin@flyto.test', password: 'e2e-admin-password' };
 
 // any uncaught error in the page fails the test, the front must run clean
-test.beforeEach(({ page }, testInfo) => {
-  testInfo.pageErrors = [];
-  page.on('pageerror', e => testInfo.pageErrors.push(e.message));
-});
-
-test.afterEach((_, testInfo) => {
-  expect(testInfo.pageErrors, 'errors in the page').toEqual([]);
+const test = base.extend({
+  page: async ({ page }, use) => {
+    const errors = [];
+    page.on('pageerror', e => errors.push(e.message));
+    await use(page);
+    expect(errors, 'errors in the page').toEqual([]);
+  },
 });
 
 async function login(page) {
