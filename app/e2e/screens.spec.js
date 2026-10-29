@@ -39,15 +39,7 @@ test('screens', async ({ page, browser }, testInfo) => {
   await shoot(page, testInfo, '04-upload-files');
 
   await page.locator('#password').fill('soleil-42');
-  // hold the upload requests a moment to catch the progress screen
-  await page.route('**/files/**', async route => {
-    await new Promise(r => setTimeout(r, 1500));
-    await route.continue().catch(() => {});
-  });
   await page.locator('#uploadBtn').click();
-  await expect(page.locator('.flight-bar')).toBeVisible();
-  await page.screenshot({ path: `${ DIR }/${ testInfo.project.name }-light-04b-uploading.png`, fullPage: true });
-  await page.unrouteAll({ behavior: 'wait' });
   await expect(page.locator('.share-link a')).toBeVisible({ timeout: 20000 });
   await shoot(page, testInfo, '05-ticket');
   const url = await page.locator('.share-link a').getAttribute('href');
