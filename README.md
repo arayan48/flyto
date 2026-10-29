@@ -17,6 +17,18 @@ Une alternative à WeTransfer qui tourne chez toi.
 * Cache Redis facultatif pour les sessions, les limites de tentatives et le tableau de bord
 * Avertissement dans `/admin` quand une nouvelle version est publiée ([mettre à jour](docs/updating.md))
 
+## Aperçu
+
+![Page d'envoi](docs/screenshots/envoi.png)
+
+| Le lien à partager | Ce que voit la personne qui télécharge |
+| --- | --- |
+| ![Lien prêt avec QR code](docs/screenshots/lien.png) | ![Page de téléchargement en mode sombre](docs/screenshots/telechargement.png) |
+
+| Administration | Sur téléphone |
+| --- | --- |
+| ![Tableau de bord de l'administration](docs/screenshots/admin.png) | ![Page d'envoi sur téléphone](docs/screenshots/mobile.png) |
+
 ## Démarrage rapide
 
 ### Docker Compose
