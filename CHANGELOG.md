@@ -5,6 +5,8 @@ et les versions suivent [SemVer](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+## [0.6.0] - 2026-10-29
+
 ### Modifié
 - Nouvelle interface : aplat bleu Flyto en haut des pages publiques, grands titres (Bricolage Grotesque, Instrument
   Serif), boutons arrondis, fond papier, mode sombre automatique ; Bootstrap 3 retiré
@@ -208,7 +210,8 @@ Première version de Flyto, basée sur PsiTransfer.
 - Le projet devient Flyto : nom, image Docker, variables d'environnement `FLYTO_*`
   (l'ancien préfixe `PSITRANSFER_` est encore lu)
 
-[Non publié]: https://github.com/arayan48/flyto/compare/v0.5.1...HEAD
+[Non publié]: https://github.com/arayan48/flyto/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/arayan48/flyto/compare/v0.5.1...v0.6.0
 [0.5.1]: https://github.com/arayan48/flyto/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/arayan48/flyto/compare/v0.4.1...v0.5.0
 [0.4.1]: https://github.com/arayan48/flyto/compare/v0.4.0...v0.4.1
