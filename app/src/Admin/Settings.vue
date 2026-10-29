@@ -8,6 +8,15 @@
         .alert.alert-danger.mb-4(v-if="error", role="alert") {{ error }}
         .alert.alert-success.mb-4(v-if="message", role="status") {{ message }}
         form.card.form-card.settings-form(@submit.prevent="save")
+          .field(v-if="group === 'email'")
+            label.label(for="s-mailService") {{ $t('admin.settings.mailService') }}
+            select.select#s-mailService(:value="mailService", @change="applyService($event.target.value)")
+              option(v-for="(p, key) in services", :key="key", :value="key") {{ $t('admin.settings.mailServices.' + key + '.name') }}
+              option(value="custom") {{ $t('admin.settings.mailServiceCustom') }}
+            p.hint(v-if="mailService !== 'custom'")
+              | {{ $t('admin.settings.mailServices.' + mailService + '.help') }}
+              |
+              a(:href="services[mailService].signup", target="_blank", rel="noopener") {{ services[mailService].signup.replace('https://', '') }}
           .field(v-for="key in groups[group]", :key="key", :class="{ 'is-dirty': dirty(key) }")
             template(v-if="schema[key].type === 'boolean'")
               label.check
@@ -50,6 +59,14 @@
   import ByteInput from './ByteInput.vue';
   import { get, patch, post } from '../common/api';
 
+  // SMTP relays that can be set up without running a mail server
+  const SERVICES = {
+    resend: { smtpHost: 'smtp.resend.com', smtpPort: 465, smtpSecure: true, smtpUser: 'resend', signup: 'https://resend.com' },
+    brevo: { smtpHost: 'smtp-relay.brevo.com', smtpPort: 587, smtpSecure: false, signup: 'https://www.brevo.com' },
+    mailjet: { smtpHost: 'in-v3.mailjet.com', smtpPort: 587, smtpSecure: false, signup: 'https://www.mailjet.com' },
+    gmail: { smtpHost: 'smtp.gmail.com', smtpPort: 465, smtpSecure: true, signup: 'https://myaccount.google.com/apppasswords' },
+  };
+
   const GROUPS = {
     general: ['siteName', 'siteDescription', 'publicUrl'],
     legal: ['legalPublisher', 'contactEmail', 'legalHost', 'termsUrl', 'privacyUrl'],
@@ -70,12 +87,15 @@
     data() {
       return {
         schema: null, values: {}, original: {}, retentionLabels: {}, mail: {}, group: 'general', groups: GROUPS,
-        groupNames: Object.keys(GROUPS), error: '', message: '', busy: false, testTo: '', testing: false,
+        groupNames: Object.keys(GROUPS), services: SERVICES, error: '', message: '', busy: false, testTo: '', testing: false,
         textareas: ['siteDescription', 'announcementText', 'maintenanceMessage', 'allowedEmailDomains', 'blockedExtensions', 'legalHost'],
         bytes: ['maxTransferSize', 'maxFileSize', 'userStorageQuota', 'maxPreviewSize'],
       };
     },
     computed: {
+      mailService() {
+        return Object.keys(SERVICES).find(k => SERVICES[k].smtpHost === this.values.smtpHost) || 'custom';
+      },
       changedKeys() {
         return Object.keys(this.values).filter(k => this.dirty(k));
       },
@@ -96,6 +116,17 @@
         } catch (e) {
           this.error = this.$err(e);
         }
+      },
+      applyService(key) {
+        if (key === 'custom') {
+          this.values.smtpHost = '';
+          return;
+        }
+        const { signup: _s, ...fields } = SERVICES[key];
+        const previous = SERVICES[this.mailService] || {};
+        // keep a login the admin typed, drop the one of the previous service
+        if (!fields.smtpUser && this.values.smtpUser === previous.smtpUser) fields.smtpUser = '';
+        Object.assign(this.values, fields);
       },
       dirty(key) {
         return JSON.stringify(this.values[key]) !== JSON.stringify(this.original[key]);
