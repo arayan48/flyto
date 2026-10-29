@@ -1,7 +1,7 @@
 <template>
   <!-- the logo's corner leaving the file along a dashed flight path -->
   <svg class="flight" :class="{ 'is-moving': moving }" viewBox="0 0 420 300" aria-hidden="true">
-    <path class="flight-trail" d="M120 205 C 170 120, 230 210, 285 130 S 350 50, 372 46" />
+    <path class="flight-trail" d="M134 136 C 190 110, 225 205, 285 130 S 350 50, 372 46" />
     <g class="flight-sheet" transform="translate(40 150) scale(1.15)">
       <path d="M0 10Q0 0 10 0L51.8 0Q61.8 0 68.87 7.07L92.93 31.13Q100 38.2 100 48.2L100 90Q100 100 90 100L10 100Q0 100 0 90Z" />
     </g>

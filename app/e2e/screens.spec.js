@@ -47,7 +47,7 @@ test('screens', async ({ page, browser }, testInfo) => {
   await page.locator('#uploadBtn').click();
   await expect(page.locator('.flight-bar')).toBeVisible();
   await page.screenshot({ path: `${ DIR }/${ testInfo.project.name }-light-04b-uploading.png`, fullPage: true });
-  await page.unroute('**/files/**');
+  await page.unrouteAll({ behavior: 'wait' });
   await expect(page.locator('.share-link a')).toBeVisible({ timeout: 20000 });
   await shoot(page, testInfo, '05-ticket');
   const url = await page.locator('.share-link a').getAttribute('href');
