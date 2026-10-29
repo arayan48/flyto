@@ -1,72 +1,49 @@
 <template lang="pug">
-  div(v-if="config && config.retentions")
-    .panel.panel-default(:class="{'panel-info': !disabled}")
-      .panel-heading
-        strong {{ $root.lang.settings }}
-      .panel-body
-        .form-group
-          label(for='retention') {{ $root.lang.retention }}
-          |
-          select#retention.form-control(:value='retention', :disabled='disabled',
-          @change="uploadStore.retention = $event.target.value")
-            option(
-              v-for='(label, seconds) in config.retentions'
-              :value="seconds"
-              :selected="seconds === retention"
-            ) {{ $root.lang.retentions[seconds] || label }}
-        div
-          label(for='password') {{ $root.lang.password }}
-          .input-group(:class="{'has-error': config.requireBucketPassword && !password}")
-            input#password.form-control(
-              type='text'
-              :value='password'
-              @input="uploadStore.password = $event.target.value"
-              :disabled='disabled'
-              :placeholder="config.requireBucketPassword ? $root.lang.required : $root.lang.optional"
-              :required="config.requireBucketPassword"
-            )
-            span.input-group-addon(
-              style='cursor: pointer'
-              :title='$root.lang.generateRandomPassword'
-              @click='generatePassword()'
-              tabindex="0"
-              role="button"
-              @keydown.enter.prevent='generatePassword()'
-              @keydown.space.prevent='generatePassword()'
-            )
-              icon(name="key")
+  .card-body.grid.gap-4(v-if="config && config.retentions")
+    .field
+      label.label(for="retention") {{ $root.lang.retention }}
+      select#retention.select(:value="retention", :disabled="disabled", @change="uploadStore.retention = $event.target.value")
+        option(v-for="(label, seconds) in config.retentions", :key="seconds", :value="seconds")
+          | {{ $root.lang.retentions[seconds] || label }}
+    .field
+      label.label(for="password")
+        | {{ $root.lang.password }}
+        span.faint.font-normal  · {{ config.requireBucketPassword ? $root.lang.required : $root.lang.optional }}
+      .input-group
+        input#password.input.input-mono(
+          type="text",
+          :value="password",
+          :disabled="disabled",
+          :required="config.requireBucketPassword",
+          :aria-invalid="config.requireBucketPassword && !password ? 'true' : null",
+          autocomplete="off",
+          spellcheck="false",
+          @input="uploadStore.password = $event.target.value"
+        )
+        button.btn.btn-icon(type="button", :disabled="disabled", :title="$root.lang.generateRandomPassword",
+          :aria-label="$root.lang.generateRandomPassword", @click="generatePassword()")
+          icon(name="key")
+      p.hint {{ $t('ui.upload.passwordHint') }}
 </template>
 
-<script type="text/babel">
+<script>
   import { mapStores, mapState } from 'pinia';
   import { useUploadStore } from './store';
 
-  const passGen = {
-    _pattern: /[A-Z0-9_\-+!]/,
-    _getRandomByte: function() {
-      const result = new Uint8Array(1);
-      let fixedcrypto = window.msCrypto;
-      if (!fixedcrypto) {
-        fixedcrypto = window.crypto;
+  // no look-alike characters, the password is often read out or copied by hand
+  const ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
+
+  function randomPassword(length) {
+    // keep only bytes below a multiple of the alphabet size, so every character is as likely
+    const limit = 256 - 256 % ALPHABET.length;
+    let out = '';
+    while (out.length < length) {
+      for (const b of crypto.getRandomValues(new Uint8Array(length * 2))) {
+        if (b < limit && out.length < length) out += ALPHABET[b % ALPHABET.length];
       }
-      fixedcrypto.getRandomValues(result);
-      return result[0];
-    },
-    generate: function(length) {
-      let fixedcrypto2 = window.msCrypto;
-      if (!fixedcrypto2) {
-        fixedcrypto2 = window.crypto;
-      }
-      if (!fixedcrypto2 || !fixedcrypto2.getRandomValues) return '';
-      return Array.apply(null, { 'length': length }).map(function() {
-        let result;
-        while (true) {
-          result = String.fromCharCode(this._getRandomByte());
-          if (this._pattern.test(result)) return result;
-        }
-      }, this).join('');
     }
-  };
+    return out;
+  }
 
   export default {
     name: 'Settings',
@@ -79,8 +56,8 @@
     methods: {
       generatePassword() {
         if (this.disabled) return;
-        this.uploadStore.password = passGen.generate(10);
-      }
-    }
+        this.uploadStore.password = randomPassword(12);
+      },
+    },
   };
 </script>

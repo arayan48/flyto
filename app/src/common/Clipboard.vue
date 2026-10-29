@@ -1,37 +1,27 @@
 <!--
-# Clipboard Component
-Copies a string into the clipboard
-
-## Props
-* value: String
-
-## Slots
-* default: Replaces inner content
-* text:    Replaces the text (hidden with icon-only)
+Copies a string into the clipboard.
+Props: value, icon-only (no text, the title says it), label (text instead of "Copy")
 -->
 
 <template lang="pug">
-  span(@click.stop='copy()', style='cursor: pointer')
-    slot(:state='state')
-      icon.fa-fw(name="copy", v-if="state==='pristine'")
-      icon.fa-fw(name="check", v-if="state==='copied'")
-      icon.fa-fw(name="exclamation-triangle", v-if="state==='error'")
-      slot(name='text', v-if='!iconOnly')  {{ $root.lang.clipboard }}
+  button.btn(type="button", :class="{ 'btn-icon': iconOnly }", :aria-label="iconOnly ? title : null", @click.stop="copy()")
+    icon(:name="state === 'copied' ? 'check' : state === 'error' ? 'exclamation-triangle' : 'copy'")
+    span(v-if="!iconOnly", aria-live="polite") {{ state === 'copied' ? $t('ui.copied') : (label || $t('ui.copy')) }}
 </template>
-
 
 <script>
   import { useClipboard } from '@vueuse/core';
 
   export default {
-    name: "Clipboard",
+    name: 'Clipboard',
     emits: ['change'],
     props: {
       value: {
         type: String,
-        required: true
+        required: true,
       },
-      iconOnly: Boolean
+      iconOnly: Boolean,
+      label: String,
     },
     setup() {
       // legacy: the Clipboard API needs https, a NAS is often reached over plain http
@@ -39,9 +29,15 @@ Copies a string into the clipboard
       return { writeClipboard: copy };
     },
     data() {
-      return {
-        state: 'pristine' // copied, error
-      };
+      return { state: 'pristine', timer: null };
+    },
+    computed: {
+      title() {
+        return this.$attrs.title || this.$root.lang.copyToClipboard;
+      },
+    },
+    beforeUnmount() {
+      clearTimeout(this.timer);
     },
     methods: {
       async copy() {
@@ -53,7 +49,9 @@ Copies a string into the clipboard
           this.state = 'error';
         }
         this.$emit('change', this.state);
-      }
-    }
+        clearTimeout(this.timer);
+        this.timer = setTimeout(() => { this.state = 'pristine'; }, 2500);
+      },
+    },
   };
 </script>
