@@ -14,7 +14,7 @@ name: flyto
 
 services:
   flyto:
-    image: ghcr.io/arayan48/flyto:v0.8.1
+    image: ghcr.io/arayan48/flyto:v0.9.0
     container_name: flyto
     restart: unless-stopped
     depends_on:
