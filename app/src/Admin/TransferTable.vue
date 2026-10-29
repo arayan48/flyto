@@ -26,7 +26,7 @@
           span.label.label-warning(v-if="t.partial") {{ $t('admin.transfers.status.partial') }}
           span.label.label-danger(v-if="t.suspendedAt", :title="t.suspendedReason") {{ $t('admin.transfers.status.suspended') }}
         td(v-if="showOwner")
-          a(v-if="t.ownerId", :href="'#/users/' + t.ownerId", @click.stop="") {{ t.ownerEmail || '#' + t.ownerId }}
+          a(v-if="t.ownerId", :href="'admin#/users/' + t.ownerId", @click.stop="") {{ t.ownerEmail || '#' + t.ownerId }}
           span.text-muted(v-else) {{ $t('admin.transfers.anonymous') }}
         td {{ t.createdAt | date }}
         td

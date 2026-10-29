@@ -4,7 +4,7 @@
       small(v-if="me")  {{ me.user.email }}
     ul.nav.nav-tabs
       li(v-for="t in tabs", :class="{active: tab === t}")
-        a(:href="'#' + t", @click="tab = t") {{ $t('account.tabs.' + t) }}
+        a(:href="'account#' + t") {{ $t('account.tabs.' + t) }}
     .alert.alert-danger(v-if="error") {{ error }}
     template(v-if="me")
       my-transfers(v-if="tab === 'transfers'", :me="me", @changed="load")

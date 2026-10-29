@@ -23,10 +23,10 @@
           td(style="white-space: nowrap") {{ d.at | date }}
           td.break-all {{ d.name }}
           td
-            a.mono(v-if="d.available", :href="'#/transfers/' + encodeURIComponent(d.sid)") {{ d.sid }}
+            a.mono(v-if="d.available", :href="'admin#/transfers/' + encodeURIComponent(d.sid)") {{ d.sid }}
             span.mono.text-muted(v-else, :title="$t('admin.downloads.gone')") {{ d.sid }}
           td
-            a(v-if="d.ownerId", :href="'#/users/' + d.ownerId") {{ d.ownerEmail }}
+            a(v-if="d.ownerId", :href="'admin#/users/' + d.ownerId") {{ d.ownerEmail }}
             span.text-muted(v-else) –
           td {{ d.ip || '–' }}
           td.small.text-muted {{ agent(d.userAgent) }}

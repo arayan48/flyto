@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     p
-      a(href="#/transfers") ‹ {{ $t('admin.transfers.back') }}
+      a(href="admin#/transfers") ‹ {{ $t('admin.transfers.back') }}
     .alert.alert-danger(v-if="error") {{ error }}
     .alert.alert-success(v-if="message") {{ message }}
     template(v-if="t")
@@ -25,7 +25,7 @@
               tr
                 th {{ $t('admin.transfers.owner') }}
                 td
-                  a(v-if="t.owner", :href="'#/users/' + t.owner.id") {{ t.owner.name || t.owner.email }}
+                  a(v-if="t.owner", :href="'admin#/users/' + t.owner.id") {{ t.owner.name || t.owner.email }}
                   span.text-muted(v-else) {{ $t('admin.transfers.anonymous') }}
               tr
                 th {{ $t('admin.transfers.created') }}

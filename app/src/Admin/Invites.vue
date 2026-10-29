@@ -3,7 +3,7 @@
     .alert.alert-info(v-if="mode !== 'invite'")
       | {{ $t('admin.invites.modeNotice', { mode: $t('admin.settings.registrationModes.' + mode) }) }}
       |
-      a(href="#/settings") {{ $root.lang.admin.warnings.settingsLink }}
+      a(href="admin#/settings") {{ $root.lang.admin.warnings.settingsLink }}
     .row
       .col-md-5
         form.well(@submit.prevent="create")

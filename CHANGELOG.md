@@ -5,6 +5,10 @@ et les versions suivent [SemVer](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+### Corrigé
+- Les onglets et les liens internes de /admin et de /account ramenaient à la page d'envoi au lieu de changer
+  d'onglet
+
 ## [0.4.1] - 2026-10-29
 
 ### Corrigé
