@@ -6,11 +6,9 @@
     .alert.alert-danger(v-if="error") {{ error }}
     created-link.mb-4(v-if="message", :text="message", :link="link")
     template(v-if="data")
-      h1.text-xl
-        | {{ user.name || user.email }}
-        |
-        small {{ user.email }}
-      p
+      h1.text-xl {{ user.name || user.email }}
+      p.muted.text-sm(v-if="user.name") {{ user.email }}
+      p.flex.flex-wrap.gap-1.mt-2.mb-5
         span.badge(:class="user.role === 'admin' ? 'badge-accent' : ''") {{ $t('admin.roles.' + user.role) }}
         span.badge(:class="{active: 'badge-success', pending: 'badge-warning', disabled: ''}[user.status]") {{ $t('admin.users.statuses.' + user.status) }}
         span.badge.badge-success(v-if="user.totpEnabled") 2FA

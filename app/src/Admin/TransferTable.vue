@@ -19,8 +19,7 @@
             input(type="checkbox", :checked="selected.includes(t.sid)", @change="toggle(t.sid, $event.target.checked)")
           td
             span.mono {{ t.sid }}
-            |
-            small.muted {{ t.files }} {{ $t('admin.users.filesShort') }}
+            small.muted.ml-2 {{ t.files }} {{ $t('admin.users.filesShort') }}
             br
             span.badge(v-if="t.password") {{ $t('admin.transfers.status.protected') }}
             span.badge.badge-accent(v-if="t.oneTime") {{ $t('admin.transfers.status.oneTime') }}
