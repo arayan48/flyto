@@ -1,4 +1,5 @@
 import { createApp, h } from 'vue';
+import './theme.css';
 import Icon from './Icon.vue';
 import { translate, errorMessage, formatDate, humanFileSize } from './format';
 
