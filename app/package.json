@@ -5,36 +5,24 @@
   "author": "arayan48 <arabirayanma@gmail.com>",
   "private": true,
   "scripts": {
-    "dev": "cross-env NODE_ENV=development webpack-dev-server",
-    "build": "cross-env NODE_ENV=production webpack",
-    "analyze": "cross-env ANALYZE=true npm run build",
+    "dev": "vite build --watch --mode development",
+    "build": "vite build",
     "test:e2e": "playwright test"
   },
   "dependencies": {
     "@nuintun/qrcode": "^5.0.2",
     "drag-drop": "^7.2.0",
-    "regenerator-runtime": "^0.14.1",
-    "tus-js-client": "^2.3.1",
-    "uuid": "^11.1.0",
-    "vue": "^2.7.16",
-    "vue-awesome": "^4.5.0",
-    "vuex": "^3.6.2"
+    "pinia": "^4.1.0",
+    "tus-js-client": "^4.3.1",
+    "vue": "^3.5.44"
   },
   "devDependencies": {
-    "@babel/core": "^7.27.4",
-    "@babel/preset-env": "^7.27.2",
+    "@iconify-json/ph": "^1.2.2",
     "@playwright/test": "^1.64.1",
-    "babel-loader": "^8.2.5",
-    "cross-env": "^7.0.3",
-    "css-loader": "^5.2.7",
-    "file-loader": "^6.2.0",
+    "@vitejs/plugin-vue": "^6.0.10",
     "pug": "^3.0.3",
-    "pug-plain-loader": "^1.1.0",
-    "vue-loader": "^15.9.8",
-    "vue-template-compiler": "^2.7.16",
-    "webpack": "^5.99.9",
-    "webpack-bundle-analyzer": "^4.10.2",
-    "webpack-cli": "^4.9.2",
-    "webpack-dev-server": "^4.15.2"
-  }
+    "unplugin-icons": "^24.0.0",
+    "vite": "^8.3.5"
+  },
+  "type": "module"
 }

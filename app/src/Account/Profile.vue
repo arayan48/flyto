@@ -31,6 +31,7 @@
 
   export default {
     name: 'Profile',
+    emits: ['changed'],
     props: ['me'],
     data() {
       const u = this.me.user;

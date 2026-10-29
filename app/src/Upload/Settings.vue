@@ -8,7 +8,7 @@
           label(for='retention') {{ $root.lang.retention }}
           |
           select#retention.form-control(:value='retention', :disabled='disabled',
-          @change="$store.commit('upload/RETENTION', $event.target.value)")
+          @change="uploadStore.retention = $event.target.value")
             option(
               v-for='(label, seconds) in config.retentions'
               :value="seconds"
@@ -20,7 +20,7 @@
             input#password.form-control(
               type='text'
               :value='password'
-              @input="$store.commit('upload/PASSWORD', $event.target.value)"
+              @input="uploadStore.password = $event.target.value"
               :disabled='disabled'
               :placeholder="config.requireBucketPassword ? $root.lang.required : $root.lang.optional"
               :required="config.requireBucketPassword"
@@ -38,8 +38,8 @@
 </template>
 
 <script type="text/babel">
-  import { mapState } from 'vuex';
-  import 'vue-awesome/icons/key';
+  import { mapStores, mapState } from 'pinia';
+  import { useUploadStore } from './store';
 
   const passGen = {
     _pattern: /[A-Z0-9_\-+!]/,
@@ -71,17 +71,15 @@
   export default {
     name: 'Settings',
 
-    computed: mapState({
-      config: 'config',
-      disabled: 'disabled',
-      retention: state => state.upload.retention,
-      password: state => state.upload.password,
-    }),
+    computed: {
+      ...mapStores(useUploadStore),
+      ...mapState(useUploadStore, { config: 'config', disabled: 'inputsDisabled', retention: 'retention', password: 'password' }),
+    },
 
     methods: {
       generatePassword() {
         if (this.disabled) return;
-        this.$store.commit('upload/PASSWORD', passGen.generate(10));
+        this.uploadStore.password = passGen.generate(10);
       }
     }
   };

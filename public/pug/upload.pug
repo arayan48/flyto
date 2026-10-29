@@ -1,4 +1,5 @@
 doctype html
+- const bundle = frontend('upload')
 html(lang=lang.langCode)
   head
     include partials/head
@@ -9,6 +10,6 @@ html(lang=lang.langCode)
       include partials/header
       #upload
     include partials/footer
-    script(src='app/common.js')
     script FLYTO_UPLOAD_PATH = '#{uploadAppPath}';
-    script(src='app/upload.js')
+    if bundle.js
+      script(type='module' src='app/' + bundle.js)

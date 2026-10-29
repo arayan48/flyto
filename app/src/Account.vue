@@ -14,7 +14,6 @@
 </template>
 
 <script>
-  import 'vue-awesome/icons/spinner';
   import Login from './Account/Login.vue';
   import Register from './Account/Register.vue';
   import Forgot from './Account/Forgot.vue';

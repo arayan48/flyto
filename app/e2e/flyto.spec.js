@@ -1,5 +1,5 @@
-const { test: base, expect } = require('@playwright/test');
-const fs = require('fs');
+import { test as base, expect } from '@playwright/test';
+import fs from 'node:fs';
 
 const ADMIN = { email: 'admin@flyto.test', password: 'e2e-admin-password' };
 

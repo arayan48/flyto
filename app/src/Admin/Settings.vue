@@ -18,8 +18,8 @@
             template(v-else)
               label(:for="'s-' + key") {{ label(key) }}
               textarea.form-control(v-if="textareas.includes(key)", :id="'s-' + key", v-model="values[key]", rows="3")
-              byte-input(v-else-if="bytes.includes(key)", :value="values[key] || null",
-                @input="v => values[key] = v || 0", :placeholder="$t('admin.quota.unlimited')")
+              byte-input(v-else-if="bytes.includes(key)", :model-value="values[key] || null",
+                @update:model-value="v => values[key] = v || 0", :placeholder="$t('admin.quota.unlimited')")
               select.form-control(v-else-if="schema[key].type === 'enum'", :id="'s-' + key", v-model="values[key]")
                 option(v-for="v in enumValues(key)", :value="v") {{ enumLabel(key, v) }}
               div(v-else-if="schema[key].type === 'list'")

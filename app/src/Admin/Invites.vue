@@ -62,7 +62,7 @@
                 br
                 small.text-muted {{ i.note }} {{ $t('admin.invites.by', { email: i.createdByEmail || '–', date: $options.filters.day(i.createdAt) }) }}
               td {{ i.uses }} / {{ i.maxUses || '∞' }}
-              td {{ i.expiresAt | date }}
+              td {{ $date(i.expiresAt) }}
               td
                 span.label(:class="stateClass(i)") {{ $t('admin.invites.states.' + state(i)) }}
               td.table-actions

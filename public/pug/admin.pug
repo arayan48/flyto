@@ -1,4 +1,5 @@
 doctype html
+- const bundle = frontend('admin')
 html(lang=lang.langCode)
   head
     include partials/head
@@ -8,5 +9,5 @@ html(lang=lang.langCode)
       include partials/header
       #admin
     include partials/footer
-    script(src='app/common.js')
-    script(src='app/admin.js')
+    if bundle.js
+      script(type='module' src='app/' + bundle.js)

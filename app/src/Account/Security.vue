@@ -74,6 +74,7 @@
 
   export default {
     name: 'Security',
+    emits: ['changed'],
     props: ['me'],
     data() {
       return { current: '', password: '', password2: '', pwSaved: '', pwError: '', busy: false,

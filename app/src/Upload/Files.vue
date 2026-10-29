@@ -37,16 +37,16 @@
               td.btns
                 a(
                   style="cursor:pointer",
-                  @click="$store.dispatch('upload/removeFile', file)",
-                  @keydown.enter.prevent="$store.dispatch('upload/removeFile', file)",
-                  @keydown.space.prevent="$store.dispatch('upload/removeFile', file)",
+                  @click="removeFile(file)",
+                  @keydown.enter.prevent="removeFile(file)",
+                  @keydown.space.prevent="removeFile(file)",
                   v-show="!disabled || bucketSizeError",
                   tabindex="0",
                   role="button"
                 )
                   icon(name="times")
 
-        input#fileInput(type="file", @change="$store.dispatch('upload/addFiles', $event.target.files)", multiple="", :disabled="disabled", style="display: none")
+        input#fileInput(type="file", @change="addFiles($event.target.files)", multiple="", :disabled="disabled", style="display: none")
         .text-right
           a.btn.btn-success.btn-sm(
             @click="triggerFileInput()",
@@ -63,13 +63,10 @@
 
 <script type="text/babel">
   import dragDrop from 'drag-drop';
-  import 'vue-awesome/icons/exclamation-triangle'
-  import 'vue-awesome/icons/plus'
-  import 'vue-awesome/icons/plus-circle'
-  import 'vue-awesome/icons/times'
-  import { mapGetters, mapState } from 'vuex';
+  import { mapState, mapActions } from 'pinia';
+  import { useUploadStore } from './store';
   import FileIcon from '../common/FileIcon.vue';
-  import { humanFileSize } from "./store/upload";
+  import { humanFileSize } from '../common/format';
 
   export default {
     name: 'Files',
@@ -77,15 +74,12 @@
     components: { FileIcon },
 
     computed: {
-      ...mapState('upload', ['files']),
-      ...mapState(['state',]),
-      ...mapGetters('upload', ['bucketSize', 'bucketSizeError']),
-      ...mapGetters(['disabled']),
+      ...mapState(useUploadStore, ['files', 'state', 'bucketSize', 'bucketSizeError', 'disabled']),
     },
 
     mounted() {
       // init drop files support on <body>
-      this.dragDropCleanup = dragDrop('body', files => this.$store.dispatch('upload/addFiles', files));
+      this.dragDropCleanup = dragDrop('body', files => this.addFiles(files));
     },
 
     watch: {
@@ -97,6 +91,7 @@
     },
 
     methods: {
+      ...mapActions(useUploadStore, ['addFiles', 'removeFile']),
       humanFileSize,
       triggerFileInput() {
         if (this.disabled) return;

@@ -59,10 +59,10 @@
             tbody
               tr
                 th {{ $t('admin.dashboard.allUploads') }}
-                td.text-right {{ stats.totals.uploads }} · {{ stats.totals.uploadBytes | size }}
+                td.text-right {{ stats.totals.uploads }} · {{ $size(stats.totals.uploadBytes) }}
               tr
                 th {{ $t('admin.dashboard.allDownloads') }}
-                td.text-right {{ stats.totals.downloads }} · {{ stats.totals.downloadBytes | size }}
+                td.text-right {{ stats.totals.downloads }} · {{ $size(stats.totals.downloadBytes) }}
         .col-md-6.admin-section
           h4 {{ $t('admin.dashboard.topUsers') }}
           p.text-muted(v-if="!stats.topUsers.length") {{ $t('admin.empty') }}
@@ -74,7 +74,7 @@
                   br
                   small.text-muted(v-if="u.name") {{ u.email }}
                 td.text-right {{ u.transfers }} {{ $t('admin.dashboard.transfersShort') }}
-                td.text-right {{ u.storage | size }}
+                td.text-right {{ $size(u.storage) }}
 
       .admin-section
         h4
@@ -88,8 +88,6 @@
 </template>
 
 <script>
-  import 'vue-awesome/icons/sync-alt';
-  import 'vue-awesome/icons/spinner';
   import BarChart from './BarChart.vue';
   import AuditTable from './AuditTable.vue';
   import { get, patch } from '../common/api';

@@ -70,28 +70,28 @@
               tbody
                 tr
                   th {{ $t('admin.users.storage') }}
-                  td {{ user.usage.storage | size }}
-                    span.text-muted(v-if="data.limits.storage")  / {{ data.limits.storage | size }}
+                  td {{ $size(user.usage.storage) }}
+                    span.text-muted(v-if="data.limits.storage")  / {{ $size(data.limits.storage) }}
                 tr
                   th {{ $t('admin.users.transfers') }}
                   td {{ user.usage.transfers }} ({{ user.usage.files }} {{ $t('admin.users.filesShort') }})
                 tr
                   th {{ $t('admin.users.allUploads') }}
-                  td {{ data.totals.uploads }} · {{ data.totals.uploadBytes | size }}
+                  td {{ data.totals.uploads }} · {{ $size(data.totals.uploadBytes) }}
                 tr
                   th {{ $t('admin.users.created_') }}
-                  td {{ user.createdAt | date }}
+                  td {{ $date(user.createdAt) }}
                 tr(v-if="data.invitedBy")
                   th {{ $t('admin.users.invitedBy') }}
                   td
                     a(:href="'admin#/users/' + data.invitedBy.id") {{ data.invitedBy.email }}
                 tr
                   th {{ $t('admin.users.lastLogin') }}
-                  td {{ user.lastLoginAt | date }}
+                  td {{ $date(user.lastLoginAt) }}
                     span.text-muted(v-if="user.lastLoginIp")  · {{ user.lastLoginIp }}
                 tr
                   th {{ $t('admin.users.passwordChanged') }}
-                  td {{ user.passwordChangedAt | date }}
+                  td {{ $date(user.passwordChangedAt) }}
                 tr
                   th {{ $t('admin.users.failedLogins') }}
                   td {{ user.failedLogins }}
@@ -124,7 +124,7 @@
             tr(v-for="s in data.sessions", :key="s.id")
               td {{ agent(s.userAgent) }}
               td {{ s.ip || '–' }}
-              td {{ $t('account.lastSeen') }} {{ s.lastSeenAt | date }}
+              td {{ $t('account.lastSeen') }} {{ $date(s.lastSeenAt) }}
               td.table-actions
                 button.btn.btn-xs.btn-default(@click="revokeSession(s)") {{ $t('account.revoke') }}
 

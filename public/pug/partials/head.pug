@@ -21,14 +21,8 @@ meta(property='og:image:height' content='630')
 link(href='assets/styles.css' rel='stylesheet')
 link(href='assets/fonts/dm-sans/wght.css' rel='stylesheet')
 link(href='assets/brand.css' rel='stylesheet')
-script.
-  // Add ployfills for stupid IE
-  if (document.documentMode || /Edge/.test(navigator.userAgent)) {
-    (function(d, script) {
-      script = d.createElement('script');
-      script.type = 'text/javascript';
-      script.async = false;
-      script.src = 'assets/babel-polyfill.js';
-      d.getElementsByTagName('head')[0].appendChild(script);
-    }(document));
-  }
+if bundle
+  each file in bundle.css
+    link(href='app/' + file rel='stylesheet')
+  each file in bundle.preload
+    link(href='app/' + file rel='modulepreload')

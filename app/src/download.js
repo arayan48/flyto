@@ -1,35 +1,19 @@
-import "regenerator-runtime/runtime.js";
-
-if(!String.prototype.startsWith) {
-  String.prototype.startsWith = function(searchString, position) {
-    position = position || 0;
-    return this.indexOf(searchString, position) === position;
-  };
-}
-
-import Vue from 'vue';
-import { httpGet } from "./common/util";
+import { mountApp, baseURI } from './common/vue-setup';
 import Download from './Download.vue';
-import Icon from 'vue-awesome/components/Icon'
+import { httpGet } from './common/util';
 
-Vue.component('icon', Icon);
-
-new Vue({
-  el: '#download',
-  data: {
-    baseURI: document.head.getElementsByTagName('base')[0].href.replace(/\/$/,''),
-    lang: {},
+mountApp(Download, {
+  data() {
+    return {
+      baseURI: baseURI().replace(/\/$/, ''),
+      lang: {},
+    };
   },
-  async beforeCreate() {
-    // Fetch translations
+  async created() {
     try {
       this.lang = await httpGet('lang.json');
-    }
-    catch (e) {
+    } catch (e) {
       alert(e);
     }
   },
-  render: h => h(Download)
-});
-
-window.FLYTO_VERSION = FLYTO_VERSION;
+}).mount('#download');

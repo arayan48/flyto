@@ -77,7 +77,7 @@
       this.onResize = () => this.measure();
       window.addEventListener('resize', this.onResize);
     },
-    beforeDestroy() {
+    beforeUnmount() {
       window.removeEventListener('resize', this.onResize);
     },
     methods: {

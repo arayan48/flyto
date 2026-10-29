@@ -13,7 +13,6 @@
 </template>
 
 <script>
-  import 'vue-awesome/icons/spinner';
   import { post } from '../common/api';
 
   export default {

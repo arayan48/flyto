@@ -13,22 +13,23 @@
   // bytes in and out, MB/GB/TB on screen; null means "empty"
   export default {
     name: 'ByteInput',
-    props: { value: { default: null }, placeholder: String },
+    props: { modelValue: { default: null }, placeholder: String },
+    emits: ['update:modelValue'],
     data() {
-      return { units: Object.keys(UNITS), unit: splitBytes(this.value).unit };
+      return { units: Object.keys(UNITS), unit: splitBytes(this.modelValue).unit };
     },
     computed: {
       parts() {
-        if (this.value === null || this.value === undefined || this.value === '') return { value: '', unit: this.unit };
-        const s = splitBytes(this.value);
-        return this.value === 0 ? { value: 0, unit: this.unit } : s;
+        if (this.modelValue === null || this.modelValue === undefined || this.modelValue === '') return { value: '', unit: this.unit };
+        const s = splitBytes(this.modelValue);
+        return this.modelValue === 0 ? { value: 0, unit: this.unit } : s;
       },
     },
     methods: {
       emit(value, unit) {
         this.unit = unit;
-        if (value === '' || value === null) return this.$emit('input', null);
-        this.$emit('input', Math.round(+value * UNITS[unit]));
+        if (value === '' || value === null) return this.$emit('update:modelValue', null);
+        this.$emit('update:modelValue', Math.round(+value * UNITS[unit]));
       },
     },
   };

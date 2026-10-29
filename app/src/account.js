@@ -1,19 +1,19 @@
-import Vue, { baseURI } from './common/vue-setup';
+import { mountApp, baseURI } from './common/vue-setup';
 import Account from './Account.vue';
 import { httpGet } from './common/util';
 import { get, setCsrf } from './common/api';
 
-new Vue({
-  el: '#account',
-  data: {
-    baseURI: baseURI(),
-    page: window.FLYTO_PAGE || 'login',
-    lang: {},
-    session: null,
-    error: '',
+mountApp(Account, {
+  data() {
+    return {
+      baseURI: baseURI(),
+      page: window.FLYTO_PAGE || 'login',
+      lang: {},
+      session: null,
+      error: '',
+    };
   },
-  render: h => h(Account),
-  async beforeCreate() {
+  async created() {
     try {
       this.lang = await httpGet('lang.json');
       this.session = await get('session');
@@ -34,6 +34,4 @@ new Vue({
       document.location.href = /^[a-z0-9/#?=&_.-]+$/i.test(next) && !next.startsWith('//') ? next.replace(/^\//, '') : fallback;
     },
   },
-});
-
-window.FLYTO_VERSION = FLYTO_VERSION;
+}).mount('#account');

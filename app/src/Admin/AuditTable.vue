@@ -4,7 +4,7 @@
       tr(v-if="!items.length")
         td.text-muted {{ $t('admin.empty') }}
       tr(v-for="e in items", :key="e.id")
-        td(style="white-space: nowrap") {{ e.at | date }}
+        td(style="white-space: nowrap") {{ $date(e.at) }}
         td
           span.label(:class="labelClass(e.action)") {{ actionLabel(e.action) }}
         td
