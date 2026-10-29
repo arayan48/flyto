@@ -71,3 +71,16 @@ export function userAgentLabel(ua) {
     : /Mac OS X/.test(ua) ? 'macOS' : /Linux/.test(ua) ? 'Linux' : '';
   return os ? `${ browser } · ${ os }` : browser;
 }
+
+/**
+ * Date in the words of the page language, "5 nov. 2026, 14:30".
+ */
+export function formatWhen(lang, value, withTime = true) {
+  if (!value) return '–';
+  const options = withTime ? { dateStyle: 'medium', timeStyle: 'short' } : { dateStyle: 'medium' };
+  try {
+    return new Intl.DateTimeFormat((lang && lang.langCode) || undefined, options).format(new Date(+value));
+  } catch (e) {
+    return formatDate(value, withTime);
+  }
+}

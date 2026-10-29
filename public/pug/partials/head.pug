@@ -6,10 +6,10 @@ link(href='assets/brand/favicon-32.png' rel='icon' type='image/png' sizes='32x32
 link(href='assets/favicon.ico' rel='alternate icon' type='image/x-icon')
 link(href='assets/brand/apple-touch-icon.png' rel='apple-touch-icon' sizes='180x180')
 link(href='site.webmanifest' rel='manifest')
-meta(name='theme-color' content='#2F6BFF')
+meta(name='theme-color' content='#f3f5f9' media='(prefers-color-scheme: light)')
+meta(name='theme-color' content='#0a0f18' media='(prefers-color-scheme: dark)')
 meta(name='viewport' content='width=device-width, initial-scale=1')
 meta(name='robots' content='noindex,nofollow')
-meta(http-equiv='x-ua-compatible' content='IE=edge')
 meta(property='og:title' content=site && site.siteName || 'Flyto')
 if site && site.siteDescription
   meta(name='description' content=site.siteDescription)
@@ -18,8 +18,6 @@ if origin
   meta(property='og:image' content=origin + 'assets/brand/og-image.png')
 meta(property='og:image:width' content='1200')
 meta(property='og:image:height' content='630')
-link(href='assets/styles.css' rel='stylesheet')
-link(href='assets/brand.css' rel='stylesheet')
 if bundle
   each file in bundle.css
     link(href='app/' + file rel='stylesheet')

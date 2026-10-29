@@ -33,6 +33,7 @@ export default defineConfig({
         download: 'src/download.js',
         admin: 'src/admin.js',
         account: 'src/account.js',
+        page: 'src/page.js',
       },
       output: {
         entryFileNames: '[name]-[hash].js',

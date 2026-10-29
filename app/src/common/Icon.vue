@@ -12,6 +12,13 @@
   import CaretUp from '~icons/ph/caret-up';
   import Check from '~icons/ph/check';
   import CloudArrowUp from '~icons/ph/cloud-arrow-up';
+  import Cpu from '~icons/ph/cpu';
+  import Gauge from '~icons/ph/gauge';
+  import ListBullets from '~icons/ph/list-bullets';
+  import SlidersHorizontal from '~icons/ph/sliders-horizontal';
+  import Stack from '~icons/ph/stack';
+  import Users from '~icons/ph/users';
+
   import Copy from '~icons/ph/copy';
   import DownloadSimple from '~icons/ph/download-simple';
   import EnvelopeSimple from '~icons/ph/envelope-simple';
@@ -44,6 +51,12 @@
     'chevron-up': CaretUp,
     'cloud-upload-alt': CloudArrowUp,
     'copy': Copy,
+    'cpu': Cpu,
+    'gauge': Gauge,
+    'list': ListBullets,
+    'sliders': SlidersHorizontal,
+    'stack': Stack,
+    'users': Users,
     'download': DownloadSimple,
     'envelope': EnvelopeSimple,
     'exclamation-triangle': Warning,

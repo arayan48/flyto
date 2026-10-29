@@ -1,7 +1,8 @@
 import { createApp, h } from 'vue';
 import './theme.css';
+import './shell.css';
 import Icon from './Icon.vue';
-import { translate, errorMessage, formatDate, humanFileSize } from './format';
+import { translate, errorMessage, formatWhen, humanFileSize } from './format';
 
 export function baseURI() {
   return document.head.getElementsByTagName('base')[0].href;
@@ -20,8 +21,12 @@ export function mountApp(component, root) {
   g.$err = function(e) {
     return errorMessage(this.$root.lang, e);
   };
-  g.$date = value => formatDate(value);
-  g.$day = value => formatDate(value, false);
+  g.$date = function(value) {
+    return formatWhen(this.$root.lang, value);
+  };
+  g.$day = function(value) {
+    return formatWhen(this.$root.lang, value, false);
+  };
   g.$size = value => (value || value === 0 ? humanFileSize(value) : '–');
   window.FLYTO_VERSION = FLYTO_VERSION;
   return app;
