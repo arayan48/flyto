@@ -4,6 +4,8 @@ import { test, expect } from '@playwright/test';
 const DIR = 'screens';
 
 test.skip(!process.env.FLYTO_SCREENSHOTS, 'only when FLYTO_SCREENSHOTS is set');
+// in French, as in the README
+test.use({ locale: 'fr-FR' });
 
 async function shoot(page, testInfo, name) {
   await page.waitForTimeout(400);
@@ -20,7 +22,7 @@ async function shoot(page, testInfo, name) {
 test('screens', async ({ page, browser }, testInfo) => {
   test.setTimeout(180000);
 
-  const visitor = await browser.newPage({ storageState: { cookies: [], origins: [] }, viewport: page.viewportSize() });
+  const visitor = await browser.newPage({ storageState: { cookies: [], origins: [] }, viewport: page.viewportSize(), locale: 'fr-FR' });
   await visitor.goto('./');
   await shoot(visitor, testInfo, '01-upload-logged-out');
   await visitor.goto('login');
@@ -51,7 +53,7 @@ test('screens', async ({ page, browser }, testInfo) => {
   await visitor.locator('button.decrypt').click();
   await expect(visitor.locator('.manifest-row').first()).toBeVisible();
   await shoot(visitor, testInfo, '07-download');
-  await visitor.locator('.manifest-row', { hasText: 'notes.txt' }).getByTitle('Preview').click();
+  await visitor.locator('.manifest-row', { hasText: 'notes.txt' }).getByRole('button', { name: 'Prévisualisation' }).click();
   await expect(visitor.locator('.preview-modal pre')).toBeVisible();
   await shoot(visitor, testInfo, '08-preview');
   await visitor.keyboard.press('Escape');
