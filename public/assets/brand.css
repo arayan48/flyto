@@ -1,7 +1,7 @@
-/* Flyto colours and type on top of Bootstrap 3, see the brand guidelines:
+/* Flyto colours on top of Bootstrap 3 (system font until the redesign picks one), see the brand guidelines:
    blue #2F6BFF for actions, sky #7FD4FF never for text on white, ink #0E1420 for text */
 body {
-  font-family: 'DM Sans Variable', 'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   color: #0E1420;
   line-height: 1.6;
 }

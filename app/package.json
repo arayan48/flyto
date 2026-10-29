@@ -11,16 +11,20 @@
   },
   "dependencies": {
     "@nuintun/qrcode": "^5.0.2",
+    "@vueuse/core": "^15.0.0",
     "drag-drop": "^7.2.0",
     "pinia": "^4.1.0",
+    "reka-ui": "^2.11.0",
     "tus-js-client": "^4.3.1",
     "vue": "^3.5.44"
   },
   "devDependencies": {
     "@iconify-json/ph": "^1.2.2",
     "@playwright/test": "^1.64.1",
+    "@tailwindcss/vite": "^4.3.3",
     "@vitejs/plugin-vue": "^6.0.10",
     "pug": "^3.0.3",
+    "tailwindcss": "^4.3.3",
     "unplugin-icons": "^24.0.0",
     "vite": "^8.3.5"
   },

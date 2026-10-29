@@ -1,0 +1,33 @@
+/* Tailwind with the Flyto palette only (flyto-depart/LISEZ-MOI.txt): the default
+   colours, fonts, radii and shadows are dropped so nothing generic slips in.
+   No preflight: Bootstrap 3 still styles the pages until the redesign. */
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+
+@theme {
+  --color-*: initial;
+  --color-white: #fff;
+  --color-blue: #2F6BFF;
+  --color-blue-dark: #1d4fd6;
+  --color-blue-soft: #eef3ff;
+  --color-blue-line: #c9d8ff;
+  /* never alone for text on white */
+  --color-sky: #7FD4FF;
+  --color-ink: #0E1420;
+  --color-ink-muted: #5b6475;
+  --color-line: #dde2ea;
+  --color-paper: #f6f8fb;
+  --color-danger: #c42b2b;
+  --color-success: #1e7f4a;
+  --color-warning: #a35f00;
+
+  --font-*: initial;
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  --radius-*: initial;
+  --radius-sm: 3px;
+  --radius-md: 6px;
+
+  --shadow-*: initial;
+}

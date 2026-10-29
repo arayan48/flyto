@@ -13,7 +13,6 @@
   "bugs": "https://github.com/arayan48/flyto/issues",
   "main": "app.js",
   "dependencies": {
-    "@fontsource-variable/dm-sans": "^5.3.0",
     "@node-rs/argon2": "^2.0.2",
     "archiver": "^8.0.0",
     "axios": "^1.16.1",

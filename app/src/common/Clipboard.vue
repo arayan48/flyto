@@ -20,7 +20,8 @@ Copies a string into the clipboard
 </template>
 
 
-<script type="text/babel">
+<script>
+  import { useClipboard } from '@vueuse/core';
 
   export default {
     name: "Clipboard",
@@ -32,32 +33,25 @@ Copies a string into the clipboard
       },
       iconOnly: Boolean
     },
+    setup() {
+      // legacy: the Clipboard API needs https, a NAS is often reached over plain http
+      const { copy } = useClipboard({ legacy: true });
+      return { writeClipboard: copy };
+    },
     data() {
       return {
         state: 'pristine' // copied, error
       };
     },
     methods: {
-      copy() {
-        let el = document.createElement('textarea');
-        Object.assign(el.style, {
-          position: 'absolute',
-          left: '-200%'
-        });
-        el.value = this.value;
-        document.body.appendChild(el);
-
-        let success = false;
+      async copy() {
         try {
-          el.select();
-          success = document.execCommand('copy');
-        }
-        catch(e) {
-          alert(this.$root.lang.oldBrowserError);
+          await this.writeClipboard(this.value);
+          this.state = 'copied';
+        } catch (e) {
           console.error(e);
+          this.state = 'error';
         }
-        document.body.removeChild(el);
-        this.state = success ? 'copied' : 'error';
         this.$emit('change', this.state);
       }
     }

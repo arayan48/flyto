@@ -46,10 +46,14 @@ test('upload, open the link, preview and download', async ({ page }) => {
   await expect(row).toBeVisible();
   await expect(page.locator('.btn-download-archive')).toBeVisible();
 
+  await row.getByTitle('Copy to clipboard').click();
+  await expect(row.locator('.downloaded')).toBeVisible();
+
   await row.getByTitle('Preview').click();
   await expect(page.locator('.preview-modal pre')).toHaveText('hello from flyto');
   await page.keyboard.press('Escape');
   await expect(page.locator('.preview-modal')).toHaveCount(0);
+  await expect(page.getByRole('dialog')).toHaveCount(0);
 
   const download = page.waitForEvent('download');
   await row.locator('strong', { hasText: name }).click();

@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import Icons from 'unplugin-icons/vite';
+import tailwindcss from '@tailwindcss/vite';
 import { execSync } from 'node:child_process';
 
 let commit = '';
@@ -13,6 +14,7 @@ export default defineConfig({
   plugins: [
     vue(),
     Icons({ compiler: 'vue3' }),
+    tailwindcss(),
   ],
   define: {
     FLYTO_VERSION: JSON.stringify(process.env.FLYTO_VERSION || commit || 'dev'),
