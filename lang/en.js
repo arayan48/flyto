@@ -149,6 +149,7 @@ module.exports = {
     storageQuota: "Your storage space ({limit}) is full: delete old transfers in My account.",
     transferQuota: "You already have {limit} active transfers: delete one in My account.",
     notOwner: "This transfer belongs to someone else.",
+    suspended: "This transfer has been suspended by an administrator.",
     maintenance: "Uploads are paused for maintenance.",
     passwordRequired: "A password is required for every transfer.",
   },

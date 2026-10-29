@@ -201,3 +201,25 @@ test('a preview is not counted as a download, and one-time files have none', asy
   assert.strictEqual((await request('GET', `/files/${ encodeURIComponent(once) }?preview`)).status, 404);
   assert.strictEqual((await request('GET', `/files/${ encodeURIComponent(once) }`)).status, 200);
 });
+
+test('a suspended transfer takes no new file', async () => {
+  await upload('metasuspended', 'a.txt', Buffer.from('abc'));
+  await app.ctx.db.updateTransfer('metasuspended', { suspendedAt: Date.now() });
+  const res = await request('POST', '/files/', {
+    ...TUS,
+    'Upload-Length': '3',
+    'Upload-Metadata': tusMeta.encode({ name: 'b.txt', sid: 'metasuspended', retention: '3600' }),
+  });
+  assert.strictEqual(res.status, 403);
+  assert.strictEqual(JSON.parse(res.body).error, 'suspended');
+  assert.strictEqual(app.ctx.db.get('metasuspended').length, 1);
+});
+
+test('an expired file is not served before the cleanup removes it', async () => {
+  const fid = await upload('metaexpired', 'a.txt', Buffer.from('abc'));
+  const [sid, key] = fid.split('++');
+  app.ctx.db.get(sid).find(f => f.key === key).metadata.expiresAt = Date.now() - 1000;
+  await app.ctx.store.update(fid, app.ctx.db.get(sid).find(f => f.key === key));
+  assert.strictEqual((await request('GET', '/metaexpired.json')).status, 404);
+  assert.strictEqual((await request('GET', `/files/${ encodeURIComponent(fid) }`)).status, 404);
+});
