@@ -7,7 +7,7 @@ Copies a string into the clipboard
 
 ## Slots
 * default: Replaces inner content
-* text:    Replaces the text
+* text:    Replaces the text (hidden with icon-only)
 -->
 
 <template lang="pug">
@@ -16,22 +16,21 @@ Copies a string into the clipboard
       icon.fa-fw(name="copy", v-if="state==='pristine'")
       icon.fa-fw(name="check", v-if="state==='copied'")
       icon.fa-fw(name="exclamation-triangle", v-if="state==='error'")
-      slot(name='text')  {{ $root.lang.clipboard }}
+      slot(name='text', v-if='!iconOnly')  {{ $root.lang.clipboard }}
 </template>
 
 
 <script type="text/babel">
-  import 'vue-awesome/icons/check';
-  import 'vue-awesome/icons/copy';
-  import 'vue-awesome/icons/exclamation-triangle';
 
   export default {
     name: "Clipboard",
+    emits: ['change'],
     props: {
       value: {
         type: String,
         required: true
-      }
+      },
+      iconOnly: Boolean
     },
     data() {
       return {
