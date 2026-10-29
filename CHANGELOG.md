@@ -5,6 +5,14 @@ et les versions suivent [SemVer](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+### Modifié
+- Nouvelle interface : aplat bleu Flyto en haut des pages publiques, grands titres (Bricolage Grotesque, Instrument
+  Serif), boutons arrondis, fond papier, mode sombre automatique ; Bootstrap 3 retiré
+- Page d'envoi : grande zone de dépôt (le coin du fichier s'envole au survol), réglages à côté, avancement en direct
+- Fin d'envoi présentée comme un billet : lien, QR code sur le talon, copie et envoi par e-mail
+- Page de téléchargement : taille totale et date d'expiration du transfert, téléchargement de chaque fichier en un clic
+- Mon compte et l'administration reprennent la même interface, utilisable sur téléphone
+
 ## [0.5.1] - 2026-10-29
 
 ### Corrigé

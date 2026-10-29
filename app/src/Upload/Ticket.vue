@@ -95,7 +95,6 @@
   }
   /* a departure ticket: the stub with the QR code is torn along the perforation */
   .ticket {
-    --notch: .7rem;
     display: grid;
     border-radius: var(--radius-lg);
     background: var(--surface);
@@ -174,42 +173,11 @@
     padding: 1.75rem 1.5rem;
     border-top: 2px dashed var(--line-strong);
   }
-  .ticket-stub::before, .ticket-stub::after {
-    content: "";
-    position: absolute;
-    top: calc(var(--notch) * -1 - 1px);
-    width: calc(var(--notch) * 2);
-    height: calc(var(--notch) * 2);
-    border-radius: 50%;
-    background: var(--bg);
-    clip-path: inset(50% 0 0 0);
-  }
-  .ticket-stub::before {
-    left: calc(var(--notch) * -1 - 1px);
-    clip-path: inset(0 0 0 50%);
-  }
-  .ticket-stub::after {
-    right: calc(var(--notch) * -1 - 1px);
-    clip-path: inset(0 50% 0 0);
-  }
   @media (min-width: 40rem) {
     .ticket-stub {
       width: 13.5rem;
       border-top: 0;
       border-left: 2px dashed var(--line-strong);
-    }
-    .ticket-stub::before, .ticket-stub::after {
-      left: calc(var(--notch) * -1 - 1px);
-      right: auto;
-    }
-    .ticket-stub::before {
-      top: calc(var(--notch) * -1 - 1px);
-      clip-path: inset(50% 0 0 0);
-    }
-    .ticket-stub::after {
-      top: auto;
-      bottom: calc(var(--notch) * -1 - 1px);
-      clip-path: inset(0 0 50% 0);
     }
   }
   .ticket-qr {

@@ -35,7 +35,7 @@
     border-radius: 50%;
     background: var(--ink);
     color: var(--sky);
-    font-size: 1.6rem;
+    font-size: 1.15rem;
   }
   .spin-badge svg {
     position: absolute;

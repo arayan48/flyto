@@ -36,6 +36,9 @@
   height: 2.1rem;
   width: auto;
 }
+.is-band .site-logo-file {
+  fill: #fff;
+}
 .site-nav {
   display: flex;
   align-items: center;
