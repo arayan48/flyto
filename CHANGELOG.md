@@ -5,6 +5,8 @@ et les versions suivent [SemVer](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+## [0.9.0] - 2026-10-29
+
 ### Ajouté
 - Onglet « Stockage et limites » dans les réglages de `/admin` : l'espace occupé par les transferts et la place
   libre sur le disque en haut, puis les limites rangées du serveur au fichier, avec ce que chacune compte.
@@ -249,7 +251,8 @@ Première version de Flyto, basée sur PsiTransfer.
 - Le projet devient Flyto : nom, image Docker, variables d'environnement `FLYTO_*`
   (l'ancien préfixe `PSITRANSFER_` est encore lu)
 
-[Non publié]: https://github.com/arayan48/flyto/compare/v0.8.1...HEAD
+[Non publié]: https://github.com/arayan48/flyto/compare/v0.9.0...HEAD
+[0.9.0]: https://github.com/arayan48/flyto/compare/v0.8.1...v0.9.0
 [0.8.1]: https://github.com/arayan48/flyto/compare/v0.8.0...v0.8.1
 [0.8.0]: https://github.com/arayan48/flyto/compare/v0.7.1...v0.8.0
 [0.7.1]: https://github.com/arayan48/flyto/compare/v0.7.0...v0.7.1
