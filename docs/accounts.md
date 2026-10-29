@@ -70,7 +70,15 @@ Sans `--password`, un mot de passe aléatoire est affiché. Chaque commande est 
   utilisateur (vide : celle du réglage, 0 : illimité). Les admins ne sont pas limités.
 * **Téléchargements** : bouton QR code, taille des aperçus, lien du bouton E-Mail, enregistrement des IP
   et du navigateur, anonymisation des IP (activée par défaut).
-* **E-mail** : serveur SMTP (ou `FLYTO_SMTP_URL`), expéditeur, e-mail de test.
+* **E-mail** : serveur SMTP (ou `FLYTO_SMTP_URL`), expéditeur, e-mail de test. Le menu « Service d'envoi » remplit
+  le serveur pour Resend, Brevo, Mailjet ou Gmail ; il reste l'utilisateur et le mot de passe :
+
+  | Service | Nom de domaine | Utilisateur / mot de passe | Gratuit |
+  |---|---|---|---|
+  | Resend | obligatoire | `resend` / clé API | 100 par jour |
+  | Brevo | conseillé | identifiant SMTP / clé SMTP | 300 par jour |
+  | Mailjet | non, une adresse d'expéditeur validée suffit | clé API / clé secrète | 200 par jour |
+  | Gmail | non | adresse Gmail / mot de passe d'application | environ 500 par jour |
 * **Conservation** : durée de conservation du journal et de l'historique des téléchargements.
 
 ## Sécurité

@@ -5,6 +5,11 @@ et les versions suivent [SemVer](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+### Ajouté
+- Choix du service d'envoi dans l'onglet E-mail de `/admin` : Resend, Brevo, Mailjet ou Gmail remplissent le serveur
+  SMTP, avec ce qu'il faut pour l'utilisateur, le mot de passe et le nom de domaine. Mailjet et Gmail marchent sans
+  nom de domaine.
+
 ## [0.7.1] - 2026-10-29
 
 ### Corrigé
