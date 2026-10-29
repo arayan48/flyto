@@ -5,6 +5,8 @@ et les versions suivent [SemVer](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+## [0.7.0] - 2026-10-29
+
 ### Ajouté
 - Pages intégrées `/legal` (mentions légales) et `/privacy` (confidentialité), liées en bas de chaque page. Elles se
   remplissent avec les réglages de l'instance (durées de conservation, adresses IP gardées ou non) ; l'éditeur,
@@ -222,7 +224,8 @@ Première version de Flyto, basée sur PsiTransfer.
 - Le projet devient Flyto : nom, image Docker, variables d'environnement `FLYTO_*`
   (l'ancien préfixe `PSITRANSFER_` est encore lu)
 
-[Non publié]: https://github.com/arayan48/flyto/compare/v0.6.0...HEAD
+[Non publié]: https://github.com/arayan48/flyto/compare/v0.7.0...HEAD
+[0.7.0]: https://github.com/arayan48/flyto/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/arayan48/flyto/compare/v0.5.1...v0.6.0
 [0.5.1]: https://github.com/arayan48/flyto/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/arayan48/flyto/compare/v0.4.1...v0.5.0
