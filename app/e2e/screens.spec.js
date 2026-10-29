@@ -1,13 +1,12 @@
 import { test, expect } from '@playwright/test';
 
 // screenshots of every screen in light and dark, kept as a CI artifact to review the interface
-const ADMIN = { email: 'admin@flyto.test', password: 'e2e-admin-password' };
 const DIR = 'screens';
 
 test.skip(!process.env.FLYTO_SCREENSHOTS, 'only when FLYTO_SCREENSHOTS is set');
 
 async function shoot(page, testInfo, name) {
-  await page.waitForLoadState('networkidle');
+  await page.waitForTimeout(400);
   await page.evaluate(() => document.fonts.ready);
   for (const colorScheme of ['light', 'dark']) {
     await page.emulateMedia({ colorScheme });
@@ -16,18 +15,14 @@ async function shoot(page, testInfo, name) {
   await page.emulateMedia({ colorScheme: 'light' });
 }
 
-test('screens', async ({ page }, testInfo) => {
-  test.setTimeout(120000);
+test('screens', async ({ page, browser }, testInfo) => {
+  test.setTimeout(180000);
 
-  await page.goto('./');
-  await shoot(page, testInfo, '01-upload-logged-out');
-  await page.goto('login');
-  await shoot(page, testInfo, '02-login');
-
-  await page.locator('#email').fill(ADMIN.email);
-  await page.locator('#password').fill(ADMIN.password);
-  await page.locator('form button[type=submit]').click();
-  await page.waitForURL(/\/admin/);
+  const visitor = await browser.newPage({ storageState: { cookies: [], origins: [] }, viewport: page.viewportSize() });
+  await visitor.goto('./');
+  await shoot(visitor, testInfo, '01-upload-logged-out');
+  await visitor.goto('login');
+  await shoot(visitor, testInfo, '02-login');
 
   await page.goto('./');
   await expect(page.locator('.dropzone')).toBeVisible();
@@ -47,27 +42,21 @@ test('screens', async ({ page }, testInfo) => {
   await shoot(page, testInfo, '05-ticket');
   const url = await page.locator('.share-link a').getAttribute('href');
 
-  await page.context().clearCookies();
-  await page.goto(url);
-  await expect(page.locator('#downloadPassword')).toBeVisible();
-  await shoot(page, testInfo, '06-download-locked');
-  await page.locator('#downloadPassword').fill('soleil-42');
-  await page.locator('button.decrypt').click();
-  await expect(page.locator('.manifest-row').first()).toBeVisible();
-  await shoot(page, testInfo, '07-download');
-  await page.locator('.manifest-row', { hasText: 'notes.txt' }).getByTitle('Preview').click();
-  await expect(page.locator('.preview-modal pre')).toBeVisible();
-  await shoot(page, testInfo, '08-preview');
-  await page.keyboard.press('Escape');
+  await visitor.goto(url);
+  await expect(visitor.locator('#downloadPassword')).toBeVisible();
+  await shoot(visitor, testInfo, '06-download-locked');
+  await visitor.locator('#downloadPassword').fill('soleil-42');
+  await visitor.locator('button.decrypt').click();
+  await expect(visitor.locator('.manifest-row').first()).toBeVisible();
+  await shoot(visitor, testInfo, '07-download');
+  await visitor.locator('.manifest-row', { hasText: 'notes.txt' }).getByTitle('Preview').click();
+  await expect(visitor.locator('.preview-modal pre')).toBeVisible();
+  await shoot(visitor, testInfo, '08-preview');
+  await visitor.keyboard.press('Escape');
 
-  await page.goto('nope-nope-nope');
-  await shoot(page, testInfo, '09-download-missing');
+  await visitor.goto('nope-nope-nope');
+  await shoot(visitor, testInfo, '09-download-missing');
 
-  await page.goto('login');
-  await page.locator('#email').fill(ADMIN.email);
-  await page.locator('#password').fill(ADMIN.password);
-  await page.locator('form button[type=submit]').click();
-  await page.waitForURL(/\/admin/);
   for (const tab of ['dashboard', 'users', 'transfers', 'downloads', 'invites', 'audit', 'settings', 'system']) {
     await page.goto(`admin#/${ tab }`);
     await page.locator('.admin-tabs a[aria-current="page"]').waitFor();

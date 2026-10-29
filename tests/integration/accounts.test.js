@@ -133,7 +133,7 @@ test('pages show the running version and the brand logo', async () => {
     const res = await client.get(page);
     assert.strictEqual(res.status, 200, page);
     assert.ok(res.data.includes(`Flyto v${ version }`), page);
-    assert.ok(res.data.includes('assets/brand/flyto-lockup.svg'), page);
+    assert.ok(res.data.includes('class="site-logo"'), page);
   }
 });
 

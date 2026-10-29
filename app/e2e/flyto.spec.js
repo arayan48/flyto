@@ -1,7 +1,7 @@
 import { test as base, expect } from '@playwright/test';
 import fs from 'node:fs';
 
-const ADMIN = { email: 'admin@flyto.test', password: 'e2e-admin-password' };
+const ADMIN = { email: 'admin@flyto.test' };
 
 // any uncaught error in the page fails the test, the front must run clean
 const test = base.extend({
@@ -17,14 +17,6 @@ const test = base.extend({
   },
 });
 
-async function login(page) {
-  await page.goto('login');
-  await page.locator('#email').fill(ADMIN.email);
-  await page.locator('#password').fill(ADMIN.password);
-  await page.locator('form button[type=submit]').click();
-  await page.waitForURL(/\/admin/);
-}
-
 async function uploadText(page, name, text) {
   await page.goto('./');
   await page.locator('#fileInput').setInputFiles({ name, mimeType: 'text/plain', buffer: Buffer.from(text) });
@@ -35,13 +27,15 @@ async function uploadText(page, name, text) {
   return link.getAttribute('href');
 }
 
-test('a visitor is asked to log in before uploading', async ({ page }) => {
+test('a visitor is asked to log in before uploading', async ({ browser }) => {
+  const context = await browser.newContext({ storageState: { cookies: [], origins: [] } });
+  const page = await context.newPage();
   await page.goto('./');
   await expect(page.locator('.upload-login a[href="login"]')).toBeVisible();
+  await context.close();
 });
 
 test('upload, open the link, preview and download', async ({ page }) => {
-  await login(page);
   const name = `hello-${ Date.now() }.txt`;
   const url = await uploadText(page, name, 'hello from flyto');
 
@@ -65,7 +59,6 @@ test('upload, open the link, preview and download', async ({ page }) => {
 });
 
 test('a password protects the transfer', async ({ page }) => {
-  await login(page);
   await page.goto('./');
   await page.locator('#password').fill('s3cret-pass');
   const name = `locked-${ Date.now() }.txt`;
@@ -76,6 +69,7 @@ test('a password protects the transfer', async ({ page }) => {
   await expect(link).toBeVisible({ timeout: 20000 });
   const url = await link.getAttribute('href');
 
+  await page.context().clearCookies();
   await page.goto(url);
   const input = page.locator('input[type=password]');
   await input.fill('wrong');
@@ -87,7 +81,6 @@ test('a password protects the transfer', async ({ page }) => {
 });
 
 test('every admin tab renders', async ({ page }) => {
-  await login(page);
   for (const tab of ['users', 'transfers', 'downloads', 'invites', 'audit', 'settings', 'system', 'dashboard']) {
     await page.locator(`.admin-tabs a[href="admin#/${ tab }"]`).click();
     await expect(page).toHaveURL(new RegExp(`/admin#/${ tab }$`));
@@ -104,7 +97,6 @@ test('every admin tab renders', async ({ page }) => {
 });
 
 test('my account lists the transfers and every tab renders', async ({ page }) => {
-  await login(page);
   const name = `mine-${ Date.now() }.txt`;
   await uploadText(page, name, 'mine');
 
