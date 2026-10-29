@@ -1,18 +1,19 @@
 <template lang="pug">
-  .admin-pager.clearfix(v-if="total > perPage")
-    span.text-muted.small {{ $t('admin.pager', { from: (page - 1) * perPage + 1, to: Math.min(total, page * perPage), total }) }}
-    ul.pagination.pagination-sm.pull-right(style="margin: 0")
-      li(:class="{disabled: page <= 1}")
-        a(href="#", @click.prevent="go(page - 1)") ‹
-      li(v-for="p in pages", :key="p", :class="{active: p === page}")
-        a(href="#", @click.prevent="go(p)") {{ p }}
-      li(:class="{disabled: page >= last}")
-        a(href="#", @click.prevent="go(page + 1)") ›
+  nav.pager(v-if="total > perPage", :aria-label="$t('ui.pages')")
+    span.text-sm.faint.tnum {{ $t('admin.pager', { from: (page - 1) * perPage + 1, to: Math.min(total, page * perPage), total }) }}
+    .flex.gap-1
+      button.btn.btn-sm.btn-icon(type="button", :disabled="page <= 1", :aria-label="$t('ui.preview.previous')", @click="go(page - 1)")
+        icon(name="arrow-left")
+      button.btn.btn-sm.tnum(v-for="p in pages", :key="p", type="button", :class="{ 'btn-primary': p === page }",
+        :aria-current="p === page ? 'page' : null", @click="go(p)") {{ p }}
+      button.btn.btn-sm.btn-icon(type="button", :disabled="page >= last", :aria-label="$t('ui.preview.next')", @click="go(page + 1)")
+        icon(name="arrow-right")
 </template>
 
 <script>
   export default {
     name: 'Pager',
+    emits: ['change'],
     props: { page: Number, perPage: Number, total: Number },
     computed: {
       last() {
@@ -33,3 +34,14 @@
     },
   };
 </script>
+
+<style>
+  .pager {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: .75rem;
+    margin-top: 1rem;
+  }
+</style>

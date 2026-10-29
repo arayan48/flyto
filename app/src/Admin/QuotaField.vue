@@ -1,16 +1,16 @@
 <template lang="pug">
-  .form-group
-    label {{ label }}
-    .row
-      .col-xs-5
-        select.form-control(:value="mode", @change="setMode($event.target.value)")
-          option(value="default") {{ $t('admin.quota.default') }}
-          option(value="unlimited") {{ $t('admin.quota.unlimited') }}
-          option(value="custom") {{ $t('admin.quota.custom') }}
-      .col-xs-7(v-if="mode === 'custom'")
+  fieldset.field
+    legend.label.mb-1 {{ label }}
+    .quota-row
+      select.select(:value="mode", :aria-label="label", @change="setMode($event.target.value)")
+        option(value="default") {{ $t('admin.quota.default') }}
+        option(value="unlimited") {{ $t('admin.quota.unlimited') }}
+        option(value="custom") {{ $t('admin.quota.custom') }}
+      template(v-if="mode === 'custom'")
         byte-input(v-if="bytes", :model-value="modelValue", @update:model-value="v => $emit('update:modelValue', v || null)")
-        input.form-control(v-else, type="number", min="1", :value="modelValue", @input="$emit('update:modelValue', +$event.target.value || null)")
-      .col-xs-7.form-control-static.text-muted(v-else-if="mode === 'default'") {{ defaultLabel }}
+        input.input(v-else, type="number", min="1", :value="modelValue", :aria-label="label",
+          @input="$emit('update:modelValue', +$event.target.value || null)")
+      span.text-sm.faint.self-center(v-else-if="mode === 'default'") {{ defaultLabel }}
 </template>
 
 <script>
@@ -46,3 +46,15 @@
     },
   };
 </script>
+
+<style>
+  .quota-row {
+    display: grid;
+    gap: .5rem;
+  }
+  @media (min-width: 40rem) {
+    .quota-row {
+      grid-template-columns: 11rem minmax(0, 1fr);
+    }
+  }
+</style>

@@ -1,39 +1,40 @@
 <template lang="pug">
-  table.table.table-hover.admin-table
-    thead
-      tr
-        th(v-if="selectable", style="width: 30px")
-          input(type="checkbox", :checked="allSelected", @change="toggleAll($event.target.checked)")
-        th {{ $t('admin.transfers.transfer') }}
-        th(v-if="showOwner") {{ $t('admin.transfers.owner') }}
-        th {{ $t('admin.transfers.created') }}
-        th {{ $t('admin.transfers.expires') }}
-        th.text-right {{ $t('admin.transfers.downloads') }}
-        th.text-right {{ $t('admin.transfers.size') }}
-    tbody
-      tr(v-if="!items.length")
-        td.text-muted(colspan="7") {{ $t('admin.empty') }}
-      tr.clickable(v-for="t in items", :key="t.sid", @click="open(t)", :class="{danger: t.suspendedAt}")
-        td(v-if="selectable", @click.stop="")
-          input(type="checkbox", :checked="selected.includes(t.sid)", @change="toggle(t.sid, $event.target.checked)")
-        td
-          span.mono {{ t.sid }}
-          |
-          small.text-muted {{ t.files }} {{ $t('admin.users.filesShort') }}
-          br
-          span.label.label-default(v-if="t.password") {{ $t('admin.transfers.status.protected') }}
-          span.label.label-info(v-if="t.oneTime") {{ $t('admin.transfers.status.oneTime') }}
-          span.label.label-warning(v-if="t.partial") {{ $t('admin.transfers.status.partial') }}
-          span.label.label-danger(v-if="t.suspendedAt", :title="t.suspendedReason") {{ $t('admin.transfers.status.suspended') }}
-        td(v-if="showOwner")
-          a(v-if="t.ownerId", :href="'admin#/users/' + t.ownerId", @click.stop="") {{ t.ownerEmail || '#' + t.ownerId }}
-          span.text-muted(v-else) {{ $t('admin.transfers.anonymous') }}
-        td {{ $date(t.createdAt) }}
-        td
-          template(v-if="t.oneTime") {{ $t('admin.transfers.status.oneTime') }}
-          template(v-else) {{ $date(t.expiresAt) }}
-        td.text-right {{ t.downloads }}
-        td.text-right {{ $size(t.size) }}
+  .card.table-wrap
+    table.table.admin-table
+      thead
+        tr
+          th(v-if="selectable", style="width: 30px")
+            input(type="checkbox", :checked="allSelected", @change="toggleAll($event.target.checked)")
+          th {{ $t('admin.transfers.transfer') }}
+          th(v-if="showOwner") {{ $t('admin.transfers.owner') }}
+          th {{ $t('admin.transfers.created') }}
+          th {{ $t('admin.transfers.expires') }}
+          th.text-right {{ $t('admin.transfers.downloads') }}
+          th.text-right {{ $t('admin.transfers.size') }}
+      tbody
+        tr(v-if="!items.length")
+          td.muted(colspan="7") {{ $t('admin.empty') }}
+        tr.clickable(v-for="t in items", :key="t.sid", @click="open(t)", :class="{ 'is-suspended': t.suspendedAt }")
+          td(v-if="selectable", @click.stop="")
+            input(type="checkbox", :checked="selected.includes(t.sid)", @change="toggle(t.sid, $event.target.checked)")
+          td
+            span.mono {{ t.sid }}
+            |
+            small.muted {{ t.files }} {{ $t('admin.users.filesShort') }}
+            br
+            span.badge(v-if="t.password") {{ $t('admin.transfers.status.protected') }}
+            span.badge.badge-accent(v-if="t.oneTime") {{ $t('admin.transfers.status.oneTime') }}
+            span.badge.badge-warning(v-if="t.partial") {{ $t('admin.transfers.status.partial') }}
+            span.badge.badge-danger(v-if="t.suspendedAt", :title="t.suspendedReason") {{ $t('admin.transfers.status.suspended') }}
+          td(v-if="showOwner")
+            a(v-if="t.ownerId", :href="'admin#/users/' + t.ownerId", @click.stop="") {{ t.ownerEmail || '#' + t.ownerId }}
+            span.muted(v-else) {{ $t('admin.transfers.anonymous') }}
+          td {{ $date(t.createdAt) }}
+          td
+            template(v-if="t.oneTime") {{ $t('admin.transfers.status.oneTime') }}
+            template(v-else) {{ $date(t.expiresAt) }}
+          td.text-right {{ t.downloads }}
+          td.text-right {{ $size(t.size) }}
 </template>
 
 <script>

@@ -2,7 +2,7 @@
   figure.bar-chart
     figcaption.bar-chart-title
       strong {{ title }}
-      span.text-muted(v-if="subtitle")  · {{ subtitle }}
+      span.muted(v-if="subtitle")  · {{ subtitle }}
     .bar-chart-plot(@mouseleave="hover = null")
       svg(:viewBox="`0 0 ${width} ${height}`", :width="width", :height="height", role="img", :aria-label="title")
         g(v-for="tick in ticks", :key="'t' + tick")
@@ -17,7 +17,7 @@
       .bar-chart-tip(v-if="hover !== null", :style="tipStyle")
         div {{ labels[hover] }}
         strong {{ format(values[hover], true) }}
-        div.text-muted(v-if="extra && extra[hover]") {{ extra[hover] }}
+        div.muted(v-if="extra && extra[hover]") {{ extra[hover] }}
     table.sr-only
       caption {{ title }}
       tr(v-for="(v, i) in values", :key="'r' + i")
@@ -112,33 +112,40 @@
 
 <style>
   .bar-chart {
-    margin: 0 0 20px;
+    margin: 0;
   }
   .bar-chart-title {
-    margin-bottom: 6px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: .25rem;
+    margin-bottom: .75rem;
+    font-size: var(--text-sm);
   }
   .bar-chart-plot {
     position: relative;
   }
   .bar-chart svg {
     display: block;
+    max-width: 100%;
+    height: auto;
     overflow: visible;
   }
   .bar-chart .grid {
-    stroke: #e8ebf1;
+    stroke: var(--line);
     stroke-width: 1;
     shape-rendering: crispEdges;
   }
   .bar-chart .axis {
-    fill: #5b6475;
+    fill: var(--ink-3);
+    font-family: var(--font-sans);
     font-size: 11px;
   }
   .bar-chart .bar {
-    fill: #2F6BFF;
+    fill: var(--accent);
     transition: opacity .1s;
   }
   .bar-chart .bar.dim {
-    opacity: .45;
+    opacity: .4;
   }
   .bar-chart .hit {
     fill: transparent;
@@ -147,14 +154,14 @@
     position: absolute;
     top: 0;
     transform: translateX(-50%);
-    background: #fff;
-    border: 1px solid #e3e7ef;
-    border-radius: 4px;
-    padding: 4px 8px;
-    font-size: 12px;
+    padding: .3rem .55rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    box-shadow: var(--shadow-pop);
+    font-size: var(--text-xs);
     line-height: 1.4;
-    pointer-events: none;
     white-space: nowrap;
-    box-shadow: 0 2px 6px rgba(14, 20, 32, .08);
+    pointer-events: none;
   }
 </style>

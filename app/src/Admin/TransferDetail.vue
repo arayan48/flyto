@@ -1,107 +1,113 @@
 <template lang="pug">
   div
-    p
-      a(href="admin#/transfers") ‹ {{ $t('admin.transfers.back') }}
+    a.back-link(href="admin#/transfers")
+      icon(name="arrow-left")
+      | {{ $t('admin.transfers.back') }}
     .alert.alert-danger(v-if="error") {{ error }}
     .alert.alert-success(v-if="message") {{ message }}
     template(v-if="t")
-      h3
+      h1.text-xl
         span.mono {{ t.sid }}
         |
         small {{ t.files }} {{ $t('admin.users.filesShort') }} · {{ $size(t.size) }}
       .alert.alert-danger(v-if="t.suspendedAt")
         strong {{ $t('admin.transfers.suspendedOn', { date: $date(t.suspendedAt) }) }}
         template(v-if="t.suspendedReason")  {{ t.suspendedReason }}
-      .row
-        .col-md-7
-          table.table.table-condensed.kv-table
-            tbody
-              tr
-                th {{ $t('admin.transfers.link') }}
-                td
-                  a.break-all(:href="t.url", target="_blank", rel="noopener") {{ t.url }}
-                  |
-                  clipboard.btn.btn-xs.btn-default(:value="t.url")
-              tr
-                th {{ $t('admin.transfers.owner') }}
-                td
-                  a(v-if="t.owner", :href="'admin#/users/' + t.owner.id") {{ t.owner.name || t.owner.email }}
-                  span.text-muted(v-else) {{ $t('admin.transfers.anonymous') }}
-              tr
-                th {{ $t('admin.transfers.created') }}
-                td {{ $date(t.createdAt) }}
-              tr
-                th {{ $t('admin.transfers.expires') }}
-                td
-                  template(v-if="t.oneTime") {{ $t('admin.transfers.status.oneTime') }} ·
-                  | {{ $date(t.expiresAt) }}
-              tr
-                th {{ $t('admin.transfers.downloads') }}
-                td {{ t.downloads }}
-                  span.text-muted(v-if="t.lastDownload")  · {{ $t('admin.transfers.last') }} {{ $date(t.lastDownload) }}
-              tr
-                th {{ $t('admin.transfers.protection') }}
-                td
-                  span.label.label-default(v-if="t.password") {{ $t('admin.transfers.status.protected') }}
-                  span.label.label-info(v-if="t.locked") {{ $t('admin.transfers.locked') }}
-                  span.label.label-warning(v-if="t.partial") {{ $t('admin.transfers.status.partial') }}
-        .col-md-5
+      .grid-75
+        div
+          .card.kv-card
+            table.kv-table
+              tbody
+                tr
+                  th {{ $t('admin.transfers.link') }}
+                  td
+                    a.break-all(:href="t.url", target="_blank", rel="noopener") {{ t.url }}
+                    |
+                    clipboard.btn.btn-sm(:value="t.url")
+                tr
+                  th {{ $t('admin.transfers.owner') }}
+                  td
+                    a(v-if="t.owner", :href="'admin#/users/' + t.owner.id") {{ t.owner.name || t.owner.email }}
+                    span.muted(v-else) {{ $t('admin.transfers.anonymous') }}
+                tr
+                  th {{ $t('admin.transfers.created') }}
+                  td {{ $date(t.createdAt) }}
+                tr
+                  th {{ $t('admin.transfers.expires') }}
+                  td
+                    template(v-if="t.oneTime") {{ $t('admin.transfers.status.oneTime') }} ·
+                    | {{ $date(t.expiresAt) }}
+                tr
+                  th {{ $t('admin.transfers.downloads') }}
+                  td {{ t.downloads }}
+                    span.muted(v-if="t.lastDownload")  · {{ $t('admin.transfers.last') }} {{ $date(t.lastDownload) }}
+                tr
+                  th {{ $t('admin.transfers.protection') }}
+                  td
+                    span.badge(v-if="t.password") {{ $t('admin.transfers.status.protected') }}
+                    span.badge.badge-accent(v-if="t.locked") {{ $t('admin.transfers.locked') }}
+                    span.badge.badge-warning(v-if="t.partial") {{ $t('admin.transfers.status.partial') }}
+        div
           .admin-section
-            h4 {{ $t('admin.users.actions') }}
-            form.form-inline(@submit.prevent="setExpiration", style="margin-bottom: 10px")
-              input.form-control.input-sm(type="datetime-local", v-model="expiresAt", required)
+            h2.section-title {{ $t('admin.users.actions') }}
+            form.inline-form.mb-2(@submit.prevent="setExpiration")
+              input.input(type="datetime-local", v-model="expiresAt", required)
               |
-              button.btn.btn-sm.btn-default(type="submit") {{ $t('admin.transfers.setExpiration') }}
-            form.form-inline(@submit.prevent="setOwner", style="margin-bottom: 10px")
-              input.form-control.input-sm(type="email", v-model.trim="ownerEmail", :placeholder="$t('admin.transfers.ownerEmail')")
+              button.btn.btn-sm(type="submit") {{ $t('admin.transfers.setExpiration') }}
+            form.inline-form.mb-4(@submit.prevent="setOwner")
+              input.input(type="email", v-model.trim="ownerEmail", :placeholder="$t('admin.transfers.ownerEmail')")
               |
-              button.btn.btn-sm.btn-default(type="submit") {{ $t('admin.transfers.changeOwner') }}
-            button.btn.btn-default.btn-block(v-if="t.suspendedAt", @click="unsuspend") {{ $t('admin.transfers.unsuspend') }}
-            button.btn.btn-warning.btn-block(v-else, @click="suspend") {{ $t('admin.transfers.suspend') }}
-            button.btn.btn-danger.btn-block(@click="remove") {{ $t('admin.transfers.delete') }}
+              button.btn.btn-sm(type="submit") {{ $t('admin.transfers.changeOwner') }}
+            button.btn.w-full(v-if="t.suspendedAt", @click="unsuspend") {{ $t('admin.transfers.unsuspend') }}
+            button.btn.w-full(v-else, @click="suspend") {{ $t('admin.transfers.suspend') }}
+            button.btn.btn-danger.w-full(@click="remove") {{ $t('admin.transfers.delete') }}
 
       .admin-section
-        h4 {{ $t('admin.transfers.filesTitle') }}
-        table.table.table-condensed.admin-table
-          thead
-            tr
-              th {{ $t('admin.transfers.file') }}
-              th {{ $t('admin.transfers.created') }}
-              th {{ $t('admin.transfers.expires') }}
-              th.text-right {{ $t('admin.transfers.downloads') }}
-              th.text-right {{ $t('admin.transfers.size') }}
-              th
-          tbody
-            tr(v-for="f in t.items", :key="f.key")
-              td
-                | {{ f.name }}
-                br
-                small.text-muted(v-if="f.comment") {{ f.comment }}
-                small.text-muted(v-if="f.type")  {{ f.type }}
-                span.label.label-warning(v-if="f.partial")  {{ $t('admin.transfers.received', { received: $size(f.received), total: $size(f.size) }) }}
-              td {{ $date(f.createdAt) }}
-              td {{ $date(f.expiresAt) }}
-              td.text-right {{ f.downloads }}
-              td.text-right {{ $size(f.size) }}
-              td.table-actions
-                a.btn.btn-xs.btn-default(v-if="!f.partial && f.retention !== 'one-time'", :href="'files/' + encodeURIComponent(t.sid + '++' + f.key)",
-                  :title="$t('admin.transfers.download')") ↓
-                button.btn.btn-xs.btn-danger(@click="removeFile(f)", :title="$t('admin.transfers.deleteFile')") ✕
-        p.text-muted.small {{ $t('admin.transfers.downloadNote') }}
-
-      .row
-        .col-md-7.admin-section
-          h4 {{ $t('admin.transfers.log') }}
-          p.text-muted(v-if="!t.log.length") {{ $t('admin.empty') }}
-          table.table.table-condensed(v-else)
+        h2.section-title {{ $t('admin.transfers.filesTitle') }}
+        .card.table-wrap
+          table.table.admin-table
+            thead
+              tr
+                th {{ $t('admin.transfers.file') }}
+                th {{ $t('admin.transfers.created') }}
+                th {{ $t('admin.transfers.expires') }}
+                th.text-right {{ $t('admin.transfers.downloads') }}
+                th.text-right {{ $t('admin.transfers.size') }}
+                th
             tbody
-              tr(v-for="(d, i) in t.log", :key="i")
-                td {{ $date(d.at) }}
-                td {{ d.name }}
-                td {{ d.ip || '–' }}
-                td.small.text-muted {{ agent(d.userAgent) }}
-        .col-md-5.admin-section
-          h4 {{ $t('admin.users.history') }}
+              tr(v-for="f in t.items", :key="f.key")
+                td
+                  | {{ f.name }}
+                  br
+                  small.muted(v-if="f.comment") {{ f.comment }}
+                  small.muted(v-if="f.type")  {{ f.type }}
+                  span.badge.badge-warning(v-if="f.partial")  {{ $t('admin.transfers.received', { received: $size(f.received), total: $size(f.size) }) }}
+                td {{ $date(f.createdAt) }}
+                td {{ $date(f.expiresAt) }}
+                td.text-right {{ f.downloads }}
+                td.text-right {{ $size(f.size) }}
+                td.actions
+                  a.btn.btn-sm(v-if="!f.partial && f.retention !== 'one-time'", :href="'files/' + encodeURIComponent(t.sid + '++' + f.key)",
+                    :title="$t('admin.transfers.download')", :aria-label="$t('admin.transfers.download')")
+                  icon(name="download")
+                  button.btn.btn-sm.btn-icon.btn-ghost.btn-danger(type="button", @click="removeFile(f)", :title="$t('admin.transfers.deleteFile')", :aria-label="$t('admin.transfers.deleteFile')")
+                  icon(name="times")
+        p.muted.text-sm {{ $t('admin.transfers.downloadNote') }}
+
+      .grid-75
+        .admin-section
+          h2.section-title {{ $t('admin.transfers.log') }}
+          p.muted(v-if="!t.log.length") {{ $t('admin.empty') }}
+          .card.table-wrap(v-else)
+            table.table
+              tbody
+                tr(v-for="(d, i) in t.log", :key="i")
+                  td {{ $date(d.at) }}
+                  td {{ d.name }}
+                  td {{ d.ip || '–' }}
+                  td.text-sm.muted {{ agent(d.userAgent) }}
+        .admin-section
+          h2.section-title {{ $t('admin.users.history') }}
           audit-table(:items="t.history")
 </template>
 

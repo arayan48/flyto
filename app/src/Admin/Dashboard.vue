@@ -2,89 +2,90 @@
   div
     .alert.alert-danger(v-if="error") {{ error }}
     template(v-if="stats")
-      .alert.alert-warning(v-for="w in warnings", :key="w.key")
-        | {{ w.text }}
-        |
-        a(v-if="w.href", :href="w.href") {{ w.link }}
-        button.btn.btn-xs.btn-warning(v-if="w.action", @click="w.action", style="margin-left: 8px") {{ w.link }}
+      .alert.alert-warning.mb-3(v-for="w in warnings", :key="w.key")
+        icon(name="exclamation-triangle")
+        div
+          | {{ w.text }}
+          |
+          a(v-if="w.href", :href="w.href") {{ w.link }}
+          button.btn.btn-sm.ml-2(v-if="w.action", type="button", @click="w.action") {{ w.link }}
 
       .admin-toolbar
-        span.text-muted.small {{ $t('admin.dashboard.generated', { date: $date(stats.generatedAt) }) }}
-        select.form-control.input-sm(v-model.number="days", @change="load")
+        span.muted.text-sm {{ $t('admin.dashboard.generated', { date: $date(stats.generatedAt) }) }}
+        select.select(v-model.number="days", @change="load")
           option(:value="7") {{ $t('admin.dashboard.days', { count: 7 }) }}
           option(:value="30") {{ $t('admin.dashboard.days', { count: 30 }) }}
           option(:value="90") {{ $t('admin.dashboard.days', { count: 90 }) }}
           option(:value="365") {{ $t('admin.dashboard.days', { count: 365 }) }}
-        button.btn.btn-sm.btn-default(@click="load")
+        button.btn.btn-icon(type="button", @click="load", :title="$t('ui.refresh')", :aria-label="$t('ui.refresh')")
           icon(name="sync-alt")
 
-      .row
-        .col-sm-6.col-md-3(v-for="tile in tiles", :key="tile.label")
-          a.stat-tile(:href="tile.href", style="display:block; color: inherit; text-decoration: none")
-            .stat-label {{ tile.label }}
-            .stat-value {{ tile.value }}
-            .stat-sub {{ tile.sub }}
-            .progress.usage-bar(v-if="tile.percent !== undefined")
-              .progress-bar(:class="{'progress-bar-danger': tile.percent > 90, 'progress-bar-warning': tile.percent > 75 && tile.percent <= 90}",
-                :style="{width: tile.percent + '%'}")
+      .summary.card.mb-6
+        a.summary-cell(v-for="tile in tiles", :key="tile.label", :href="tile.href")
+          span.eyebrow {{ tile.label }}
+          span.summary-value.tnum {{ tile.value }}
+          span.text-xs.faint(v-if="tile.sub") {{ tile.sub }}
+          .progress.mt-2(v-if="tile.percent !== undefined", :class="{ 'is-high': tile.percent > 90 }")
+            span(:style="{ width: tile.percent + '%' }")
 
-      .row
-        .col-md-6
+      .grid-2.charts
+        .card.card-body
           bar-chart(:title="$t('admin.dashboard.uploadsChart')", :labels="stats.activity.days",
             :values="stats.activity.uploads.map(d => d.count)",
             :extra="stats.activity.uploads.map(d => sizeLabel(d.bytes))")
-        .col-md-6
+        .card.card-body
           bar-chart(:title="$t('admin.dashboard.volumeChart')", :labels="stats.activity.days",
             :values="stats.activity.uploads.map(d => d.bytes)", :formatter="sizeFormatter")
-        .col-md-6
+        .card.card-body
           bar-chart(:title="$t('admin.dashboard.downloadsChart')", :labels="stats.activity.days",
             :values="stats.activity.downloads.map(d => d.count)",
             :extra="stats.activity.downloads.map(d => sizeLabel(d.bytes))")
-        .col-md-6
+        .card.card-body
           bar-chart(:title="$t('admin.dashboard.signupsChart')", :labels="stats.activity.days",
             :values="stats.activity.signups")
 
-      .row
-        .col-md-6.admin-section
-          h4 {{ $t('admin.dashboard.transfers') }}
-          table.table.table-condensed.kv-table
-            tbody
-              tr(v-for="row in transferRows", :key="row.key")
-                th {{ row.label }}
-                td.text-right
-                  a(:href="'admin#/transfers?status=' + row.key", v-if="row.link") {{ row.value }}
-                  template(v-else) {{ row.value }}
-          h4 {{ $t('admin.dashboard.totals') }}
-          table.table.table-condensed.kv-table
-            tbody
-              tr
-                th {{ $t('admin.dashboard.allUploads') }}
-                td.text-right {{ stats.totals.uploads }} · {{ $size(stats.totals.uploadBytes) }}
-              tr
-                th {{ $t('admin.dashboard.allDownloads') }}
-                td.text-right {{ stats.totals.downloads }} · {{ $size(stats.totals.downloadBytes) }}
-        .col-md-6.admin-section
-          h4 {{ $t('admin.dashboard.topUsers') }}
-          p.text-muted(v-if="!stats.topUsers.length") {{ $t('admin.empty') }}
-          table.table.table-condensed(v-else)
-            tbody
-              tr(v-for="u in stats.topUsers", :key="u.id")
-                td
-                  a(:href="'admin#/users/' + u.id") {{ u.name || u.email }}
-                  br
-                  small.text-muted(v-if="u.name") {{ u.email }}
-                td.text-right {{ u.transfers }} {{ $t('admin.dashboard.transfersShort') }}
-                td.text-right {{ $size(u.storage) }}
+      .grid-2
+        .admin-section
+          h2.section-title {{ $t('admin.dashboard.transfers') }}
+          .card.kv-card
+            table.kv-table
+              tbody
+                tr(v-for="row in transferRows", :key="row.key")
+                  th {{ row.label }}
+                  td.text-right
+                    a(:href="'admin#/transfers?status=' + row.key", v-if="row.link") {{ row.value }}
+                    template(v-else) {{ row.value }}
+          h2.section-title.mt-6 {{ $t('admin.dashboard.totals') }}
+          .card.kv-card
+            table.kv-table
+              tbody
+                tr
+                  th {{ $t('admin.dashboard.allUploads') }}
+                  td.text-right {{ stats.totals.uploads }} · {{ $size(stats.totals.uploadBytes) }}
+                tr
+                  th {{ $t('admin.dashboard.allDownloads') }}
+                  td.text-right {{ stats.totals.downloads }} · {{ $size(stats.totals.downloadBytes) }}
+        .admin-section
+          h2.section-title {{ $t('admin.dashboard.topUsers') }}
+          p.muted(v-if="!stats.topUsers.length") {{ $t('admin.empty') }}
+          .card.table-wrap(v-else)
+            table.table
+              tbody
+                tr(v-for="u in stats.topUsers", :key="u.id")
+                  td
+                    a(:href="'admin#/users/' + u.id") {{ u.name || u.email }}
+                    br
+                    small.muted(v-if="u.name") {{ u.email }}
+                  td.text-right {{ u.transfers }} {{ $t('admin.dashboard.transfersShort') }}
+                  td.text-right {{ $size(u.storage) }}
 
       .admin-section
-        h4
-          | {{ $t('admin.dashboard.recent') }}
-          |
-          small
-            a(href="admin#/audit") {{ $t('admin.dashboard.seeAll') }}
+        .flex.items-baseline.justify-between.gap-3
+          h2.section-title {{ $t('admin.dashboard.recent') }}
+          a.text-sm(href="admin#/audit") {{ $t('admin.dashboard.seeAll') }}
         audit-table(:items="stats.recent")
-    p.text-muted(v-else-if="!error")
-      icon(name="spinner", spin="")
+    p.muted(v-else-if="!error")
+      icon(name="spinner", spin)
 </template>
 
 <script>
@@ -185,3 +186,48 @@
     },
   };
 </script>
+
+<style>
+  .summary {
+    display: grid;
+  }
+  @media (min-width: 40rem) {
+    .summary {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 68rem) {
+    .summary {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+  .summary-cell {
+    display: grid;
+    align-content: start;
+    gap: .15rem;
+    padding: 1rem 1.1rem;
+    border-bottom: 1px solid var(--line);
+    color: inherit;
+    text-decoration: none;
+  }
+  .summary-cell:hover {
+    background: var(--surface-2);
+    color: inherit;
+  }
+  @media (min-width: 68rem) {
+    .summary-cell {
+      border-bottom: 0;
+    }
+    .summary-cell + .summary-cell {
+      border-left: 1px solid var(--line);
+    }
+  }
+  .summary-value {
+    font-size: var(--text-xl);
+    font-weight: 650;
+    letter-spacing: -0.01em;
+  }
+  .charts {
+    margin-bottom: .5rem;
+  }
+</style>

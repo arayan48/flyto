@@ -1,52 +1,49 @@
 <template lang="pug">
   div(v-if="schema")
-    .row
-      .col-sm-3
-        ul.nav.nav-pills.nav-stacked
-          li(v-for="g in groupNames", :class="{active: group === g}")
-            a(href="#", @click.prevent="group = g") {{ $t('admin.settings.groups.' + g) }}
-      .col-sm-9
-        .alert.alert-danger(v-if="error") {{ error }}
-        .alert.alert-success(v-if="message") {{ message }}
-        form(@submit.prevent="save")
-          .form-group(v-for="key in groups[group]", :key="key", :class="{'has-warning': dirty(key)}")
+    .grid-label
+      nav.settings-groups
+        button(v-for="g in groupNames", :key="g", type="button", :aria-current="group === g ? 'true' : null",
+          @click="group = g") {{ $t('admin.settings.groups.' + g) }}
+      div
+        .alert.alert-danger.mb-4(v-if="error", role="alert") {{ error }}
+        .alert.alert-success.mb-4(v-if="message", role="status") {{ message }}
+        form.card.form-card.settings-form(@submit.prevent="save")
+          .field(v-for="key in groups[group]", :key="key", :class="{ 'is-dirty': dirty(key) }")
             template(v-if="schema[key].type === 'boolean'")
-              .checkbox
-                label
-                  input(type="checkbox", v-model="values[key]")
-                  |  {{ label(key) }}
+              label.check
+                input(type="checkbox", v-model="values[key]")
+                span {{ label(key) }}
             template(v-else)
-              label(:for="'s-' + key") {{ label(key) }}
-              textarea.form-control(v-if="textareas.includes(key)", :id="'s-' + key", v-model="values[key]", rows="3")
+              label.label(:for="'s-' + key") {{ label(key) }}
+              textarea.textarea(v-if="textareas.includes(key)", :id="'s-' + key", v-model="values[key]", rows="3")
               byte-input(v-else-if="bytes.includes(key)", :model-value="values[key] || null",
                 @update:model-value="v => values[key] = v || 0", :placeholder="$t('admin.quota.unlimited')")
-              select.form-control(v-else-if="schema[key].type === 'enum'", :id="'s-' + key", v-model="values[key]")
+              select.select(v-else-if="schema[key].type === 'enum'", :id="'s-' + key", v-model="values[key]")
                 option(v-for="v in enumValues(key)", :value="v") {{ enumLabel(key, v) }}
-              div(v-else-if="schema[key].type === 'list'")
-                label.checkbox-inline(v-for="v in schema[key].values", :key="v", style="margin-left: 0; margin-right: 15px")
+              .flex.flex-wrap.gap-x-5.gap-y-2(v-else-if="schema[key].type === 'list'")
+                label.check(v-for="v in schema[key].values", :key="v")
                   input(type="checkbox", :value="v", v-model="values[key]")
-                  |  {{ enumLabel(key, v) }}
-              input.form-control(v-else-if="schema[key].type === 'integer'", :id="'s-' + key", type="number",
+                  span {{ enumLabel(key, v) }}
+              input.input(v-else-if="schema[key].type === 'integer'", :id="'s-' + key", type="number",
                 v-model.number="values[key]", :min="schema[key].min", :max="schema[key].max")
-              input.form-control(v-else, :id="'s-' + key", :type="schema[key].type === 'secret' ? 'password' : 'text'",
+              input.input(v-else, :id="'s-' + key", :type="schema[key].type === 'secret' ? 'password' : 'text'",
                 v-model="values[key]", autocomplete="off")
-            p.help-block(v-if="help(key)") {{ help(key) }}
-            p.help-block.small(v-if="isCustom(key)")
-              a(href="#", @click.prevent="reset(key)") {{ $t('admin.settings.resetDefault') }}
+            p.hint(v-if="help(key)") {{ help(key) }}
+            p.hint(v-if="isCustom(key)")
+              button.link-button(type="button", @click="reset(key)") {{ $t('admin.settings.resetDefault') }}
 
           template(v-if="group === 'email'")
-            p.text-muted(v-if="mail.fromEnv") {{ $t('admin.settings.smtpFromEnv') }}
-            .form-group
-              .input-group
-                input.form-control(type="email", v-model.trim="testTo", :placeholder="$root.session.user.email")
-                span.input-group-btn
-                  button.btn.btn-default(type="button", @click="testEmail", :disabled="testing") {{ $t('admin.settings.testEmail') }}
+            p.muted(v-if="mail.fromEnv") {{ $t('admin.settings.smtpFromEnv') }}
+            .input-group
+              input.input(type="email", v-model.trim="testTo", :placeholder="$root.session.user.email",
+                :aria-label="$t('admin.settings.testEmail')")
+              button.btn(type="button", @click="testEmail", :disabled="testing") {{ $t('admin.settings.testEmail') }}
 
-          button.btn.btn-primary(type="submit", :disabled="busy || !changedKeys.length")
-            | {{ $t('admin.settings.save') }}
-            template(v-if="changedKeys.length")  ({{ changedKeys.length }})
-          |
-          button.btn.btn-default(type="button", v-if="changedKeys.length", @click="load") {{ $t('admin.cancel') }}
+          .settings-actions
+            button.btn.btn-primary(type="submit", :disabled="busy || !changedKeys.length")
+              | {{ $t('admin.settings.save') }}
+              span.tnum(v-if="changedKeys.length")  ({{ changedKeys.length }})
+            button.btn(type="button", v-if="changedKeys.length", @click="load") {{ $t('admin.cancel') }}
 </template>
 
 <script>
@@ -165,3 +162,55 @@
     },
   };
 </script>
+
+<style>
+  .settings-groups {
+    display: flex;
+    gap: .25rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  @media (min-width: 40rem) {
+    .settings-groups {
+      flex-direction: column;
+    }
+  }
+  .settings-groups button {
+    padding: .4rem .7rem;
+    border: 0;
+    border-radius: var(--radius-md);
+    background: none;
+    color: var(--ink-2);
+    font: inherit;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    text-align: left;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .settings-groups button:hover {
+    background: var(--surface-2);
+    color: var(--ink);
+  }
+  .settings-groups button[aria-current] {
+    background: var(--surface);
+    box-shadow: inset 0 0 0 1px var(--line);
+    color: var(--ink);
+  }
+  .settings-form .field.is-dirty {
+    padding-left: .75rem;
+    margin-left: -.75rem;
+    border-left: 2px solid var(--warning);
+  }
+  .settings-actions {
+    position: sticky;
+    bottom: 0;
+    display: flex;
+    gap: .5rem;
+    margin: 0 -1.1rem -1.1rem;
+    padding: .85rem 1.1rem;
+    border-top: 1px solid var(--line);
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    background: var(--surface);
+  }
+</style>

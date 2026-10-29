@@ -1,144 +1,139 @@
 <template lang="pug">
   div
-    p
-      a(href="admin#/users") ‹ {{ $t('admin.users.back') }}
+    a.back-link(href="admin#/users")
+      icon(name="arrow-left")
+      | {{ $t('admin.users.back') }}
     .alert.alert-danger(v-if="error") {{ error }}
-    .alert.alert-success(v-if="message")
-      | {{ message }}
-      template(v-if="link")
-        br
-        code.break-all {{ link }}
-        |
-        clipboard.btn.btn-xs.btn-default(:value="link")
+    created-link.mb-4(v-if="message", :text="message", :link="link")
     template(v-if="data")
-      h3
+      h1.text-xl
         | {{ user.name || user.email }}
         |
         small {{ user.email }}
       p
-        span.label(:class="user.role === 'admin' ? 'label-primary' : 'label-default'") {{ $t('admin.roles.' + user.role) }}
-        span.label(:class="{active: 'label-success', pending: 'label-warning', disabled: 'label-default'}[user.status]") {{ $t('admin.users.statuses.' + user.status) }}
-        span.label.label-success(v-if="user.totpEnabled") 2FA
-        span.label.label-warning(v-if="!user.emailVerified") {{ $t('admin.users.unverified') }}
-        span.label.label-danger(v-if="locked") {{ $t('admin.users.lockedUntil', { date: $date(user.lockedUntil) }) }}
+        span.badge(:class="user.role === 'admin' ? 'badge-accent' : ''") {{ $t('admin.roles.' + user.role) }}
+        span.badge(:class="{active: 'badge-success', pending: 'badge-warning', disabled: ''}[user.status]") {{ $t('admin.users.statuses.' + user.status) }}
+        span.badge.badge-success(v-if="user.totpEnabled") 2FA
+        span.badge.badge-warning(v-if="!user.emailVerified") {{ $t('admin.users.unverified') }}
+        span.badge.badge-danger(v-if="locked") {{ $t('admin.users.lockedUntil', { date: $date(user.lockedUntil) }) }}
 
-      .row
-        .col-md-7
-          form.admin-section(@submit.prevent="save")
-            h4 {{ $t('admin.users.profile') }}
-            .row
-              .col-sm-6.form-group
-                label {{ $t('auth.name') }}
-                input.form-control(type="text", v-model.trim="form.name")
-              .col-sm-6.form-group
-                label {{ $t('auth.email') }}
-                input.form-control(type="email", v-model.trim="form.email", required)
-              .col-sm-6.form-group
-                label {{ $t('admin.users.role') }}
-                select.form-control(v-model="form.role", :disabled="isMe")
+      .grid-75
+        div
+          form.card.form-card(@submit.prevent="save")
+            h2.section-title {{ $t('admin.users.profile') }}
+            .grid-2
+              .field
+                label.label {{ $t('auth.name') }}
+                input.input(type="text", v-model.trim="form.name")
+              .field
+                label.label {{ $t('auth.email') }}
+                input.input(type="email", v-model.trim="form.email", required)
+              .field
+                label.label {{ $t('admin.users.role') }}
+                select.select(v-model="form.role", :disabled="isMe")
                   option(value="user") {{ $t('admin.roles.user') }}
                   option(value="admin") {{ $t('admin.roles.admin') }}
-              .col-sm-6.form-group
-                label {{ $t('admin.users.status') }}
-                select.form-control(v-model="form.status", :disabled="isMe")
+              .field
+                label.label {{ $t('admin.users.status') }}
+                select.select(v-model="form.status", :disabled="isMe")
                   option(v-for="s in ['active', 'pending', 'disabled']", :value="s") {{ $t('admin.users.statuses.' + s) }}
-            .checkbox
-              label
-                input(type="checkbox", v-model="form.emailVerified")
-                |  {{ $t('admin.users.emailVerified') }}
-            .checkbox
-              label
-                input(type="checkbox", v-model="form.notifyDownloads")
-                |  {{ $t('account.notifyDownloads') }}
-            h4 {{ $t('admin.users.quotas') }}
-            p.text-muted.small(v-if="user.role === 'admin'") {{ $t('admin.users.adminNoQuota') }}
+            label.check
+              input(type="checkbox", v-model="form.emailVerified")
+              span {{ $t('admin.users.emailVerified') }}
+            label.check
+              input(type="checkbox", v-model="form.notifyDownloads")
+              span {{ $t('account.notifyDownloads') }}
+            h2.section-title {{ $t('admin.users.quotas') }}
+            p.muted.text-sm(v-if="user.role === 'admin'") {{ $t('admin.users.adminNoQuota') }}
             quota-field(v-model="form.quotaTransfer", :label="$t('admin.users.quotaTransfer')", bytes,
               :global-value="globals.maxTransferSize")
             quota-field(v-model="form.quotaStorage", :label="$t('admin.users.quotaStorage')", bytes,
               :global-value="globals.userStorageQuota")
             quota-field(v-model="form.quotaTransfers", :label="$t('admin.users.quotaTransfers')",
               :global-value="globals.maxActiveTransfers")
-            .form-group
-              label {{ $t('admin.users.notes') }}
-              textarea.form-control(v-model="form.notes", rows="3", :placeholder="$t('admin.users.notesHelp')")
-            button.btn.btn-primary(type="submit", :disabled="busy") {{ $t('account.save') }}
+            .field
+              label.label {{ $t('admin.users.notes') }}
+              textarea.textarea(v-model="form.notes", rows="3", :placeholder="$t('admin.users.notesHelp')")
+            div
+              button.btn.btn-primary(type="submit", :disabled="busy") {{ $t('account.save') }}
 
-        .col-md-5
+        div
           .admin-section
-            h4 {{ $t('admin.users.overview') }}
-            table.table.table-condensed.kv-table
-              tbody
-                tr
-                  th {{ $t('admin.users.storage') }}
-                  td {{ $size(user.usage.storage) }}
-                    span.text-muted(v-if="data.limits.storage")  / {{ $size(data.limits.storage) }}
-                tr
-                  th {{ $t('admin.users.transfers') }}
-                  td {{ user.usage.transfers }} ({{ user.usage.files }} {{ $t('admin.users.filesShort') }})
-                tr
-                  th {{ $t('admin.users.allUploads') }}
-                  td {{ data.totals.uploads }} · {{ $size(data.totals.uploadBytes) }}
-                tr
-                  th {{ $t('admin.users.created_') }}
-                  td {{ $date(user.createdAt) }}
-                tr(v-if="data.invitedBy")
-                  th {{ $t('admin.users.invitedBy') }}
-                  td
-                    a(:href="'admin#/users/' + data.invitedBy.id") {{ data.invitedBy.email }}
-                tr
-                  th {{ $t('admin.users.lastLogin') }}
-                  td {{ $date(user.lastLoginAt) }}
-                    span.text-muted(v-if="user.lastLoginIp")  · {{ user.lastLoginIp }}
-                tr
-                  th {{ $t('admin.users.passwordChanged') }}
-                  td {{ $date(user.passwordChangedAt) }}
-                tr
-                  th {{ $t('admin.users.failedLogins') }}
-                  td {{ user.failedLogins }}
+            h2.section-title {{ $t('admin.users.overview') }}
+            .card.kv-card
+              table.kv-table
+                tbody
+                  tr
+                    th {{ $t('admin.users.storage') }}
+                    td {{ $size(user.usage.storage) }}
+                      span.muted(v-if="data.limits.storage")  / {{ $size(data.limits.storage) }}
+                  tr
+                    th {{ $t('admin.users.transfers') }}
+                    td {{ user.usage.transfers }} ({{ user.usage.files }} {{ $t('admin.users.filesShort') }})
+                  tr
+                    th {{ $t('admin.users.allUploads') }}
+                    td {{ data.totals.uploads }} · {{ $size(data.totals.uploadBytes) }}
+                  tr
+                    th {{ $t('admin.users.created_') }}
+                    td {{ $date(user.createdAt) }}
+                  tr(v-if="data.invitedBy")
+                    th {{ $t('admin.users.invitedBy') }}
+                    td
+                      a(:href="'admin#/users/' + data.invitedBy.id") {{ data.invitedBy.email }}
+                  tr
+                    th {{ $t('admin.users.lastLogin') }}
+                    td {{ $date(user.lastLoginAt) }}
+                      span.muted(v-if="user.lastLoginIp")  · {{ user.lastLoginIp }}
+                  tr
+                    th {{ $t('admin.users.passwordChanged') }}
+                    td {{ $date(user.passwordChangedAt) }}
+                  tr
+                    th {{ $t('admin.users.failedLogins') }}
+                    td {{ user.failedLogins }}
           .admin-section
-            h4 {{ $t('admin.users.actions') }}
-            p
-              button.btn.btn-default.btn-block(@click="resetLink(false)") {{ $t('admin.users.resetLink') }}
-              button.btn.btn-default.btn-block(@click="resetLink(true)", :disabled="!mailEnabled") {{ $t('admin.users.resetMail') }}
-              button.btn.btn-default.btn-block(@click="setPassword") {{ $t('admin.users.setPassword') }}
-              button.btn.btn-default.btn-block(v-if="locked || user.failedLogins", @click="act('unlock')") {{ $t('admin.users.unlock') }}
-              button.btn.btn-default.btn-block(v-if="!user.emailVerified", @click="act('verify-email')") {{ $t('admin.users.verifyEmail') }}
-              button.btn.btn-warning.btn-block(v-if="user.totpEnabled", @click="confirmAct('disable-2fa', 'admin.users.confirmReset2fa')") {{ $t('admin.users.reset2fa') }}
-              button.btn.btn-warning.btn-block(@click="revokeSessions") {{ $t('admin.users.revokeSessions') }}
+            h2.section-title {{ $t('admin.users.actions') }}
+            .stack-actions
+              button.btn.w-full(@click="resetLink(false)") {{ $t('admin.users.resetLink') }}
+              button.btn.w-full(@click="resetLink(true)", :disabled="!mailEnabled") {{ $t('admin.users.resetMail') }}
+              button.btn.w-full(@click="setPassword") {{ $t('admin.users.setPassword') }}
+              button.btn.w-full(v-if="locked || user.failedLogins", @click="act('unlock')") {{ $t('admin.users.unlock') }}
+              button.btn.w-full(v-if="!user.emailVerified", @click="act('verify-email')") {{ $t('admin.users.verifyEmail') }}
+              button.btn.w-full(v-if="user.totpEnabled", @click="confirmAct('disable-2fa', 'admin.users.confirmReset2fa')") {{ $t('admin.users.reset2fa') }}
+              button.btn.w-full(@click="revokeSessions") {{ $t('admin.users.revokeSessions') }}
             template(v-if="!isMe")
-              .checkbox
-                label
-                  input(type="checkbox", v-model="keepTransfers")
-                  |  {{ $t('admin.users.keepTransfers') }}
-              button.btn.btn-danger.btn-block(@click="remove") {{ $t('admin.users.delete') }}
+              label.check
+                input(type="checkbox", v-model="keepTransfers")
+                span {{ $t('admin.users.keepTransfers') }}
+              button.btn.btn-danger.w-full(@click="remove") {{ $t('admin.users.delete') }}
 
       .admin-section
-        h4 {{ $t('admin.users.transfersTitle') }}
+        h2.section-title {{ $t('admin.users.transfersTitle') }}
         transfer-table(:items="data.transfers", :show-owner="false", @changed="load")
 
       .admin-section
-        h4 {{ $t('admin.users.sessionsTitle') }}
-        p.text-muted(v-if="!data.sessions.length") {{ $t('admin.empty') }}
-        table.table.table-condensed(v-else)
-          tbody
-            tr(v-for="s in data.sessions", :key="s.id")
-              td {{ agent(s.userAgent) }}
-              td {{ s.ip || '–' }}
-              td {{ $t('account.lastSeen') }} {{ $date(s.lastSeenAt) }}
-              td.table-actions
-                button.btn.btn-xs.btn-default(@click="revokeSession(s)") {{ $t('account.revoke') }}
+        h2.section-title {{ $t('admin.users.sessionsTitle') }}
+        p.muted(v-if="!data.sessions.length") {{ $t('admin.empty') }}
+        .card.table-wrap(v-else)
+          table.table
+            tbody
+              tr(v-for="s in data.sessions", :key="s.id")
+                td {{ agent(s.userAgent) }}
+                td {{ s.ip || '–' }}
+                td {{ $t('account.lastSeen') }} {{ $date(s.lastSeenAt) }}
+                td.actions
+                  button.btn.btn-sm(@click="revokeSession(s)") {{ $t('account.revoke') }}
 
-      .row
-        .col-md-6.admin-section
-          h4 {{ $t('admin.users.activity') }}
+      .grid-2
+        .admin-section
+          h2.section-title {{ $t('admin.users.activity') }}
           audit-table(:items="data.activity")
-        .col-md-6.admin-section
-          h4 {{ $t('admin.users.history') }}
+        .admin-section
+          h2.section-title {{ $t('admin.users.history') }}
           audit-table(:items="data.history")
 </template>
 
 <script>
-  import Clipboard from '../common/Clipboard.vue';
+  import CreatedLink from './CreatedLink.vue';
   import QuotaField from './QuotaField.vue';
   import AuditTable from './AuditTable.vue';
   import TransferTable from './TransferTable.vue';
@@ -150,7 +145,7 @@
 
   export default {
     name: 'UserDetail',
-    components: { Clipboard, QuotaField, AuditTable, TransferTable },
+    components: { CreatedLink, QuotaField, AuditTable, TransferTable },
     props: ['id'],
     data() {
       return { data: null, form: {}, globals: {}, mailEnabled: false, error: '', message: '', link: '', busy: false,

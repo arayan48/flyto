@@ -2,25 +2,25 @@
   div
     .admin-toolbar
       .grow
-        input.form-control(type="search", v-model="q", :placeholder="$t('admin.transfers.search')", @input="debounced")
-      select.form-control(v-model="status", @change="reload")
+        input.input(type="search", v-model="q", :placeholder="$t('admin.transfers.search')", @input="debounced")
+      select.select(v-model="status", @change="reload")
         option(value="") {{ $t('admin.transfers.allStatuses') }}
         option(v-for="s in statuses", :value="s") {{ $t('admin.transfers.status.' + s) }}
-      select.form-control(v-model="sort", @change="reload")
+      select.select(v-model="sort", @change="reload")
         option(v-for="s in sorts", :value="s") {{ $t('admin.transfers.sort.' + s) }}
-      button.btn.btn-default(@click="dir = dir === 'asc' ? 'desc' : 'asc'; load()") {{ dir === 'asc' ? '▲' : '▼' }}
-      a.btn.btn-default(:href="'api/admin/transfers.csv' + filterQuery", download) CSV
+      button.btn(@click="dir = dir === 'asc' ? 'desc' : 'asc'; load()") {{ dir === 'asc' ? '▲' : '▼' }}
+      a.btn(:href="'api/admin/transfers.csv' + filterQuery", download) CSV
 
     .alert.alert-danger(v-if="error") {{ error }}
     .alert.alert-success(v-if="message") {{ message }}
 
     .admin-toolbar(v-if="selected.length")
       strong {{ $t('admin.transfers.selected', { count: selected.length }) }}
-      button.btn.btn-sm.btn-warning(@click="bulk('suspend')") {{ $t('admin.transfers.suspend') }}
-      button.btn.btn-sm.btn-default(@click="bulk('unsuspend')") {{ $t('admin.transfers.unsuspend') }}
+      button.btn.btn-sm(@click="bulk('suspend')") {{ $t('admin.transfers.suspend') }}
+      button.btn.btn-sm(@click="bulk('unsuspend')") {{ $t('admin.transfers.unsuspend') }}
       button.btn.btn-sm.btn-danger(@click="bulk('delete')") {{ $t('admin.transfers.delete') }}
 
-    p.text-muted.small(v-if="result") {{ $t('admin.transfers.summary', { count: result.total, size: $size(result.size) }) }}
+    p.muted.text-sm(v-if="result") {{ $t('admin.transfers.summary', { count: result.total, size: $size(result.size) }) }}
     transfer-table(v-if="result", :items="result.items", selectable, :selected="selected", @select="s => selected = s")
     pager(v-if="result", :page="page", :per-page="result.perPage", :total="result.total", @change="p => { page = p; load(); }")
 </template>
