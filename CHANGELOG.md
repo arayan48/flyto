@@ -5,6 +5,12 @@ et les versions suivent [SemVer](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+## [0.8.1] - 2026-10-29
+
+### Corrigé
+- Le lien affiché après un envoi reprenait l'adresse utilisée pour ouvrir Flyto (par exemple l'IP locale) au lieu de
+  l'adresse publique définie dans les réglages.
+
 ## [0.8.0] - 2026-10-29
 
 ### Ajouté
@@ -237,7 +243,8 @@ Première version de Flyto, basée sur PsiTransfer.
 - Le projet devient Flyto : nom, image Docker, variables d'environnement `FLYTO_*`
   (l'ancien préfixe `PSITRANSFER_` est encore lu)
 
-[Non publié]: https://github.com/arayan48/flyto/compare/v0.8.0...HEAD
+[Non publié]: https://github.com/arayan48/flyto/compare/v0.8.1...HEAD
+[0.8.1]: https://github.com/arayan48/flyto/compare/v0.8.0...v0.8.1
 [0.8.0]: https://github.com/arayan48/flyto/compare/v0.7.1...v0.8.0
 [0.7.1]: https://github.com/arayan48/flyto/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/arayan48/flyto/compare/v0.6.0...v0.7.0
