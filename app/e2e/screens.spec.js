@@ -42,7 +42,7 @@ test('screens', async ({ page, browser }, testInfo) => {
   // hold the upload requests a moment to catch the progress screen
   await page.route('**/files/**', async route => {
     await new Promise(r => setTimeout(r, 1500));
-    await route.continue();
+    await route.continue().catch(() => {});
   });
   await page.locator('#uploadBtn').click();
   await expect(page.locator('.flight-bar')).toBeVisible();
