@@ -5,6 +5,8 @@ et les versions suivent [SemVer](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+## [0.5.0] - 2026-10-29
+
 ### Modifié
 - Le front passe de Vue 2 (plus maintenu depuis fin 2023) à Vue 3 avec Pinia, construit par Vite au lieu de
   webpack ; les fichiers servis portent un hash et sont mis en cache un an
@@ -192,7 +194,8 @@ Première version de Flyto, basée sur PsiTransfer.
 - Le projet devient Flyto : nom, image Docker, variables d'environnement `FLYTO_*`
   (l'ancien préfixe `PSITRANSFER_` est encore lu)
 
-[Non publié]: https://github.com/arayan48/flyto/compare/v0.4.1...HEAD
+[Non publié]: https://github.com/arayan48/flyto/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/arayan48/flyto/compare/v0.4.1...v0.5.0
 [0.4.1]: https://github.com/arayan48/flyto/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/arayan48/flyto/compare/v0.3.2...v0.4.0
 [0.3.2]: https://github.com/arayan48/flyto/compare/v0.3.1...v0.3.2
