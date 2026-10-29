@@ -5,9 +5,15 @@ et les versions suivent [SemVer](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+## [0.4.0] - 2026-10-29
+
 ### Ajouté
 - Flyto est dans le store ZimaOS arayan48 (`https://arayan48.github.io/appstore/store.json`), mis à jour
   automatiquement à chaque release : la mise à jour se fait depuis l'App Store de ZimaOS
+
+### Modifié
+- Au démarrage, la base passe au schéma 3 (une colonne ajoutée aux transferts, une aux utilisateurs) :
+  rien à faire, et une v0.3.2 remise en place fonctionne toujours avec cette base
 
 ### Corrigé
 - Un envoi ne peut plus choisir lui-même sa date d'expiration ni verrouiller son transfert : seuls le nom, le
@@ -156,7 +162,8 @@ Première version de Flyto, basée sur PsiTransfer.
 - Le projet devient Flyto : nom, image Docker, variables d'environnement `FLYTO_*`
   (l'ancien préfixe `PSITRANSFER_` est encore lu)
 
-[Non publié]: https://github.com/arayan48/flyto/compare/v0.3.2...HEAD
+[Non publié]: https://github.com/arayan48/flyto/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/arayan48/flyto/compare/v0.3.2...v0.4.0
 [0.3.2]: https://github.com/arayan48/flyto/compare/v0.3.1...v0.3.2
 [0.3.1]: https://github.com/arayan48/flyto/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/arayan48/flyto/compare/v0.2.0...v0.3.0
