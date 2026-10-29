@@ -80,3 +80,18 @@ test('a PATCH larger than Upload-Length is refused and nothing is written', asyn
   assert.strictEqual(head.headers['upload-offset'], '0');
   assert.strictEqual(fs.statSync(path.join(tmpDir, 'uploadlimit', fid.split('++')[1])).size, 0);
 });
+
+test('an upload past the total size of all transfers is refused', async () => {
+  await app.ctx.settings.update({ maxTotalStorage: 1024 });
+  try {
+    const refused = await request('POST', '/files/', {
+      ...TUS,
+      'Upload-Length': '2048',
+      'Upload-Metadata': tusMeta.encode({ name: 'big.txt', sid: 'serverfull', retention: '3600' }),
+    });
+    assert.strictEqual(refused.status, 507);
+    assert.strictEqual(JSON.parse(refused.body).error, 'serverFull');
+  } finally {
+    await app.ctx.settings.update({ maxTotalStorage: 0 });
+  }
+});

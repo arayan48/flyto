@@ -3,7 +3,7 @@
 const { test } = require('node:test');
 const assert = require('node:assert');
 
-const { limitsFor, checkUpload } = require('../../lib/quotas');
+const { limitsFor, checkUpload, checkSpace } = require('../../lib/quotas');
 const Settings = require('../../lib/settings');
 const Cache = require('../../lib/cache');
 const { anonymizeIp } = require('../../lib/utils');
@@ -42,6 +42,17 @@ test('checkUpload refuses with the reason', () => {
   assert.strictEqual(checkUpload({ ...ok, usage: { storage: 0, transfers: 2 } }).code, 'transferQuota');
   // more files into an existing transfer do not count as a new one
   assert.strictEqual(checkUpload({ ...ok, isNewBucket: false, usage: { storage: 0, transfers: 2 } }), null);
+});
+
+test('checkSpace: total size of all transfers and free disk, admins included', () => {
+  const settings = settingsWith({ maxTotalStorage: 1000, minFreeDisk: 100 });
+  const totals = { size: 900, pending: 50 };
+  assert.strictEqual(checkSpace({ settings, size: 100, totals, freeDisk: 500 }), null);
+  assert.strictEqual(checkSpace({ settings, size: 101, totals, freeDisk: 500 }).code, 'serverFull');
+  // bytes announced by unfinished uploads are not on the disk yet but will be
+  assert.strictEqual(checkSpace({ settings, size: 60, totals, freeDisk: 200 }).code, 'serverFull');
+  assert.strictEqual(checkSpace({ settings, size: 60, totals, freeDisk: null }), null);
+  assert.strictEqual(checkSpace({ settings: settingsWith({ minFreeDisk: 0 }), size: 1e12, totals, freeDisk: 0 }), null);
 });
 
 test('settings validation', () => {
