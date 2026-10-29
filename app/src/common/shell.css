@@ -126,3 +126,28 @@
     padding-top: 1.5rem;
   }
 }
+.legal-doc {
+  display: grid;
+  gap: 1.75rem;
+  max-width: 48rem;
+  padding: 2rem;
+}
+@media (min-width: 40rem) {
+  .legal-doc {
+    padding: 2.75rem;
+  }
+}
+.legal-doc h2 {
+  margin-bottom: .5rem;
+  font-size: var(--text-lg);
+}
+.legal-doc p {
+  color: var(--ink-2);
+  white-space: pre-line;
+}
+.legal-doc p + p {
+  margin-top: .5rem;
+}
+.site-footer-links {
+  flex-wrap: wrap;
+}

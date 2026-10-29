@@ -137,6 +137,23 @@ test('pages show the running version and the brand logo', async () => {
   }
 });
 
+test('the legal notice and privacy pages follow the settings', async () => {
+  await admin.patch('/api/admin/settings', {
+    legalPublisher: 'Jeanne <Test>', legalHost: 'Serveur perso', contactEmail: 'contact@flyto.test', anonymizeIps: false,
+  });
+  const visitor = new Client();
+  const legal = await visitor.get('/legal');
+  assert.strictEqual(legal.status, 200);
+  assert.ok(legal.data.includes('Jeanne &lt;Test&gt;'));
+  assert.ok(legal.data.includes('Serveur perso'));
+  assert.ok(legal.data.includes('contact@flyto.test'));
+  const privacy = await visitor.get('/privacy');
+  assert.strictEqual(privacy.status, 200);
+  assert.ok(privacy.data.includes('href="legal"'), 'footer links the legal notice');
+  assert.ok(!privacy.data.includes('PsiTransfer'));
+  await admin.patch('/api/admin/settings', { legalPublisher: '', legalHost: '', contactEmail: '', anonymizeIps: true });
+});
+
 test('the admin page needs an admin', async () => {
   const anonymous = await new Client().get('/admin');
   assert.strictEqual(anonymous.status, 302);

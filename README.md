@@ -144,5 +144,9 @@ DEBUG=flyto:* npm start
 
 ## Crédits et licence
 
-Flyto est basé sur [PsiTransfer](https://github.com/psi-4ward/psitransfer) de Christoph Wiechert,
-distribué sous licence BSD 2-Clause. Voir [LICENSE](LICENSE).
+Flyto est parti d'un fork de [PsiTransfer](https://github.com/psi-4ward/psitransfer) de Christoph Wiechert, puis a été
+largement réécrit : interface, comptes, base PostgreSQL, administration. Il reste sous licence BSD 2-Clause, avec les
+deux mentions de copyright dans [LICENSE](LICENSE).
+
+Les pages `/legal` (mentions légales) et `/privacy` (confidentialité) sont intégrées et décrivent ce que l'instance
+garde réellement ; l'éditeur, l'hébergement et le contact se règlent dans `/admin` > Réglages > Mentions légales.

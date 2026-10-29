@@ -29,12 +29,12 @@
       .field
         label.label(for="password2") {{ $t('auth.passwordRepeat') }}
         input#password2.input(type="password", v-model="password2", autocomplete="new-password", required)
-      p.text-sm.muted(v-if="settings.termsUrl || settings.privacyUrl")
+      p.text-sm.muted
         | {{ $t('auth.termsNotice') }}
         |
         a(v-if="settings.termsUrl", :href="settings.termsUrl", target="_blank", rel="noopener") {{ $root.lang.nav.terms }}
-        template(v-if="settings.termsUrl && settings.privacyUrl")  ·
-        a(v-if="settings.privacyUrl", :href="settings.privacyUrl", target="_blank", rel="noopener") {{ $root.lang.nav.privacy }}
+        template(v-if="settings.termsUrl")  ·
+        a(:href="settings.privacyUrl || 'privacy'", target="_blank", rel="noopener") {{ $root.lang.nav.privacy }}
       button.btn.btn-primary(type="submit", :disabled="busy") {{ $t('auth.registerButton') }}
       .auth-links
         a(href="login") {{ $t('auth.haveAccount') }}

@@ -1,0 +1,24 @@
+doctype html
+- const bundle = frontend('page')
+- const band = true
+html(lang=lang.langCode)
+  head
+    include partials/head
+    include partials/head_custom
+  body(class='has-band')
+    include partials/header
+    main.page.site-main
+      section.band.legal-band
+        h1.display!= doc.title
+        if doc.intro
+          p.lede.mt-6 #{doc.intro}
+      article.band-lift.legal-doc.card.card-raised
+        each section in doc.sections
+          section
+            h2 #{section.title}
+            each para in section.paras
+              p #{para}
+        if doc.custom
+          p
+            a(href=doc.custom.url target='_blank' rel='noopener') #{doc.custom.label}
+    include partials/footer
