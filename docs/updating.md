@@ -50,14 +50,14 @@ données**, puis installe-la depuis le store avec les mêmes mots de passe (`POS
 
 1. Ouvre l'app Flyto, puis **Paramètres** (icône engrenage).
 2. Dans le champ de l'image, remplace le tag par la nouvelle version, par exemple
-   `ghcr.io/arayan48/flyto:v0.5.0`.
+   `ghcr.io/arayan48/flyto:v0.5.1`.
 3. Enregistre : ZimaOS télécharge l'image et redémarre le conteneur.
 
 Les fichiers et la base restent dans `/DATA/AppData/flyto`, ils ne sont pas touchés.
 
 ## Docker Compose
 
-Dans `docker-compose.yml`, change le tag de l'image (`ghcr.io/arayan48/flyto:v0.5.0`), puis :
+Dans `docker-compose.yml`, change le tag de l'image (`ghcr.io/arayan48/flyto:v0.5.1`), puis :
 
 ```bash
 docker compose pull
@@ -69,7 +69,7 @@ Avec le tag `latest` ou `v0`, seules les deux commandes suffisent.
 ## Docker
 
 ```bash
-docker pull ghcr.io/arayan48/flyto:v0.5.0
+docker pull ghcr.io/arayan48/flyto:v0.5.1
 docker stop flyto && docker rm flyto
 ```
 
@@ -80,7 +80,7 @@ Les données sont dans le volume `/data`, elles sont conservées.
 
 ```bash
 git fetch --tags
-git checkout v0.5.0
+git checkout v0.5.1
 npm ci
 cd app && npm ci && npm run build && cd ..
 ```
