@@ -2,30 +2,21 @@ const https = require('https');
 const fs = require('fs');
 const config = require('./config');
 const app = require('./lib/endpoints');
-const eventBus = require('./lib/eventBus');
 const updateCheck = require('./lib/updateCheck');
 
-/**
- * Naming:
- * sid: Group of files
- * key: File
- * fid: {sid}++{key}
- */
+// sid: a transfer (group of files), key: a file, fid: {sid}++{key}
 
 let server;
 let httpsServer;
 
 app.ready.then(() => {
   if(config.port) {
-    // HTTP Server
     server = app.listen(config.port, config.iface, () => {
       console.log(`Flyto listening on http://${config.iface}:${config.port}`);
-      eventBus.emit('listen', server);
     });
   }
 
   if(config.sslPort && config.sslKeyFile && config.sslCertFile) {
-    // HTTPS Server
     const sslOpts = {
       key: fs.readFileSync(config.sslKeyFile),
       cert: fs.readFileSync(config.sslCertFile)
@@ -33,7 +24,6 @@ app.ready.then(() => {
     httpsServer = https.createServer(sslOpts, app)
       .listen(config.sslPort, config.iface, () => {
         console.log(`Flyto listening on https://${config.iface}:${config.sslPort}`);
-        eventBus.emit('listen', httpsServer);
       });
   }
 });
@@ -41,10 +31,8 @@ app.ready.then(() => {
 updateCheck.start(config);
 
 
-// graceful shutdown
 function shutdown() {
   console.log('Flyto shutting down...');
-  eventBus.emit('shutdown', server || httpsServer);
   if(!server && !httpsServer) process.exit(0);
   if(server) {
     server.close(() => {

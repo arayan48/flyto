@@ -1,6 +1,5 @@
 const path = require('path');
 const fs = require('fs');
-const fsp = require('fs-promise');
 
 // Default Config
 // Do not edit this, generate a config.<ENV>.js for your NODE_ENV
@@ -83,15 +82,17 @@ const config = {
   "updateCheckRepo": 'arayan48/flyto',
 };
 
-// Load NODE_ENV specific config
 const envConfFile = path.resolve(__dirname, `config.${ process.env.NODE_ENV }.js`);
-if (process.env.NODE_ENV && fsp.existsSync(envConfFile)) {
+if (process.env.NODE_ENV && fs.existsSync(envConfFile)) {
   Object.assign(config, require(envConfFile));
 }
 
 // Load config from ENV VARS
 // "true" and "false" are booleans, anything else keeps the type of the default value
-function parseEnv(value, current) {
+const SWITCHES = new Set(['requireBucketPassword', 'disableQrCode', 'updateCheck']);
+
+function parseEnv(value, current, key) {
+  if (SWITCHES.has(key)) return !/^(false|0|no|off)$/i.test(value);
   if (value === 'false') return false;
   if (value === 'true' && typeof current !== 'string') return true;
   if (typeof current === 'number') return parseInt(value, 10);
@@ -112,7 +113,7 @@ for (let k in config) {
   const suffix = k.replace(/([A-Z])/g, $1 => "_" + $1).toUpperCase();
   const envName = process.env['FLYTO_' + suffix] ? 'FLYTO_' + suffix : 'PSITRANSFER_' + suffix;
   if (process.env[envName]) {
-    config[k] = parseEnv(process.env[envName], config[k]);
+    config[k] = parseEnv(process.env[envName], config[k], k);
   }
 }
 
@@ -121,7 +122,7 @@ if (!config.uploadAppPath.endsWith('/')) config.uploadAppPath = config.uploadApp
 
 config.uploadAppPath = config.baseUrl.substr(0, config.baseUrl.length - 1) + config.uploadAppPath;
 
-// Load language files
+// every language falls back to the default one for missing strings
 config.languages = {
   [config.defaultLanguage]: require(`./lang/${ config.defaultLanguage }`) // default language
 };

@@ -34,10 +34,8 @@ test('compareVersions orders releases and pre-releases', () => {
   assert.strictEqual(compareVersions('dev', '0.1.0'), 0);
 });
 
-test('isEnabled accepts the string coming from FLYTO_UPDATE_CHECK', () => {
+test('isEnabled follows the updateCheck option', () => {
   assert.strictEqual(isEnabled({ updateCheck: true }), true);
-  assert.strictEqual(isEnabled({ updateCheck: 'true' }), true);
-  assert.strictEqual(isEnabled({ updateCheck: 'false' }), false);
   assert.strictEqual(isEnabled({ updateCheck: false }), false);
 });
 

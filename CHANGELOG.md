@@ -9,6 +9,36 @@ et les versions suivent [SemVer](https://semver.org/lang/fr/).
 - Flyto est dans le store ZimaOS arayan48 (`https://arayan48.github.io/appstore/store.json`), mis à jour
   automatiquement à chaque release : la mise à jour se fait depuis l'App Store de ZimaOS
 
+### Corrigé
+- Un envoi ne peut plus choisir lui-même sa date d'expiration ni verrouiller son transfert : seuls le nom, le
+  commentaire, le type, la durée et le mot de passe sont repris de la page d'envoi
+- Les fichiers vides s'envoient et se téléchargent, ils restaient invisibles puis disparaissaient après 48 h
+- Changer l'expiration d'un transfert (ou le verrouiller) pendant un envoi ne bloque plus cet envoi
+- La reprise d'un envoi ne renvoie plus d'erreur sur un fichier déjà téléchargé ou verrouillé, et ne montre
+  plus l'empreinte du mot de passe
+- Un `Upload-Length` mal formé (`007`) ou un `Upload-Offset` invalide est refusé : le premier faisait sauter la
+  limite de taille de l'envoi, le second le contrôle de l'offset
+- Un lien `?sid=` ne peut plus imposer l'identifiant d'un transfert (et donc son lien de partage) à celui qui envoie ;
+  les nouveaux identifiants font de 8 à 64 caractères `A-Z a-z 0-9 _ -`
+- Un transfert anonyme ne peut plus être complété ni verrouillé par un autre visiteur : le navigateur qui l'a
+  commencé est reconnu par un cookie
+- Deux envois du même fichier en même temps (reprise après une coupure) ne mélangent plus leurs octets : le
+  second attend que le premier se termine
+- Un envoi refusé ou abandonné avant sa création ne garde plus d'espace réservé pendant 48 h
+- La page de téléchargement ne calcule plus le mot de passe quand aucun n'est donné, et une seule fois pour tout
+  le transfert (une seule empreinte pour tous ses fichiers)
+- Un aperçu ne compte plus comme un téléchargement et n'avertit plus le propriétaire
+- Des échecs de connexion anciens ne rapprochent plus du blocage du compte
+- `FLYTO_UPDATE_CHECK`, `FLYTO_DISABLE_QR_CODE` et `FLYTO_REQUIRE_BUCKET_PASSWORD` acceptent aussi `0`, `no` et `off`
+- Les formulaires admin répondent par une erreur claire au lieu d'une erreur 500 (quota invalide, invitation
+  inconnue, action groupée inconnue) ; confirmer une nouvelle adresse déjà prise ne grille plus le lien
+- `node cli.js user disable` ferme aussi les sessions gardées en cache par Redis
+- Une erreur sur une page affiche la page d'erreur de Flyto au lieu de l'erreur brute d'Express
+
+### Supprimé
+- Les dépendances `cors`, `method-override`, `fs-promise`, `to-object-reducer` et `common-streams`, et le code
+  tus jamais utilisé (CORS, `X-HTTP-Method-Override`, longueur différée, sommes de contrôle, concaténation)
+
 ## [0.3.2] - 2026-10-28
 
 ### Corrigé

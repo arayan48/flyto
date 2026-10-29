@@ -44,6 +44,14 @@ test('a new upload reports offset 0 before any data', async () => {
   fs.rmSync(dir, { recursive: true, force: true });
 });
 
+test('an empty upload is complete as soon as it is created', async () => {
+  const { dir, store } = await setup(0);
+  const info = await store.info(FID);
+  assert.ok(!('isPartial' in info));
+  assert.strictEqual(info.offset, 0);
+  fs.rmSync(dir, { recursive: true, force: true });
+});
+
 test('append to an unknown upload is not found and writes nothing', async () => {
   const { dir, store } = await setup(6);
   const fid = 'bucket++00000000-0000-4000-8000-000000000002';
@@ -91,5 +99,20 @@ test('append stops writing once a body without Content-Length goes past Upload-L
   // writes in flight may be dropped, the client resumes from the reported offset
   const written = fs.readFileSync(store.getFilename(FID), 'utf8');
   assert.ok('abcdef'.startsWith(written), written);
+  fs.rmSync(dir, { recursive: true, force: true });
+});
+
+test('a second PATCH while one is being written is refused, the first one is kept', async () => {
+  const { dir, store } = await setup(6);
+  const slow = new Readable({ read() {} });
+  const first = store.append(FID, slow, 0);
+  slow.push('abc');
+  await new Promise(resolve => setTimeout(resolve, 20));
+  await assert.rejects(store.append(FID, Readable.from([Buffer.from('abc')]), 0), { status: 423 });
+  slow.push(null);
+  assert.strictEqual((await first).offset, 3);
+  assert.strictEqual(fs.readFileSync(store.getFilename(FID), 'utf8'), 'abc');
+  // the lock is gone once the first PATCH ended
+  assert.strictEqual((await store.append(FID, Readable.from([Buffer.from('def')]), 3)).offset, 6);
   fs.rmSync(dir, { recursive: true, force: true });
 });

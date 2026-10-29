@@ -246,6 +246,31 @@ test('failed logins lock the account for a while', async () => {
   assert.strictEqual((await new Client().login('bob@flyto.test')).status, 200);
 });
 
+test('failed logins long ago do not count toward the lock', async () => {
+  const created = await admin.post('/api/admin/users', { email: 'erin@flyto.test', password: PASSWORD });
+  assert.strictEqual(created.status, 201);
+  const pool = new Pool({ connectionString: url });
+  // one failure away from the lock, but a day ago
+  await pool.query('UPDATE users SET failed_logins = 4, last_failed_login_at = $2 WHERE id = $1',
+    [created.data.user.id, Date.now() - 86400000]);
+  assert.strictEqual((await new Client().login('erin@flyto.test', 'wrong password!')).status, 401);
+  const { rows: [row] } = await pool.query('SELECT failed_logins, locked_until FROM users WHERE id = $1', [created.data.user.id]);
+  await pool.end();
+  assert.strictEqual(row.failed_logins, 1);
+  assert.strictEqual(row.locked_until, null);
+});
+
+test('admin forms refuse invalid values instead of failing', async () => {
+  const quota = await admin.post('/api/admin/users', { email: 'frank@flyto.test', quotaStorage: 'abc', sendEmail: false });
+  assert.strictEqual(quota.status, 400);
+  assert.strictEqual(quota.data.error, 'invalidQuota');
+  assert.strictEqual((await admin.post('/api/admin/invites/abc/revoke')).status, 404);
+  assert.strictEqual((await admin.del('/api/admin/invites/abc')).status, 404);
+  const bulk = await admin.post('/api/admin/transfers/bulk', { sids: ['nothing0'], action: 'explode' });
+  assert.strictEqual(bulk.status, 400);
+  assert.strictEqual(bulk.data.error, 'invalidAction');
+});
+
 test('two-factor authentication with a recovery code', async () => {
   const setup = await alice.post('/api/me/2fa/setup', { password: PASSWORD });
   assert.strictEqual(setup.status, 200);

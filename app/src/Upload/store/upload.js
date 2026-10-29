@@ -26,16 +26,6 @@ function randomSid() {
   }
 }
 
-function getSid() {
-  // support setting an explicit SID by location search param
-  const match = document.location.search.match(/sid=([^&]+)/);
-  if (match) {
-    return match[1];
-  } else {
-    return randomSid();
-  }
-}
-
 export default {
   namespaced: true,
 
@@ -43,7 +33,7 @@ export default {
     retention: null,
     password: '',
     files: [],
-    sid: getSid(),
+    sid: randomSid(),
     uploadURI: (window.FLYTO_UPLOAD_PATH || '/') + 'files',
   },
 
@@ -219,9 +209,10 @@ export default {
                   window.addEventListener('online', onOnlineHandler);
                 }
               }
-              // Client Error
+              // Client Error; 423: the previous request of this file is still being written, retry
               else if (error && error.originalResponse && error.originalResponse._xhr &&
-                error.originalResponse._xhr.status >= 400 && error.originalResponse._xhr.status < 500) {
+                error.originalResponse._xhr.status >= 400 && error.originalResponse._xhr.status < 500 &&
+                error.originalResponse._xhr.status !== 423) {
                 commit('UPDATE_FILE', {
                   file, data: {
                     error: jsonResMessage || error.message || error.toString()
