@@ -3,6 +3,7 @@ import os from 'node:os';
 import path from 'node:path';
 
 const PORT = 3100;
+const AUTH = 'e2e/.auth/admin.json';
 
 export default defineConfig({
   testDir: './e2e',
@@ -16,8 +17,9 @@ export default defineConfig({
     screenshot: 'only-on-failure',
   },
   projects: [
-    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-    { name: 'mobile', use: { ...devices['Pixel 7'] } },
+    { name: 'setup', testMatch: /auth\.setup\.js/ },
+    { name: 'chromium', dependencies: ['setup'], use: { ...devices['Desktop Chrome'], storageState: AUTH } },
+    { name: 'mobile', dependencies: ['setup'], use: { ...devices['Pixel 7'], storageState: AUTH } },
   ],
   webServer: {
     command: 'node ../app.js',

@@ -1,22 +1,26 @@
 <template lang="pug">
   .admin-app
-    .alert.alert-danger(v-if="$root.error") {{ $root.error }}
+    .alert.alert-danger(v-if="$root.error", role="alert") {{ $root.error }}
     template(v-else-if="$root.session && $root.lang.admin")
-      ul.nav.nav-tabs.admin-tabs
-        li(v-for="t in tabs", :class="{active: route.tab === t}")
-          a(:href="'admin#/' + t") {{ $t('admin.tabs.' + t) }}
-      dashboard(v-if="route.tab === 'dashboard'")
-      users(v-else-if="route.tab === 'users' && !route.id")
-      user-detail(v-else-if="route.tab === 'users'", :id="route.id", :key="route.id")
-      transfers(v-else-if="route.tab === 'transfers' && !route.id")
-      transfer-detail(v-else-if="route.tab === 'transfers'", :sid="route.id", :key="route.id")
-      downloads(v-else-if="route.tab === 'downloads'")
-      invites(v-else-if="route.tab === 'invites'")
-      audit(v-else-if="route.tab === 'audit'")
-      settings(v-else-if="route.tab === 'settings'")
-      system(v-else-if="route.tab === 'system'")
-    p.text-muted(v-else)
-      icon(name="spinner", spin="")
+      h1.title.mb-8.rise(v-html="$rich('ui.admin.title')")
+      .admin-layout
+        nav.admin-tabs(:aria-label="$root.lang.nav.admin")
+          a(v-for="t in tabs", :key="t", :href="'admin#/' + t", :aria-current="route.tab === t ? 'page' : null")
+            icon(:name="tabIcons[t]")
+            span {{ $t('admin.tabs.' + t) }}
+        .admin-content(:key="route.tab + (route.id || '')")
+          dashboard(v-if="route.tab === 'dashboard'")
+          users(v-else-if="route.tab === 'users' && !route.id")
+          user-detail(v-else-if="route.tab === 'users'", :id="route.id", :key="route.id")
+          transfers(v-else-if="route.tab === 'transfers' && !route.id")
+          transfer-detail(v-else-if="route.tab === 'transfers'", :sid="route.id", :key="route.id")
+          downloads(v-else-if="route.tab === 'downloads'")
+          invites(v-else-if="route.tab === 'invites'")
+          audit(v-else-if="route.tab === 'audit'")
+          settings(v-else-if="route.tab === 'settings'")
+          system(v-else-if="route.tab === 'system'")
+    p.muted(v-else)
+      icon(name="spinner", spin)
 </template>
 
 <script>
@@ -32,6 +36,10 @@
   import System from './Admin/System.vue';
 
   const TABS = ['dashboard', 'users', 'transfers', 'downloads', 'invites', 'audit', 'settings', 'system'];
+  const TAB_ICONS = {
+    dashboard: 'gauge', users: 'users', transfers: 'stack', downloads: 'download', invites: 'envelope',
+    audit: 'list', settings: 'sliders', system: 'cpu',
+  };
 
   // #/users/12 -> { tab: 'users', id: '12' }
   function parseRoute() {
@@ -44,7 +52,7 @@
     name: 'Admin',
     components: { Dashboard, Users, UserDetail, Transfers, TransferDetail, Downloads, Invites, Audit, Settings, System },
     data() {
-      return { tabs: TABS, route: parseRoute() };
+      return { tabs: TABS, route: parseRoute(), tabIcons: TAB_ICONS };
     },
     created() {
       window.addEventListener('hashchange', () => {
@@ -56,82 +64,165 @@
 </script>
 
 <style>
+  .admin-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.25rem;
+  }
+  @media (min-width: 52rem) {
+    .admin-layout {
+      grid-template-columns: 12rem minmax(0, 1fr);
+      gap: 2rem;
+      align-items: start;
+    }
+  }
   .admin-tabs {
-    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: .25rem;
+    padding-bottom: .75rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .admin-tabs a {
+    display: flex;
+    align-items: center;
+    gap: .55rem;
+    padding: .5rem .9rem;
+    border-radius: var(--radius-full);
+    color: var(--ink-2);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .admin-tabs a:hover {
+    background: var(--surface-2);
+    color: var(--ink);
+  }
+  .admin-tabs a[aria-current="page"] {
+    background: var(--ink);
+    color: var(--bg);
+  }
+  @media (min-width: 52rem) {
+    .admin-tabs {
+      position: sticky;
+      top: 1.5rem;
+      flex-direction: column;
+      flex-wrap: nowrap;
+      padding: 0;
+      border-bottom: 0;
+    }
+  }
+  .admin-content {
+    animation: rise .45s cubic-bezier(.22, 1, .36, 1) both;
   }
   .admin-toolbar {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: .5rem;
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: 1rem;
   }
-  .admin-toolbar .form-control {
+  .admin-toolbar .select, .admin-toolbar .input {
     width: auto;
-    display: inline-block;
   }
   .admin-toolbar .grow {
-    flex: 1 1 220px;
+    flex: 1 1 14rem;
   }
-  .admin-toolbar .grow .form-control {
+  .admin-toolbar .grow .input {
     width: 100%;
   }
-  .stat-tile {
-    background: #fff;
-    border: 1px solid #e3e7ef;
-    border-radius: 6px;
-    padding: 14px 16px;
-    margin-bottom: 20px;
-  }
-  .stat-tile .stat-label {
-    color: #5b6475;
-    font-size: 13px;
-  }
-  .stat-tile .stat-value {
-    font-size: 26px;
-    letter-spacing: -0.02em;
-    line-height: 1.3;
-  }
-  .stat-tile .stat-sub {
-    color: #5b6475;
-    font-size: 12px;
-  }
-  .admin-table td, .admin-table th {
-    vertical-align: middle !important;
-  }
-  .admin-table tr.clickable {
-    cursor: pointer;
-  }
-  .table-actions {
-    white-space: nowrap;
-    text-align: right;
-  }
-  .table-actions .btn + .btn {
-    margin-left: 4px;
-  }
   .admin-section {
-    margin-bottom: 30px;
+    margin-top: 2rem;
   }
-  .admin-section h4 {
-    margin-bottom: 12px;
+  .section-title {
+    margin-bottom: .75rem;
+    font-size: var(--text-base);
+  }
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
+    margin-bottom: 1rem;
+    color: var(--ink-2);
+    font-size: var(--text-sm);
+    text-decoration: none;
+  }
+  .kv-card {
+    padding: .25rem 1.1rem;
+  }
+  .kv-table {
+    width: 100%;
+    font-size: var(--text-sm);
+  }
+  .kv-table th, .kv-table td {
+    padding: .4rem 0;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  .kv-table tr:last-child th, .kv-table tr:last-child td {
+    border-bottom: 0;
   }
   .kv-table th {
-    width: 40%;
+    width: 42%;
+    padding-right: 1rem;
+    color: var(--ink-3);
     font-weight: 400;
-    color: #5b6475;
+    text-align: left;
   }
-  .label + .label {
-    margin-left: 3px;
+  .kv-table td {
+    overflow-wrap: anywhere;
   }
-  .usage-bar {
-    height: 8px;
-    margin: 6px 0 4px;
+  .badge + .badge {
+    margin-left: .25rem;
   }
-  .mono {
-    font-family: Menlo, Consolas, monospace;
-    font-size: 12px;
+  .inline-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
   }
-  .break-all {
-    word-break: break-all;
+  .inline-form .input {
+    flex: 1 1 12rem;
+    width: auto;
+  }
+  .stack-actions {
+    display: grid;
+    gap: .5rem;
+  }
+  .grid-2, .grid-75, .grid-4, .grid-label {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem 1.25rem;
+  }
+  @media (min-width: 40rem) {
+    .grid-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .grid-4 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .grid-label {
+      grid-template-columns: 14rem minmax(0, 1fr);
+    }
+  }
+  @media (min-width: 68rem) {
+    .grid-4 {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    .grid-75 {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+      gap: 1.5rem;
+    }
+  }
+  .invites-layout {
+    display: grid;
+    gap: 1.5rem;
+  }
+  .invites-layout form {
+    max-width: 36rem;
+  }
+  tr.is-suspended td {
+    background: var(--danger-soft);
   }
 </style>

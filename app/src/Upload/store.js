@@ -4,6 +4,7 @@ import { setCsrf } from '../common/api';
 import { humanFileSize } from '../common/format';
 
 let onOnlineHandler = null;
+let fileSeq = 0;
 let onOnlineHandlerAttached = false;
 
 function randomSid() {
@@ -104,6 +105,7 @@ export const useUploadStore = defineStore('upload', {
         }
         // wrap, don't change the HTML5-File-API object
         this.files.splice(0, 0, {
+          id: ++fileSeq,
           _File: files[i],
           name: files[i].name,
           comment: '',

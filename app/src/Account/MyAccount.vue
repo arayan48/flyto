@@ -1,12 +1,12 @@
 <template lang="pug">
   .my-account
-    h3 {{ $t('account.title') }}
-      small(v-if="me")  {{ me.user.email }}
-    ul.nav.nav-tabs
-      li(v-for="t in tabs", :class="{active: tab === t}")
-        a(:href="'account#' + t") {{ $t('account.tabs.' + t) }}
-    .alert.alert-danger(v-if="error") {{ error }}
-    template(v-if="me")
+    header.mb-8
+      h1.title.rise(v-html="$rich('ui.account.title')")
+      p.muted.mt-3(v-if="me") {{ me.user.email }}
+    nav.tabs.mb-8(:aria-label="$t('account.title')")
+      a(v-for="t in tabs", :key="t", :href="'account#' + t", :aria-current="tab === t ? 'page' : null") {{ $t('account.tabs.' + t) }}
+    .alert.alert-danger.mb-4(v-if="error", role="alert") {{ error }}
+    div(v-if="me", :key="tab", class="tab-panel")
       my-transfers(v-if="tab === 'transfers'", :me="me", @changed="load")
       profile(v-else-if="tab === 'profile'", :me="me", @changed="load")
       security(v-else-if="tab === 'security'", :me="me", @changed="load")

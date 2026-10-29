@@ -1,27 +1,27 @@
 <template lang="pug">
-  form(@submit.prevent="save", style="max-width: 520px")
-    .alert.alert-success(v-if="saved") {{ saved }}
-    .alert.alert-danger(v-if="error") {{ error }}
-    .form-group
-      label(for="name") {{ $t('auth.name') }}
-      input#name.form-control(type="text", v-model.trim="name", maxlength="100")
-    .form-group
-      label(for="email") {{ $t('auth.email') }}
-      input#email.form-control(type="email", v-model.trim="email", required)
-      p.help-block(v-if="!me.user.emailVerified") {{ $t('account.emailUnverified') }}
-    .form-group(v-if="emailChanged")
-      label(for="currentPassword") {{ $t('account.currentPassword') }}
-      input#currentPassword.form-control(type="password", v-model="currentPassword", autocomplete="current-password", required)
-    .form-group
-      label(for="locale") {{ $t('account.language') }}
-      select#locale.form-control(v-model="locale")
+  form.form-stack(@submit.prevent="save")
+    .alert.alert-success(v-if="saved", role="status") {{ saved }}
+    .alert.alert-danger(v-if="error", role="alert") {{ error }}
+    .field
+      label.label(for="name") {{ $t('auth.name') }}
+      input#name.input(type="text", v-model.trim="name", maxlength="100", autocomplete="name")
+    .field
+      label.label(for="email") {{ $t('auth.email') }}
+      input#email.input(type="email", v-model.trim="email", required, autocomplete="email")
+      p.hint(v-if="!me.user.emailVerified") {{ $t('account.emailUnverified') }}
+    .field(v-if="emailChanged")
+      label.label(for="currentPassword") {{ $t('account.currentPassword') }}
+      input#currentPassword.input(type="password", v-model="currentPassword", autocomplete="current-password", required)
+    .field
+      label.label(for="locale") {{ $t('account.language') }}
+      select#locale.select(v-model="locale")
         option(value="") {{ $t('account.browserLanguage') }}
-        option(v-for="l in languages", :value="l") {{ l }}
-    .checkbox
-      label
-        input(type="checkbox", v-model="notifyDownloads")
-        |  {{ $t('account.notifyDownloads') }}
-    button.btn.btn-primary(type="submit", :disabled="busy") {{ $t('account.save') }}
+        option(v-for="l in languages", :key="l", :value="l") {{ l }}
+    label.check
+      input(type="checkbox", v-model="notifyDownloads")
+      span {{ $t('account.notifyDownloads') }}
+    div
+      button.btn.btn-primary(type="submit", :disabled="busy") {{ $t('account.save') }}
 </template>
 
 <script>

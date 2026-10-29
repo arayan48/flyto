@@ -2,94 +2,87 @@
   div
     .admin-toolbar
       .grow
-        input.form-control(type="search", v-model="q", :placeholder="$t('admin.users.search')", @input="debounced")
-      select.form-control(v-model="role", @change="reload")
+        input.input(type="search", v-model="q", :placeholder="$t('admin.users.search')", @input="debounced")
+      select.select(v-model="role", @change="reload")
         option(value="") {{ $t('admin.users.allRoles') }}
         option(value="user") {{ $t('admin.roles.user') }}
         option(value="admin") {{ $t('admin.roles.admin') }}
-      select.form-control(v-model="status", @change="reload")
+      select.select(v-model="status", @change="reload")
         option(value="") {{ $t('admin.users.allStatuses') }}
         option(v-for="s in statuses", :value="s") {{ $t('admin.users.statusFilter.' + s) }}
-      button.btn.btn-primary(@click="showCreate = !showCreate")
-        icon.fa-fw(name="user-plus")
-        |  {{ $t('admin.users.create') }}
-      a.btn.btn-default(href="api/admin/users.csv", download) CSV
+      button.btn.btn-primary(type="button", @click="showCreate = !showCreate")
+        icon(name="user-plus")
+        | {{ $t('admin.users.create') }}
+      a.btn(href="api/admin/users.csv", download) CSV
 
-    form.well(v-if="showCreate", @submit.prevent="create")
-      h4 {{ $t('admin.users.create') }}
+    form.card.form-card.mb-4(v-if="showCreate", @submit.prevent="create")
+      h2.section-title {{ $t('admin.users.create') }}
       .alert.alert-danger(v-if="createError") {{ createError }}
-      .row
-        .col-sm-6.form-group
-          label {{ $t('auth.email') }}
-          input.form-control(type="email", v-model.trim="form.email", required)
-        .col-sm-6.form-group
-          label {{ $t('auth.name') }}
-          input.form-control(type="text", v-model.trim="form.name")
-        .col-sm-6.form-group
-          label {{ $t('admin.users.role') }}
-          select.form-control(v-model="form.role")
+      .grid-2
+        .field
+          label.label {{ $t('auth.email') }}
+          input.input(type="email", v-model.trim="form.email", required)
+        .field
+          label.label {{ $t('auth.name') }}
+          input.input(type="text", v-model.trim="form.name")
+        .field
+          label.label {{ $t('admin.users.role') }}
+          select.select(v-model="form.role")
             option(value="user") {{ $t('admin.roles.user') }}
             option(value="admin") {{ $t('admin.roles.admin') }}
-        .col-sm-6.form-group
-          label {{ $t('auth.password') }}
-          input.form-control(type="text", v-model="form.password", autocomplete="new-password",
+        .field
+          label.label {{ $t('auth.password') }}
+          input.input(type="text", v-model="form.password", autocomplete="new-password",
             :placeholder="$t('admin.users.passwordOptional')")
-      .checkbox(v-if="!form.password")
-        label
-          input(type="checkbox", v-model="form.sendEmail")
-          |  {{ $t('admin.users.sendWelcome') }}
-      button.btn.btn-primary(type="submit", :disabled="busy") {{ $t('admin.users.createButton') }}
-      |
-      button.btn.btn-default(type="button", @click="showCreate = false") {{ $t('admin.cancel') }}
+      label.check(v-if="!form.password")
+        input(type="checkbox", v-model="form.sendEmail")
+        span {{ $t('admin.users.sendWelcome') }}
+      .flex.flex-wrap.gap-2
+        button.btn.btn-primary(type="submit", :disabled="busy") {{ $t('admin.users.createButton') }}
+        button.btn(type="button", @click="showCreate = false") {{ $t('admin.cancel') }}
 
-    .alert.alert-success(v-if="created")
-      | {{ $t('admin.users.created', { email: created.user.email }) }}
-      template(v-if="created.link")
-        br
-        | {{ created.mailed ? $t('admin.users.linkMailed') : $t('admin.users.linkToShare') }}
-        br
-        code.break-all {{ created.link }}
-        |
-        clipboard.btn.btn-xs.btn-default(:value="created.link")
+    created-link.mb-4(v-if="created", :link="created.link",
+      :text="$t('admin.users.created', { email: created.user.email }) + (created.link ? ' ' + (created.mailed ? $t('admin.users.linkMailed') : $t('admin.users.linkToShare')) : '')")
 
     .alert.alert-danger(v-if="error") {{ error }}
-    table.table.table-hover.admin-table
-      thead
-        tr
-          th(v-for="c in columns", :key="c.key", :class="c.cls", @click="c.sort && sortBy(c.sort)",
-            :style="c.sort ? 'cursor: pointer' : ''")
-            | {{ c.label }}
-            span(v-if="sort === c.sort")  {{ dir === 'asc' ? '▲' : '▼' }}
-      tbody
-        tr(v-if="result && !result.items.length")
-          td.text-muted(:colspan="columns.length") {{ $t('admin.empty') }}
-        tr.clickable(v-for="u in items", :key="u.id", @click="open(u)")
-          td
-            strong {{ u.name || u.email }}
-            br(v-if="u.name")
-            small.text-muted(v-if="u.name") {{ u.email }}
-          td
-            span.label(:class="u.role === 'admin' ? 'label-primary' : 'label-default'") {{ $t('admin.roles.' + u.role) }}
-            span.label.label-success(v-if="u.totpEnabled") 2FA
-          td
-            span.label(:class="statusClass(u.status)") {{ $t('admin.users.statuses.' + u.status) }}
-            span.label.label-danger(v-if="u.lockedUntil && u.lockedUntil > now") {{ $t('admin.users.locked') }}
-            span.label.label-warning(v-if="!u.emailVerified") {{ $t('admin.users.unverified') }}
-          td.text-right {{ u.usage ? u.usage.transfers : 0 }}
-          td.text-right {{ $size(u.usage ? u.usage.storage : 0) }}
-          td {{ $date(u.lastLoginAt) }}
-          td {{ $day(u.createdAt) }}
+    .card.table-wrap
+      table.table.admin-table
+        thead
+          tr
+            th(v-for="c in columns", :key="c.key", :class="c.cls", @click="c.sort && sortBy(c.sort)",
+              :style="c.sort ? 'cursor: pointer' : ''")
+              | {{ c.label }}
+              span(v-if="sort === c.sort")  {{ dir === 'asc' ? '▲' : '▼' }}
+        tbody
+          tr(v-if="result && !result.items.length")
+            td.muted(:colspan="columns.length") {{ $t('admin.empty') }}
+          tr.clickable(v-for="u in items", :key="u.id", @click="open(u)")
+            td
+              strong {{ u.name || u.email }}
+              br(v-if="u.name")
+              small.muted(v-if="u.name") {{ u.email }}
+            td
+              span.badge(:class="u.role === 'admin' ? 'badge-accent' : ''") {{ $t('admin.roles.' + u.role) }}
+              span.badge.badge-success(v-if="u.totpEnabled") 2FA
+            td
+              span.badge(:class="statusClass(u.status)") {{ $t('admin.users.statuses.' + u.status) }}
+              span.badge.badge-danger(v-if="u.lockedUntil && u.lockedUntil > now") {{ $t('admin.users.locked') }}
+              span.badge.badge-warning(v-if="!u.emailVerified") {{ $t('admin.users.unverified') }}
+            td.text-right {{ u.usage ? u.usage.transfers : 0 }}
+            td.text-right {{ $size(u.usage ? u.usage.storage : 0) }}
+            td {{ $date(u.lastLoginAt) }}
+            td {{ $day(u.createdAt) }}
     pager(v-if="result", :page="page", :per-page="result.perPage", :total="result.total", @change="p => { page = p; load(); }")
 </template>
 
 <script>
   import Pager from './Pager.vue';
-  import Clipboard from '../common/Clipboard.vue';
+  import CreatedLink from './CreatedLink.vue';
   import { get, post, query } from '../common/api';
 
   export default {
     name: 'Users',
-    components: { Pager, Clipboard },
+    components: { Pager, CreatedLink },
     data() {
       return {
         q: '', role: '', status: '', sort: 'created', dir: 'desc', page: 1, result: null, error: '',
@@ -149,7 +142,7 @@
         document.location.hash = '#/users/' + u.id;
       },
       statusClass(status) {
-        return { active: 'label-success', pending: 'label-warning', disabled: 'label-default' }[status];
+        return { active: 'badge-success', pending: 'badge-warning', disabled: '' }[status];
       },
       async create() {
         this.busy = true;

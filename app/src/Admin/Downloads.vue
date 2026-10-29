@@ -2,35 +2,36 @@
   div
     .admin-toolbar
       .grow
-        input.form-control(type="search", v-model="q", :placeholder="$t('admin.downloads.search')", @input="debounced")
-      a.btn.btn-default(:href="'api/admin/downloads.csv' + filter", download) CSV
+        input.input(type="search", v-model="q", :placeholder="$t('admin.downloads.search')", @input="debounced")
+      a.btn(:href="'api/admin/downloads.csv' + filter", download) CSV
     .alert.alert-danger(v-if="error") {{ error }}
-    p.text-muted.small {{ $t('admin.downloads.privacy') }}
-    table.table.table-condensed.admin-table(v-if="result")
-      thead
-        tr
-          th {{ $t('admin.downloads.at') }}
-          th {{ $t('admin.transfers.file') }}
-          th {{ $t('admin.transfers.transfer') }}
-          th {{ $t('admin.transfers.owner') }}
-          th {{ $t('account.ip') }}
-          th {{ $t('account.device') }}
-          th.text-right {{ $t('admin.transfers.size') }}
-      tbody
-        tr(v-if="!result.items.length")
-          td.text-muted(colspan="7") {{ $t('admin.empty') }}
-        tr(v-for="d in result.items", :key="d.id")
-          td(style="white-space: nowrap") {{ $date(d.at) }}
-          td.break-all {{ d.name }}
-          td
-            a.mono(v-if="d.available", :href="'admin#/transfers/' + encodeURIComponent(d.sid)") {{ d.sid }}
-            span.mono.text-muted(v-else, :title="$t('admin.downloads.gone')") {{ d.sid }}
-          td
-            a(v-if="d.ownerId", :href="'admin#/users/' + d.ownerId") {{ d.ownerEmail }}
-            span.text-muted(v-else) –
-          td {{ d.ip || '–' }}
-          td.small.text-muted {{ agent(d.userAgent) }}
-          td.text-right {{ $size(d.size) }}
+    p.muted.text-sm {{ $t('admin.downloads.privacy') }}
+    .card.table-wrap(v-if="result")
+      table.table.admin-table
+        thead
+          tr
+            th {{ $t('admin.downloads.at') }}
+            th {{ $t('admin.transfers.file') }}
+            th {{ $t('admin.transfers.transfer') }}
+            th {{ $t('admin.transfers.owner') }}
+            th {{ $t('account.ip') }}
+            th {{ $t('account.device') }}
+            th.text-right {{ $t('admin.transfers.size') }}
+        tbody
+          tr(v-if="!result.items.length")
+            td.muted(colspan="7") {{ $t('admin.empty') }}
+          tr(v-for="d in result.items", :key="d.id")
+            td(style="white-space: nowrap") {{ $date(d.at) }}
+            td.break-all {{ d.name }}
+            td
+              a.mono(v-if="d.available", :href="'admin#/transfers/' + encodeURIComponent(d.sid)") {{ d.sid }}
+              span.mono.muted(v-else, :title="$t('admin.downloads.gone')") {{ d.sid }}
+            td
+              a(v-if="d.ownerId", :href="'admin#/users/' + d.ownerId") {{ d.ownerEmail }}
+              span.muted(v-else) –
+            td {{ d.ip || '–' }}
+            td.text-sm.muted {{ agent(d.userAgent) }}
+            td.text-right {{ $size(d.size) }}
     pager(v-if="result", :page="page", :per-page="result.perPage", :total="result.total", @change="p => { page = p; load(); }")
 </template>
 

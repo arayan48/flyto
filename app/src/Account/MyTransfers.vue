@@ -1,69 +1,70 @@
 <template lang="pug">
   div
-    .row
-      .col-sm-4(v-for="item in usage")
-        .panel.panel-default
-          .panel-body
-            .text-muted.small {{ item.label }}
-            div
-              strong {{ item.value }}
-              span.text-muted(v-if="item.limit")  / {{ item.limit }}
-            .progress.usage-bar(v-if="item.percent !== null")
-              .progress-bar(:class="{'progress-bar-danger': item.percent > 90, 'progress-bar-warning': item.percent > 75 && item.percent <= 90}",
-                :style="{width: Math.min(item.percent, 100) + '%'}")
-    p
-      a.btn.btn-success(:href="uploadUrl")
-        icon.fa-fw(name="cloud-upload-alt")
-        |  {{ $root.lang.newUpload }}
-    .alert.alert-danger(v-if="error") {{ error }}
-    p.text-muted(v-if="loaded && !transfers.length") {{ $t('account.noTransfers') }}
-    table.table.table-hover(v-if="transfers.length")
-      thead
-        tr
-          th {{ $t('account.transfer') }}
-          th {{ $t('account.created') }}
-          th {{ $t('account.expires') }}
-          th.text-right {{ $t('account.downloads') }}
-          th.text-right {{ $t('account.size') }}
-          th
-      template(v-for="t in transfers", :key="t.sid")
-        tbody
+    .usage.card.mb-6
+      .usage-item(v-for="item in usage", :key="item.label")
+        span.eyebrow {{ item.label }}
+        span.usage-value.tnum
+          | {{ item.value }}
+          span.faint.font-normal(v-if="item.limit")  / {{ item.limit }}
+        .progress.mt-2(v-if="item.percent !== null", :class="{ 'is-high': item.percent > 90 }")
+          span(:style="{ width: Math.min(item.percent, 100) + '%' }")
+
+    .flex.flex-wrap.items-center.justify-between.gap-3.mb-3
+      h2.text-lg {{ $t('account.tabs.transfers') }}
+      a.btn.btn-primary(:href="uploadUrl")
+        icon(name="cloud-upload-alt")
+        | {{ $root.lang.newUpload }}
+    .alert.alert-danger.mb-4(v-if="error", role="alert") {{ error }}
+    .card.card-body.muted(v-if="loaded && !transfers.length") {{ $t('account.noTransfers') }}
+
+    .card.table-wrap(v-if="transfers.length")
+      table.table
+        thead
           tr
-            td
-              a(:href="t.url", target="_blank", rel="noopener") {{ t.items.length === 1 ? t.items[0].name : $t('account.files', { count: t.items.length }) }}
-              br
-              small.text-muted {{ t.sid }}
-              icon.text-muted(name="key", v-if="t.password", :title="$root.lang.password")
-              |
-              span.label.label-info(v-if="t.oneTime") {{ $root.lang.retentions['one-time'] }}
-              |
-              span.label.label-warning(v-if="t.partial") {{ $t('account.partial') }}
-              |
-              span.label.label-danger(v-if="t.suspendedAt", :title="t.suspendedReason") {{ $t('account.suspended') }}
-            td {{ $date(t.createdAt) }}
-            td
-              template(v-if="t.oneTime") {{ $root.lang.retentions['one-time'] }}
-              template(v-else) {{ $date(t.expiresAt) }}
-            td.text-right {{ t.downloads }}
-            td.text-right {{ $size(t.size) }}
-            td.table-actions
-              clipboard.btn.btn-sm.btn-default(:value="t.url", :title="$root.lang.copyToClipboard", icon-only)
-              button.btn.btn-sm.btn-default(@click="expanded = expanded === t.sid ? null : t.sid", :title="$t('account.details')")
-                icon(:name="expanded === t.sid ? 'chevron-up' : 'chevron-down'")
-              button.btn.btn-sm.btn-danger(@click="remove(t)", :title="$t('account.delete')")
-                icon(name="trash")
-          template(v-if="expanded === t.sid")
-            tr(v-for="f in t.items", :key="f.key")
-              td(colspan="3")
-                small {{ f.name }}
-                span.label.label-warning(v-if="f.partial")  {{ $t('account.partial') }}
-              td.text-right
-                small {{ f.downloads }}
-              td.text-right
-                small {{ $size(f.size) }}
-              td.table-actions
-                button.btn.btn-xs.btn-default(v-if="t.items.length > 1", @click="removeFile(t, f)", :title="$t('account.deleteFile')")
-                  icon(name="times")
+            th {{ $t('account.transfer') }}
+            th {{ $t('account.created') }}
+            th {{ $t('account.expires') }}
+            th.num {{ $t('account.downloads') }}
+            th.num {{ $t('account.size') }}
+            th
+              span.sr-only {{ $t('account.details') }}
+        template(v-for="t in transfers", :key="t.sid")
+          tbody
+            tr
+              td
+                a.font-semibold(:href="t.url", target="_blank", rel="noopener") {{ t.items.length === 1 ? t.items[0].name : $t('account.files', { count: t.items.length }) }}
+                .flex.flex-wrap.items-center.gap-1.mt-1
+                  span.mono.text-xs.faint {{ t.sid }}
+                  span.badge(v-if="t.password", :title="$root.lang.password")
+                    icon(name="key")
+                  span.badge.badge-accent(v-if="t.oneTime") {{ $root.lang.retentions['one-time'] }}
+                  span.badge.badge-warning(v-if="t.partial") {{ $t('account.partial') }}
+                  span.badge.badge-danger(v-if="t.suspendedAt", :title="t.suspendedReason") {{ $t('account.suspended') }}
+              td.whitespace-nowrap {{ $date(t.createdAt) }}
+              td.whitespace-nowrap
+                template(v-if="t.oneTime") {{ $root.lang.retentions['one-time'] }}
+                template(v-else) {{ $date(t.expiresAt) }}
+              td.num {{ t.downloads }}
+              td.num {{ $size(t.size) }}
+              td.actions
+                clipboard.btn-sm.btn-ghost(:value="t.url", :title="$root.lang.copyToClipboard", icon-only)
+                button.btn.btn-sm.btn-ghost.btn-icon(type="button", @click="expanded = expanded === t.sid ? null : t.sid",
+                  :title="$t('account.details')", :aria-label="$t('account.details')", :aria-expanded="expanded === t.sid")
+                  icon(:name="expanded === t.sid ? 'chevron-up' : 'chevron-down'")
+                button.btn.btn-sm.btn-ghost.btn-icon.btn-danger(type="button", @click="remove(t)",
+                  :title="$t('account.delete')", :aria-label="$t('account.delete')")
+                  icon(name="trash")
+            template(v-if="expanded === t.sid")
+              tr.sub-row(v-for="f in t.items", :key="f.key")
+                td(colspan="3")
+                  span.text-sm {{ f.name }}
+                  span.badge.badge-warning.ml-2(v-if="f.partial") {{ $t('account.partial') }}
+                td.num.text-sm {{ f.downloads }}
+                td.num.text-sm {{ $size(f.size) }}
+                td.actions
+                  button.btn.btn-sm.btn-ghost.btn-icon(v-if="t.items.length > 1", type="button", @click="removeFile(t, f)",
+                    :title="$t('account.deleteFile')", :aria-label="$t('account.deleteFile')")
+                    icon(name="times")
 </template>
 
 <script>

@@ -1,24 +1,27 @@
-header.site-header
-  h1.site-title
-    a(href=uploadAppPath title=site.siteName)
-      img(src='assets/brand/flyto-lockup.svg' alt=site.siteName width='150' height='50')
-  nav.site-nav
-    if user
-      a.btn.btn-sm.btn-default(href='account' title=lang.nav.account)
-        | #{user.name || user.email}
-      if user.role === 'admin'
-        a.btn.btn-sm.btn-default(href='admin') #{lang.nav.admin}
-      form.site-logout(method='post' action='api/auth/logout')
-        input(type='hidden' name='_csrf' value=csrf)
-        button.btn.btn-sm.btn-link(type='submit') #{lang.nav.logout}
-    else
-      a.btn.btn-sm.btn-default(href='login') #{lang.nav.login}
-      if site.registrationMode === 'open'
-        a.btn.btn-sm.btn-primary(href='register') #{lang.nav.register}
-hr
-if site.maintenanceMode
-  .alert.alert-warning.site-banner
-    strong #{lang.maintenanceTitle}
-    |  #{site.maintenanceMessage || lang.maintenanceDefault}
-if site.announcementText
-  .alert.site-banner(class='alert-' + site.announcementLevel) #{site.announcementText}
+header.site-header(class=band ? 'is-band' : null)
+  .page.site-header-inner
+    a.site-home(href=uploadAppPath title=site.siteName)
+      include logo
+    nav.site-nav(aria-label=lang.nav.account)
+      if user
+        a.site-nav-link(href='account' title=lang.nav.account)
+          span.site-nav-full #{user.name || user.email}
+          span.site-nav-short #{lang.nav.account}
+        if user.role === 'admin'
+          a.site-nav-link(href='admin') #{lang.nav.admin}
+        form.site-logout(method='post' action='api/auth/logout')
+          input(type='hidden' name='_csrf' value=csrf)
+          button.btn.btn-sm(type='submit') #{lang.nav.logout}
+      else
+        a.site-nav-link(href='login') #{lang.nav.login}
+        if site.registrationMode === 'open'
+          a.btn.btn-sm.btn-ink(href='register') #{lang.nav.register}
+if site.maintenanceMode || site.announcementText
+  .page.site-banners
+    if site.maintenanceMode
+      .alert.alert-warning
+        div
+          strong #{lang.maintenanceTitle}
+          |  #{site.maintenanceMessage || lang.maintenanceDefault}
+    if site.announcementText
+      .alert(class=site.announcementLevel === 'success' ? 'alert-success' : site.announcementLevel === 'warning' ? 'alert-warning' : site.announcementLevel === 'danger' ? 'alert-danger' : 'alert-info') #{site.announcementText}

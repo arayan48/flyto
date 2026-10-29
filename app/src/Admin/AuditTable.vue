@@ -1,21 +1,22 @@
 <template lang="pug">
-  table.table.table-condensed.admin-table
-    tbody
-      tr(v-if="!items.length")
-        td.text-muted {{ $t('admin.empty') }}
-      tr(v-for="e in items", :key="e.id")
-        td(style="white-space: nowrap") {{ $date(e.at) }}
-        td
-          span.label(:class="labelClass(e.action)") {{ actionLabel(e.action) }}
-        td
-          a(v-if="e.actorId", :href="'admin#/users/' + e.actorId") {{ e.actorEmail }}
-          span.text-muted(v-else) {{ e.actorEmail || '–' }}
-        td
-          a(v-if="e.targetType === 'user' && e.targetId", :href="'admin#/users/' + e.targetId") {{ $t('admin.audit.user') }} {{ e.targetId }}
-          a(v-else-if="e.targetType === 'transfer' && e.targetId", :href="'admin#/transfers/' + e.targetId") {{ e.targetId }}
-          span(v-else-if="e.targetId") {{ e.targetType }} {{ e.targetId }}
-        td.small.text-muted.break-all {{ summary(e.details) }}
-        td.small.text-muted {{ e.ip }}
+  .card.table-wrap
+    table.table.admin-table
+      tbody
+        tr(v-if="!items.length")
+          td.muted {{ $t('admin.empty') }}
+        tr(v-for="e in items", :key="e.id")
+          td(style="white-space: nowrap") {{ $date(e.at) }}
+          td
+            span.badge(:class="labelClass(e.action)") {{ actionLabel(e.action) }}
+          td
+            a(v-if="e.actorId", :href="'admin#/users/' + e.actorId") {{ e.actorEmail }}
+            span.muted(v-else) {{ e.actorEmail || '–' }}
+          td
+            a(v-if="e.targetType === 'user' && e.targetId", :href="'admin#/users/' + e.targetId") {{ $t('admin.audit.user') }} {{ e.targetId }}
+            a(v-else-if="e.targetType === 'transfer' && e.targetId", :href="'admin#/transfers/' + e.targetId") {{ e.targetId }}
+            span(v-else-if="e.targetId") {{ e.targetType }} {{ e.targetId }}
+          td.text-sm.muted.break-all {{ summary(e.details) }}
+          td.text-sm.muted {{ e.ip }}
 </template>
 
 <script>
@@ -28,10 +29,10 @@
         return labels[action] || action;
       },
       labelClass(action) {
-        if (/failed|locked|deleted|suspended|revoked/.test(action)) return 'label-danger';
-        if (/^admin\./.test(action)) return 'label-primary';
-        if (/^auth\.login$|register|created|enabled/.test(action)) return 'label-success';
-        return 'label-default';
+        if (/failed|locked|deleted|suspended|revoked/.test(action)) return 'badge-danger';
+        if (/^admin\./.test(action)) return 'badge-accent';
+        if (/^auth\.login$|register|created|enabled/.test(action)) return 'badge-success';
+        return '';
       },
       summary(details) {
         if (!details || !Object.keys(details).length) return '';

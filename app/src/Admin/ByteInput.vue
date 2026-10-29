@@ -1,10 +1,9 @@
 <template lang="pug">
   .input-group
-    input.form-control(type="number", min="0", step="any", :value="parts.value", :placeholder="placeholder",
+    input.input(type="number", min="0", step="any", :value="parts.value", :placeholder="placeholder",
       @input="emit($event.target.value, parts.unit)")
-    span.input-group-btn(style="width: 80px")
-      select.form-control(:value="parts.unit", @change="emit(parts.value, $event.target.value)")
-        option(v-for="u in units", :value="u") {{ u }}
+    select.select.byte-unit(:value="parts.unit", aria-label="unit", @change="emit(parts.value, $event.target.value)")
+      option(v-for="u in units", :key="u", :value="u") {{ u }}
 </template>
 
 <script>
@@ -34,3 +33,13 @@
     },
   };
 </script>
+
+<style>
+  .byte-unit {
+    width: 5.5rem;
+    flex: none;
+    margin-left: -1px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+</style>

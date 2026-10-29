@@ -5,3 +5,5 @@ npm-debug.log
 
 /test-results
 /playwright-report
+/screens
+/e2e/.auth

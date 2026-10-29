@@ -1,12 +1,13 @@
 doctype html
 - const bundle = frontend('account')
+- const band = page !== 'account'
 html(lang=lang.langCode)
   head
     include partials/head
     include partials/head_custom
-  body
-    .container
-      include partials/header
+  body(class=band ? 'has-band' : null)
+    include partials/header
+    main.page.site-main
       #account
     include partials/footer
     script FLYTO_PAGE = '#{page}';

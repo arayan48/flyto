@@ -1,18 +1,21 @@
 <template lang="pug">
-  .row
-    .col-md-6
-      h4 {{ $t('account.exportTitle') }}
-      p.text-muted {{ $t('account.exportHelp') }}
-      a.btn.btn-default(href="api/me/export", download) {{ $t('account.exportButton') }}
-    .col-md-6
-      h4.text-danger {{ $t('account.deleteTitle') }}
-      p.text-muted {{ $t('account.deleteHelp') }}
-      .alert.alert-danger(v-if="error") {{ error }}
-      form(@submit.prevent="remove")
-        .form-group
-          label {{ $t('auth.password') }}
-          input.form-control(type="password", v-model="password", autocomplete="current-password", required)
-        button.btn.btn-danger(type="submit", :disabled="busy") {{ $t('account.deleteButton') }}
+  .split
+    section.card.card-body
+      h2.text-lg.mb-2 {{ $t('account.exportTitle') }}
+      p.muted.mb-4 {{ $t('account.exportHelp') }}
+      a.btn(href="api/me/export", download)
+        icon(name="download")
+        | {{ $t('account.exportButton') }}
+    section.card.card-body.danger-zone
+      h2.text-lg.mb-2 {{ $t('account.deleteTitle') }}
+      p.muted.mb-4 {{ $t('account.deleteHelp') }}
+      .alert.alert-danger.mb-4(v-if="error", role="alert") {{ error }}
+      form.form-stack(@submit.prevent="remove")
+        .field
+          label.label(for="deletePassword") {{ $t('auth.password') }}
+          input#deletePassword.input(type="password", v-model="password", autocomplete="current-password", required)
+        div
+          button.btn.btn-danger(type="submit", :disabled="busy") {{ $t('account.deleteButton') }}
 </template>
 
 <script>

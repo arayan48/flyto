@@ -1,28 +1,21 @@
 <template lang="pug">
-  modal.preview-modal(v-if="current", @close="current=false", :has-header="true", @next="next", @prev="prev")
-    template(#header)
-      div.header
-        p
-          strong {{current.metadata.name}}
-        div
-          small {{currentIndex+1}} / {{files.length}}
-          span.btn-group
-            a.btn.btn-sm.btn-default(title="previous", @click="prev", v-show="currentIndex > 0")
-              icon(name="arrow-left")
-            a.btn.btn-sm.btn-default(title="next", @click="next", v-show="currentIndex < files.length-1")
-              icon(name="arrow-right")
-            a.btn.btn-sm.btn-default(title="toggle line wrap", @click="lineWrap = !lineWrap", :class="{active:lineWrap}", v-show="current.previewType === 'text'")
-              icon(name="undo-alt", flip="vertical")
-    template(#body)
-      div(v-if="current.previewType === 'image'", style="text-align:center")
-        img(:src="current.url + '?preview'", style="max-width: 100%; height:auto")
-      div(v-if="current.previewType === 'text'")
-        pre(:style="{'white-space':lineWrap?'pre-wrap':'pre'}") {{ previewText }}
-      p(v-if="current.previewType === false", style="text-align:center")
-        strong.text-danger {{ $root.lang.noPreviewAvailable }}
+  modal.preview-modal(v-if="current", :title="current.metadata.name", @close="current = false", @next="next", @prev="prev")
+    template(#tools)
+      span.text-xs.faint.tnum.mr-2(v-if="files.length > 1") {{ currentIndex + 1 }} / {{ files.length }}
+      button.btn.btn-ghost.btn-icon(v-if="current.previewType === 'text'", type="button", :aria-pressed="lineWrap",
+        :title="$t('ui.preview.wrap')", :aria-label="$t('ui.preview.wrap')", @click="lineWrap = !lineWrap")
+        icon(name="undo-alt", flip="vertical")
+      button.btn.btn-ghost.btn-icon(v-if="files.length > 1", type="button", :disabled="currentIndex <= 0",
+        :title="$t('ui.preview.previous')", :aria-label="$t('ui.preview.previous')", @click="prev")
+        icon(name="arrow-left")
+      button.btn.btn-ghost.btn-icon(v-if="files.length > 1", type="button", :disabled="currentIndex >= files.length - 1",
+        :title="$t('ui.preview.next')", :aria-label="$t('ui.preview.next')", @click="next")
+        icon(name="arrow-right")
+    .preview-image(v-if="current.previewType === 'image'")
+      img(:src="current.url + '?preview'", :alt="current.metadata.name")
+    pre.preview-text(v-else-if="current.previewType === 'text'", :class="{ 'is-wrapped': lineWrap }") {{ previewText }}
+    p.p-8.text-center.muted(v-else) {{ $root.lang.noPreviewAvailable }}
 </template>
-
-
 <script type="text/babel">
   import Modal from '../common/Modal.vue';
 
@@ -81,3 +74,32 @@
     }
   };
 </script>
+
+<style>
+  .preview-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100%;
+    padding: 1rem;
+    background: var(--surface-2);
+  }
+  .preview-image img {
+    max-width: 100%;
+    max-height: calc(100vh - 8rem);
+    object-fit: contain;
+  }
+  .preview-text {
+    margin: 0;
+    padding: 1rem 1.25rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    line-height: 1.6;
+    white-space: pre;
+    tab-size: 4;
+  }
+  .preview-text.is-wrapped {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+</style>

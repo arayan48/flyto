@@ -2,15 +2,15 @@
   div
     .admin-toolbar
       .grow
-        input.form-control(type="search", v-model="q", :placeholder="$t('admin.audit.search')", @input="debounced")
-      select.form-control(v-model="action", @change="reload")
+        input.input(type="search", v-model="q", :placeholder="$t('admin.audit.search')", @input="debounced")
+      select.select(v-model="action", @change="reload")
         option(value="") {{ $t('admin.audit.allActions') }}
         option(value="auth.") {{ $t('admin.audit.groups.auth') }}
         option(value="user.") {{ $t('admin.audit.groups.user') }}
         option(value="admin.") {{ $t('admin.audit.groups.admin') }}
         option(value="transfer.") {{ $t('admin.audit.groups.transfer') }}
         option(v-for="a in actions", :value="a", :key="a") {{ label(a) }}
-      a.btn.btn-default(:href="'api/admin/audit.csv' + filter", download) CSV
+      a.btn(:href="'api/admin/audit.csv' + filter", download) CSV
     .alert.alert-danger(v-if="error") {{ error }}
     template(v-if="result")
       audit-table(:items="result.items")

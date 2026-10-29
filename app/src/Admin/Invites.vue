@@ -1,82 +1,81 @@
 <template lang="pug">
   div
-    .alert.alert-info(v-if="mode !== 'invite'")
-      | {{ $t('admin.invites.modeNotice', { mode: $t('admin.settings.registrationModes.' + mode) }) }}
-      |
-      a(href="admin#/settings") {{ $root.lang.admin.warnings.settingsLink }}
-    .row
-      .col-md-5
-        form.well(@submit.prevent="create")
-          h4 {{ $t('admin.invites.create') }}
+    .alert.alert-info.mb-4(v-if="mode !== 'invite'")
+      div
+        | {{ $t('admin.invites.modeNotice', { mode: $t('admin.settings.registrationModes.' + mode) }) }}
+        |
+        a(href="admin#/settings") {{ $root.lang.admin.warnings.settingsLink }}
+    .invites-layout
+      div
+        form.card.form-card(@submit.prevent="create")
+          h2.section-title {{ $t('admin.invites.create') }}
           .alert.alert-danger(v-if="error") {{ error }}
-          .form-group
-            label {{ $t('auth.email') }}
-            input.form-control(type="email", v-model.trim="form.email", :placeholder="$t('admin.invites.emailOptional')")
-          .form-group
-            label {{ $t('admin.users.role') }}
-            select.form-control(v-model="form.role")
+          .field
+            label.label {{ $t('auth.email') }}
+            input.input(type="email", v-model.trim="form.email", :placeholder="$t('admin.invites.emailOptional')")
+          .field
+            label.label {{ $t('admin.users.role') }}
+            select.select(v-model="form.role")
               option(value="user") {{ $t('admin.roles.user') }}
               option(value="admin") {{ $t('admin.roles.admin') }}
-          .row
-            .col-xs-6.form-group
-              label {{ $t('admin.invites.maxUses') }}
-              input.form-control(type="number", min="1", v-model="form.maxUses", :placeholder="$t('admin.quota.unlimited')")
-            .col-xs-6.form-group
-              label {{ $t('admin.invites.validity') }}
-              select.form-control(v-model="form.expiresInDays")
+          .grid-2
+            .field
+              label.label {{ $t('admin.invites.maxUses') }}
+              input.input(type="number", min="1", v-model="form.maxUses", :placeholder="$t('admin.quota.unlimited')")
+            .field
+              label.label {{ $t('admin.invites.validity') }}
+              select.select(v-model="form.expiresInDays")
                 option(:value="1") {{ $t('admin.dashboard.days', { count: 1 }) }}
                 option(:value="7") {{ $t('admin.dashboard.days', { count: 7 }) }}
                 option(:value="30") {{ $t('admin.dashboard.days', { count: 30 }) }}
                 option(value="") {{ $t('admin.invites.noExpiry') }}
-          .form-group
-            label {{ $t('admin.invites.note') }}
-            input.form-control(type="text", v-model.trim="form.note", maxlength="500")
-          .checkbox(v-if="form.email")
-            label
-              input(type="checkbox", v-model="form.sendEmail")
-              |  {{ $t('admin.invites.sendEmail') }}
-          button.btn.btn-primary(type="submit", :disabled="busy") {{ $t('admin.invites.createButton') }}
-        .alert.alert-success(v-if="created")
-          | {{ created.mailed ? $t('admin.invites.mailed') : $t('admin.invites.copyNow') }}
-          br
-          code.break-all {{ created.link }}
-          |
-          clipboard.btn.btn-xs.btn-default(:value="created.link")
-      .col-md-7
-        table.table.table-condensed.admin-table
-          thead
-            tr
-              th {{ $t('admin.invites.invite') }}
-              th {{ $t('admin.invites.uses') }}
-              th {{ $t('admin.invites.expires') }}
-              th {{ $t('admin.invites.state') }}
-              th
-          tbody
-            tr(v-if="!invites.length")
-              td.text-muted(colspan="5") {{ $t('admin.empty') }}
-            tr(v-for="i in invites", :key="i.id")
-              td
-                | {{ i.email || $t('admin.invites.anyEmail') }}
-                |
-                span.label.label-primary(v-if="i.role === 'admin'") {{ $t('admin.roles.admin') }}
-                br
-                small.text-muted {{ i.note }} {{ $t('admin.invites.by', { email: i.createdByEmail || '–', date: $day(i.createdAt) }) }}
-              td {{ i.uses }} / {{ i.maxUses || '∞' }}
-              td {{ $date(i.expiresAt) }}
-              td
-                span.label(:class="stateClass(i)") {{ $t('admin.invites.states.' + state(i)) }}
-              td.table-actions
-                button.btn.btn-xs.btn-default(v-if="state(i) === 'valid'", @click="revoke(i)") {{ $t('admin.invites.revoke') }}
-                button.btn.btn-xs.btn-danger(v-else, @click="remove(i)") ✕
+          .field
+            label.label {{ $t('admin.invites.note') }}
+            input.input(type="text", v-model.trim="form.note", maxlength="500")
+          label.check(v-if="form.email")
+            input(type="checkbox", v-model="form.sendEmail")
+            span {{ $t('admin.invites.sendEmail') }}
+          div
+            button.btn.btn-primary(type="submit", :disabled="busy") {{ $t('admin.invites.createButton') }}
+        created-link.mt-4(v-if="created", :link="created.link", :text="created.mailed ? $t('admin.invites.mailed') : $t('admin.invites.copyNow')")
+      div
+        .card.table-wrap
+          table.table.admin-table
+            thead
+              tr
+                th {{ $t('admin.invites.invite') }}
+                th {{ $t('admin.invites.uses') }}
+                th {{ $t('admin.invites.expires') }}
+                th {{ $t('admin.invites.state') }}
+                th
+            tbody
+              tr(v-if="!invites.length")
+                td.muted(colspan="5") {{ $t('admin.empty') }}
+              tr(v-for="i in invites", :key="i.id")
+                td
+                  | {{ i.email || $t('admin.invites.anyEmail') }}
+                  |
+                  span.badge.badge-accent(v-if="i.role === 'admin'") {{ $t('admin.roles.admin') }}
+                  br
+                  small.muted {{ i.note }} {{ $t('admin.invites.by', { email: i.createdByEmail || '–', date: $day(i.createdAt) }) }}
+                td {{ i.uses }} / {{ i.maxUses || '∞' }}
+                td {{ $date(i.expiresAt) }}
+                td
+                  span.badge(:class="stateClass(i)") {{ $t('admin.invites.states.' + state(i)) }}
+                td.actions
+                  button.btn.btn-sm(v-if="state(i) === 'valid'", @click="revoke(i)") {{ $t('admin.invites.revoke') }}
+                  button.btn.btn-sm.btn-ghost.btn-icon.btn-danger(v-else, type="button", @click="remove(i)",
+                    :title="$t('admin.transfers.delete')", :aria-label="$t('admin.transfers.delete')")
+                    icon(name="times")
 </template>
 
 <script>
-  import Clipboard from '../common/Clipboard.vue';
+  import CreatedLink from './CreatedLink.vue';
   import { get, post, del } from '../common/api';
 
   export default {
     name: 'Invites',
-    components: { Clipboard },
+    components: { CreatedLink },
     data() {
       return { invites: [], error: '', busy: false, created: null,
         form: { email: '', role: 'user', maxUses: 1, expiresInDays: 7, note: '', sendEmail: true } };
@@ -97,7 +96,7 @@
         return 'valid';
       },
       stateClass(i) {
-        return { valid: 'label-success', used: 'label-default', expired: 'label-warning', revoked: 'label-danger' }[this.state(i)];
+        return { valid: 'badge-success', used: '', expired: 'badge-warning', revoked: 'badge-danger' }[this.state(i)];
       },
       async load() {
         try {

@@ -1,12 +1,14 @@
-export function humanFileSize(fileSizeInBytes) {
+// "34 B", "8.4 kB", "879 kB", "1.1 GB": one decimal only while it still says something
+export function humanFileSize(bytes) {
+  bytes = +bytes || 0;
+  if (bytes < 1024) return `${ bytes } B`;
+  const units = ['kB', 'MB', 'GB', 'TB', 'PB'];
   let i = -1;
-  const byteUnits = [' kB', ' MB', ' GB', ' TB', 'PB', 'EB', 'ZB', 'YB'];
   do {
-    fileSizeInBytes = fileSizeInBytes / 1024;
+    bytes /= 1024;
     i++;
-  }
-  while (fileSizeInBytes > 1024);
-  return Math.max(fileSizeInBytes, 0.01).toFixed(2) + byteUnits[i];
+  } while (bytes >= 1024 && i < units.length - 1);
+  return `${ bytes.toFixed(bytes < 10 ? 1 : 0) } ${ units[i] }`;
 }
 
 function pad(d) {
@@ -70,4 +72,17 @@ export function userAgentLabel(ua) {
   const os = /Windows/.test(ua) ? 'Windows' : /Android/.test(ua) ? 'Android' : /iPhone|iPad/.test(ua) ? 'iOS'
     : /Mac OS X/.test(ua) ? 'macOS' : /Linux/.test(ua) ? 'Linux' : '';
   return os ? `${ browser } · ${ os }` : browser;
+}
+
+/**
+ * Date in the words of the page language, "5 nov. 2026, 14:30".
+ */
+export function formatWhen(lang, value, withTime = true) {
+  if (!value) return '–';
+  const options = withTime ? { dateStyle: 'medium', timeStyle: 'short' } : { dateStyle: 'medium' };
+  try {
+    return new Intl.DateTimeFormat((lang && lang.langCode) || undefined, options).format(new Date(+value));
+  } catch (e) {
+    return formatDate(value, withTime);
+  }
 }

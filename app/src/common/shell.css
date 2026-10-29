@@ -1,0 +1,128 @@
+/* header, footer and page frame rendered by the server (public/pug) */
+.site-header {
+  color: var(--ink);
+}
+.site-header.is-band {
+  background: var(--band);
+  color: #fff;
+}
+.site-header.is-band .btn {
+  border-color: rgb(255 255 255 / .55);
+  color: #fff;
+}
+.site-header.is-band .btn:hover {
+  border-color: #fff;
+  background: rgb(255 255 255 / .1);
+}
+.site-header.is-band .btn-ink {
+  border-color: #0e1420;
+  background: #0e1420;
+}
+.site-header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 4.75rem;
+}
+.site-home {
+  display: inline-flex;
+  color: inherit;
+}
+.site-home:hover {
+  color: inherit;
+}
+.site-logo {
+  height: 2.1rem;
+  width: auto;
+}
+.is-band .site-logo-file {
+  fill: #fff;
+}
+.site-nav {
+  display: flex;
+  align-items: center;
+  gap: .4rem 1.1rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  min-width: 0;
+}
+.site-nav-link {
+  max-width: 14rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: inherit;
+  font-size: var(--text-sm);
+  font-weight: 650;
+  text-decoration: none;
+  opacity: .85;
+}
+.site-nav-link {
+  background: linear-gradient(currentColor, currentColor) left bottom / 0 1.5px no-repeat;
+  transition: background-size .25s ease-out, opacity .2s;
+}
+.site-nav-link:hover {
+  color: inherit;
+  opacity: 1;
+  background-size: 100% 1.5px;
+}
+.site-logout {
+  margin: 0;
+}
+.site-nav-short {
+  display: none;
+}
+.site-banners {
+  display: grid;
+  gap: .5rem;
+  margin-top: 1rem;
+}
+.site-main {
+  flex: 1;
+  padding-top: 2.5rem;
+  padding-bottom: 4rem;
+}
+.has-band .site-main {
+  padding-top: 0;
+}
+.site-footer {
+  color: var(--ink-3);
+  font-size: var(--text-xs);
+}
+.site-footer a {
+  color: inherit;
+}
+.site-footer a:hover {
+  color: var(--ink);
+}
+.site-footer-inner {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: .5rem 1.5rem;
+  padding-block: 1.5rem;
+  border-top: 1px solid var(--line);
+}
+.site-footer-links {
+  display: flex;
+  gap: 1rem;
+}
+.error-page h1 {
+  max-width: 40rem;
+  margin-bottom: 2rem;
+}
+@media (max-width: 40rem) {
+  .site-logo {
+    height: 1.75rem;
+  }
+  .site-nav-full {
+    display: none;
+  }
+  .site-nav-short {
+    display: inline;
+  }
+  .site-main {
+    padding-top: 1.5rem;
+  }
+}

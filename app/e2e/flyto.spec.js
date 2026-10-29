@@ -1,7 +1,7 @@
 import { test as base, expect } from '@playwright/test';
 import fs from 'node:fs';
 
-const ADMIN = { email: 'admin@flyto.test', password: 'e2e-admin-password' };
+const ADMIN = { email: 'admin@flyto.test' };
 
 // any uncaught error in the page fails the test, the front must run clean
 const test = base.extend({
@@ -17,14 +17,6 @@ const test = base.extend({
   },
 });
 
-async function login(page) {
-  await page.goto('login');
-  await page.locator('#email').fill(ADMIN.email);
-  await page.locator('#password').fill(ADMIN.password);
-  await page.locator('form button[type=submit]').click();
-  await page.waitForURL(/\/admin/);
-}
-
 async function uploadText(page, name, text) {
   await page.goto('./');
   await page.locator('#fileInput').setInputFiles({ name, mimeType: 'text/plain', buffer: Buffer.from(text) });
@@ -35,20 +27,21 @@ async function uploadText(page, name, text) {
   return link.getAttribute('href');
 }
 
-test('a visitor is asked to log in before uploading', async ({ page }) => {
+test('a visitor is asked to log in before uploading', async ({ browser }) => {
+  const context = await browser.newContext({ storageState: { cookies: [], origins: [] } });
+  const page = await context.newPage();
   await page.goto('./');
   await expect(page.locator('.upload-login a[href="login"]')).toBeVisible();
+  await context.close();
 });
 
 test('upload, open the link, preview and download', async ({ page }) => {
-  await login(page);
   const name = `hello-${ Date.now() }.txt`;
   const url = await uploadText(page, name, 'hello from flyto');
 
   await page.goto(url);
-  const row = page.locator('tr', { hasText: name });
+  const row = page.locator('.manifest-row', { hasText: name });
   await expect(row).toBeVisible();
-  await expect(page.locator('.btn-download-archive')).toBeVisible();
 
   await row.getByTitle('Copy to clipboard').click();
   await expect(row.locator('.downloaded')).toBeVisible();
@@ -60,13 +53,12 @@ test('upload, open the link, preview and download', async ({ page }) => {
   await expect(page.getByRole('dialog')).toHaveCount(0);
 
   const download = page.waitForEvent('download');
-  await row.locator('strong', { hasText: name }).click();
+  await row.locator('.manifest-name').click();
   const file = await (await download).path();
   expect(fs.readFileSync(file, 'utf8')).toBe('hello from flyto');
 });
 
 test('a password protects the transfer', async ({ page }) => {
-  await login(page);
   await page.goto('./');
   await page.locator('#password').fill('s3cret-pass');
   const name = `locked-${ Date.now() }.txt`;
@@ -77,6 +69,7 @@ test('a password protects the transfer', async ({ page }) => {
   await expect(link).toBeVisible({ timeout: 20000 });
   const url = await link.getAttribute('href');
 
+  await page.context().clearCookies();
   await page.goto(url);
   const input = page.locator('input[type=password]');
   await input.fill('wrong');
@@ -84,15 +77,15 @@ test('a password protects the transfer', async ({ page }) => {
   await expect(page.locator('.text-danger strong')).toBeVisible();
   await input.fill('s3cret-pass');
   await page.locator('button.decrypt').click();
-  await expect(page.locator('tr', { hasText: name })).toBeVisible();
+  await expect(page.locator('.manifest-row', { hasText: name })).toBeVisible();
 });
 
 test('every admin tab renders', async ({ page }) => {
-  await login(page);
+  await page.goto('admin');
   for (const tab of ['users', 'transfers', 'downloads', 'invites', 'audit', 'settings', 'system', 'dashboard']) {
     await page.locator(`.admin-tabs a[href="admin#/${ tab }"]`).click();
     await expect(page).toHaveURL(new RegExp(`/admin#/${ tab }$`));
-    await expect(page.locator('.admin-tabs li.active a')).toHaveAttribute('href', `admin#/${ tab }`);
+    await expect(page.locator('.admin-tabs a[aria-current="page"]')).toHaveAttribute('href', `admin#/${ tab }`);
     await expect(page.locator('.admin-app > .alert-danger')).toHaveCount(0);
   }
 
@@ -100,20 +93,19 @@ test('every admin tab renders', async ({ page }) => {
   await page.locator('tr.clickable', { hasText: ADMIN.email }).click();
   await expect(page).toHaveURL(/\/admin#\/users\/\d+$/);
   await expect(page.locator('.admin-app')).toContainText(ADMIN.email);
-  await page.locator('a[href="admin#/users"]', { hasText: '‹' }).click();
+  await page.locator('.back-link').click();
   await expect(page).toHaveURL(/\/admin#\/users$/);
 });
 
 test('my account lists the transfers and every tab renders', async ({ page }) => {
-  await login(page);
   const name = `mine-${ Date.now() }.txt`;
   await uploadText(page, name, 'mine');
 
   await page.goto('account');
   await expect(page.locator('.my-account')).toContainText(name);
   for (const tab of ['profile', 'security', 'sessions', 'data', 'transfers']) {
-    await page.locator(`.my-account .nav-tabs a[href="account#${ tab }"]`).click();
+    await page.locator(`.my-account .tabs a[href="account#${ tab }"]`).click();
     await expect(page).toHaveURL(new RegExp(`/account#${ tab }$`));
-    await expect(page.locator('.my-account .nav-tabs li.active a')).toHaveAttribute('href', `account#${ tab }`);
+    await expect(page.locator('.my-account .tabs a[aria-current="page"]')).toHaveAttribute('href', `account#${ tab }`);
   }
 });

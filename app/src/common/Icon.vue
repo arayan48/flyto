@@ -6,12 +6,20 @@
 <script>
   import ArrowLeft from '~icons/ph/arrow-left';
   import ArrowRight from '~icons/ph/arrow-right';
+  import ArrowUpRight from '~icons/ph/arrow-up-right';
   import ArrowUUpLeft from '~icons/ph/arrow-u-up-left';
   import ArrowsClockwise from '~icons/ph/arrows-clockwise';
   import CaretDown from '~icons/ph/caret-down';
   import CaretUp from '~icons/ph/caret-up';
   import Check from '~icons/ph/check';
   import CloudArrowUp from '~icons/ph/cloud-arrow-up';
+  import Cpu from '~icons/ph/cpu';
+  import Gauge from '~icons/ph/gauge';
+  import ListBullets from '~icons/ph/list-bullets';
+  import SlidersHorizontal from '~icons/ph/sliders-horizontal';
+  import Stack from '~icons/ph/stack';
+  import Users from '~icons/ph/users';
+
   import Copy from '~icons/ph/copy';
   import DownloadSimple from '~icons/ph/download-simple';
   import EnvelopeSimple from '~icons/ph/envelope-simple';
@@ -39,11 +47,18 @@
   const icons = {
     'arrow-left': ArrowLeft,
     'arrow-right': ArrowRight,
+    'arrow-up-right': ArrowUpRight,
     'check': Check,
     'chevron-down': CaretDown,
     'chevron-up': CaretUp,
     'cloud-upload-alt': CloudArrowUp,
     'copy': Copy,
+    'cpu': Cpu,
+    'gauge': Gauge,
+    'list': ListBullets,
+    'sliders': SlidersHorizontal,
+    'stack': Stack,
+    'users': Users,
     'download': DownloadSimple,
     'envelope': EnvelopeSimple,
     'exclamation-triangle': Warning,
