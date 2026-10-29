@@ -1,93 +1,82 @@
 <template lang="pug">
   .download-app
-    a.btn.btn-sm.btn-info.btn-new-session(@click='newSession()', :title='$root.lang.newUpload')
-      icon.fa-fw(name="cloud-upload-alt")
-      span.hidden-xs  {{ $root.lang.newUpload }}
-    .alert.alert-danger(v-show="error")
-      strong
-        icon.fa-fw(name="exclamation-triangle")
-        |  {{ error }}
-    .well(v-if='needsPassword')
-      h3 {{ $root.lang.password }}
-      .form-group
-        input.form-control(type='password', v-model='password', @keyup.enter='password.length && fetchBucket()' autofocus)
-      p.text-danger(v-show='passwordWrong')
-        strong {{ $root.lang.accessDenied }}
-      |
-      button.decrypt.btn.btn-primary(:disabled='password.length<1', @click='fetchBucket()')
-        icon.fa-fw(name="key")
-        |  {{ $root.lang.decrypt }}
-    .panel.panel-primary(v-if='!needsPassword && !loading')
-      .panel-heading
-        strong {{ $root.lang.files }}
-        div.pull-right.btn-group.btn-download-archive(v-if="downloadsAvailable")
-          a.btn.btn-sm.btn-default(
-            @click="downloadAll('zip')"
-            @keydown.enter.prevent="downloadAll('zip')"
-            @keydown.space.prevent="downloadAll('zip')"
-            :title="$root.lang.zipDownload"
-            tabindex="0"
-            role="button"
-          )
-            icon.fa-fw(name="download")
-            |  zip
-          a.btn.btn-sm.btn-default(
-            @click="downloadAll('tar.gz')"
-            @keydown.enter.prevent="downloadAll('tar.gz')"
-            @keydown.space.prevent="downloadAll('tar.gz')"
-            :title="$root.lang.tarGzDownload"
-            tabindex="0"
-            role="button"
-          )
-            icon.fa-fw(name="download")
-            |  tar.gz
-      .panel-body
-        table.table.table-hover.table-striped.files
-          tbody
-            tr(
-              v-for='file in files',
-              style='cursor: pointer',
-              @click='download(file)',
-              @keydown.enter.prevent='download(file)',
-              @keydown.space.prevent='download(file)',
-              tabindex="0",
-              role="button"
-            )
-              td.file-icon
-                file-icon(:file='file')
-              td
-                div.pull-right.btn-group
-                  clipboard.btn.btn-sm.btn-default(:value='baseURI + file.url', @change='copied(file, $event)', :title='$root.lang.copyToClipboard')
-                    a
-                      icon(name="copy")
-                  a.btn.btn-sm.btn-default(:title="$root.lang.preview", @click.prevent.stop="preview=file", v-if="file.previewType")
-                    icon(name="eye")
-                icon.pull-right.text-success.downloaded(name="check", v-show='file.downloaded')
-                p
-                  strong {{ file.metadata.name }}
-                  small.file-size(v-if="isFinite(file.size)") ({{ humanFileSize(file.size) }})
-                p {{ file.metadata.comment }}
+    .alert.alert-danger.max-w-xl(v-if="error", role="alert")
+      icon(name="exclamation-triangle")
+      div
+        p {{ error }}
+        p.mt-2
+          a(:href="$root.baseURI + '/'") {{ $root.lang.newUpload }}
 
-    preview-modal(:preview="preview", :files="previewFiles", :max-size="config.maxPreviewSize", @close="preview=false")
+    form.unlock.card.card-body(v-else-if="needsPassword", @submit.prevent="password && fetchBucket()")
+      span.unlock-icon
+        icon(name="key")
+      h1.text-xl {{ $t('ui.download.lockedTitle') }}
+      p.muted.mt-1 {{ $t('ui.download.lockedText') }}
+      .field.mt-5
+        label.label(for="downloadPassword") {{ $root.lang.password }}
+        input#downloadPassword.input.input-mono(type="password", v-model="password", autocomplete="off", autofocus,
+          :aria-invalid="passwordWrong ? 'true' : null")
+        p.text-sm.text-danger(v-if="passwordWrong", role="alert")
+          strong {{ $root.lang.accessDenied }}
+      button.decrypt.btn.btn-primary.w-full.mt-4(type="submit", :disabled="!password")
+        icon(name="key")
+        | {{ $root.lang.decrypt }}
 
+    p.muted(v-else-if="loading")
+      icon(name="spinner", spin)
+      |  {{ $t('ui.loading') }}
+
+    template(v-else)
+      header.download-head
+        div
+          h1.text-2xl {{ files.length === 1 ? files[0].metadata.name : $t('ui.download.title', { count: files.length }) }}
+          p.muted.tnum.mt-1
+            | {{ files.length === 1 ? $t('ui.upload.oneFile') : $t('ui.upload.manyFiles', { count: files.length }) }}
+            |  · {{ humanFileSize(totalSize) }}
+            template(v-if="oneTime")  · {{ $root.lang.retentions['one-time'] }}
+            template(v-else-if="expiresAt")  · {{ $t('ui.download.until', { date: $date(expiresAt) }) }}
+        .flex.flex-wrap.gap-2.btn-download-archive(v-if="downloadsAvailable && files.length > 1")
+          a.btn.btn-primary(:href="archiveUrl('zip')", :title="$root.lang.zipDownload", @click="markAll()")
+            icon(name="download")
+            | {{ $t('ui.download.all') }}
+          a.btn(:href="archiveUrl('tar.gz')", :title="$root.lang.tarGzDownload", @click="markAll()") .tar.gz
+
+      ul.manifest.card
+        li.manifest-row(v-for="file in files", :key="file.key", :class="{ 'is-done': file.downloaded }")
+          file-icon(:file="file")
+          button.manifest-main(type="button", @click="download(file)")
+            span.manifest-name {{ file.metadata.name }}
+            span.manifest-meta.tnum
+              template(v-if="isFinite(file.size)") {{ humanFileSize(file.size) }}
+              span.downloaded(v-if="file.downloaded")
+                icon(name="check")
+                | {{ $t('ui.download.done') }}
+            span.manifest-comment(v-if="file.metadata.comment") {{ file.metadata.comment }}
+          .manifest-actions
+            button.btn.btn-ghost.btn-icon(v-if="file.previewType", type="button", :title="$root.lang.preview",
+              :aria-label="$root.lang.preview", @click="preview = file")
+              icon(name="eye")
+            clipboard.btn-ghost(:value="$root.baseURI + file.url", icon-only, :title="$root.lang.copyToClipboard",
+              @change="copied(file, $event)")
+            button.btn.btn-icon.manifest-download(type="button", :title="$t('ui.download.one')", :aria-label="$t('ui.download.one')",
+              @click="download(file)")
+              icon(name="download")
+
+    preview-modal(:preview="preview", :files="previewFiles", :max-size="config.maxPreviewSize", @close="preview = false")
 </template>
 
-
 <script>
-  "use strict";
-
   import FileIcon from './common/FileIcon.vue';
   import Clipboard from './common/Clipboard.vue';
   import PreviewModal from './Download/PreviewModal.vue';
-
+  import { humanFileSize } from './common/format';
 
   function getPreviewType(file, maxSize) {
-    if(!file || !file.metadata) return false;
-    if(file.metadata.retention === 'one-time') return false;
-    // no preview for files size > 2MB
-    if(file.size > maxSize) return false;
-    if(file.metadata.type && file.metadata.type.match(/^image\/.*/)) return 'image';
-    else if(file.metadata.type && file.metadata.type.match(/(text\/|xml|json|javascript|x-sh)/)
+    if (!file || !file.metadata) return false;
+    if (file.metadata.retention === 'one-time') return false;
+    if (file.size > maxSize) return false;
+    if (file.metadata.type && file.metadata.type.match(/^image\/.*/)) return 'image';
+    if (file.metadata.type && file.metadata.type.match(/(text\/|xml|json|javascript|x-sh)/)
       || file.metadata.name && file.metadata.name
         .match(/\.(jsx|vue|sh|pug|less|scss|sass|c|h|conf|log|bat|cmd|lua|class|java|py|php|yml|sql|md)$/)) {
       return 'text';
@@ -96,137 +85,200 @@
   }
 
   export default {
-    name: 'app',
+    name: 'Download',
     components: { FileIcon, Clipboard, PreviewModal },
-    data () {
+
+    data() {
       return {
         files: [],
-        sid: document.location.pathname.match(/^.*\/([^\/?#]+)/)[1],
-        baseURI: this.$root.baseURI,
+        sid: document.location.pathname.match(/^.*\/([^/?#]+)/)[1],
         passwordWrong: false,
         needsPassword: false,
         loading: true,
         password: '',
-        content: '',
         error: '',
         config: {},
         archiveToken: '',
-        preview: false
-      }
+        expiresAt: null,
+        preview: false,
+      };
     },
 
     computed: {
-      downloadsAvailable: function() {
+      downloadsAvailable() {
         if (!this.archiveToken) return false;
-        return this.files.filter(f => !f.downloaded || f.metadata.retention !== 'one-time').length > 0
+        return this.files.some(f => !f.downloaded || f.metadata.retention !== 'one-time');
       },
-      previewFiles: function() {
+      previewFiles() {
         return this.files.filter(f => !!f.previewType);
-      }
-
-    },
-
-    methods: {
-
-      download(file) {
-        if(file.downloaded && file.metadata.retention === 'one-time') {
-          alert(this.$root.lang.oneTimeDownloadExpired);
-          return;
-        }
-        const aEl = document.createElement('a');
-        aEl.setAttribute('href', file.url);
-        aEl.setAttribute('download', file.metadata.name);
-        aEl.style.display = 'none';
-        document.body.appendChild(aEl);
-        aEl.click();
-        document.body.removeChild(aEl);
-        file.downloaded = true;
       },
-
-      async downloadAll(format) {
-        let token = this.archiveToken;
-        if (!token) {
-          console.error('Archive token not found.');
-          return;
-        }
-        document.location.href = this.$root.baseURI
-          + '/files/' + this.sid + '++'
-          + this.archiveToken + '.' + format;
-        this.files.forEach(f => { f.downloaded = true; })
+      totalSize() {
+        return this.files.reduce((sum, f) => sum + (+f.size || 0), 0);
       },
-
-      copied(file, $event) {
-        file.downloaded = $event === 'copied';
-      },
-
-      humanFileSize(fileSizeInBytes) {
-        let i = -1;
-        const byteUnits = [' kB', ' MB', ' GB', ' TB', 'PB', 'EB', 'ZB', 'YB'];
-        let size = fileSizeInBytes;
-        do {
-          size = size / 1024;
-          i++;
-        }
-        while(size > 1024);
-        return Math.max(size, 0.01).toFixed(2) + byteUnits[i];
-      },
-
-      newSession() {
-        document.location.href = this.$root.baseURI;
-      },
-
-      isFinite(value) {
-        if(typeof value !== 'number') return false;
-        return !(value !== value || value === Infinity || value === -Infinity);
-      },
-
-      fetchBucket() {
-        const xhr = new XMLHttpRequest();
-        xhr.open('GET', this.sid + '.json');
-        if(this.password) {
-          xhr.setRequestHeader('x-download-pass', encodeURIComponent(this.password));
-        }
-        xhr.onload = () => {
-          if (xhr.status === 200) {
-            try {
-              const data = JSON.parse(xhr.responseText);
-              this.config = data.config;
-              this.archiveToken = data.archiveToken || '';
-              this.files = data.items.map(f => {
-                return Object.assign(f, {
-                  downloaded: false,
-                  previewType: getPreviewType(f, this.config.maxPreviewSize)
-                });
-              });
-              this.loading = false;
-              this.needsPassword = false;
-            }
-            catch (e) {
-              this.error = e.toString();
-            }
-          } else if (xhr.status === 401) {
-            if(this.needsPassword) {
-              this.passwordWrong = true;
-            } else {
-              this.needsPassword = true;
-            }
-            this.loading = false;
-          } else if (xhr.status === 451) {
-            this.error = this.$root.lang.transferSuspended;
-            this.loading = false;
-          } else if (xhr.status === 429) {
-            this.error = this.$root.lang.tooManyAttempts;
-            this.loading = false;
-          } else {
-            this.error = xhr.status === 404 ? this.$root.lang.errors.transferNotFound : this.$root.lang.errors.serverError;
-          }
-        };
-        xhr.send();
+      oneTime() {
+        return this.files.some(f => f.metadata.retention === 'one-time');
       },
     },
 
     beforeMount() {
       this.fetchBucket();
-    }
-  }
+    },
+
+    methods: {
+      humanFileSize,
+
+      isFinite(value) {
+        return typeof value === 'number' && Number.isFinite(value);
+      },
+
+      download(file) {
+        if (file.downloaded && file.metadata.retention === 'one-time') {
+          alert(this.$root.lang.oneTimeDownloadExpired);
+          return;
+        }
+        const a = document.createElement('a');
+        a.href = file.url;
+        a.download = file.metadata.name;
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        file.downloaded = true;
+      },
+
+      archiveUrl(format) {
+        return `${ this.$root.baseURI }/files/${ this.sid }++${ this.archiveToken }.${ format }`;
+      },
+
+      markAll() {
+        this.files.forEach(f => { f.downloaded = true; });
+      },
+
+      copied(file, state) {
+        if (state === 'copied') file.downloaded = true;
+      },
+
+      async fetchBucket() {
+        const headers = {};
+        if (this.password) headers['x-download-pass'] = encodeURIComponent(this.password);
+        let res;
+        try {
+          res = await fetch(this.sid + '.json', { headers, credentials: 'same-origin' });
+        } catch (e) {
+          this.error = this.$root.lang.errors.serverError;
+          return;
+        }
+        this.loading = false;
+        if (res.ok) {
+          const data = await res.json();
+          this.config = data.config;
+          this.archiveToken = data.archiveToken || '';
+          this.expiresAt = data.expiresAt || null;
+          this.files = data.items.map(f => Object.assign(f, {
+            downloaded: false,
+            previewType: getPreviewType(f, this.config.maxPreviewSize),
+          }));
+          this.needsPassword = false;
+        } else if (res.status === 401) {
+          if (this.needsPassword) this.passwordWrong = true;
+          this.needsPassword = true;
+        } else if (res.status === 451) {
+          this.error = this.$root.lang.transferSuspended;
+        } else if (res.status === 429) {
+          this.error = this.$root.lang.tooManyAttempts;
+        } else {
+          this.error = res.status === 404 ? this.$root.lang.errors.transferNotFound : this.$root.lang.errors.serverError;
+        }
+      },
+    },
+  };
 </script>
+
+<style>
+  .unlock {
+    max-width: 26rem;
+    margin: 2rem auto 0;
+  }
+  .unlock-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    margin-bottom: 1rem;
+    border-radius: var(--radius-md);
+    background: var(--accent-soft);
+    color: var(--accent-ink);
+    font-size: 1.25rem;
+  }
+  .download-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+    margin-bottom: 1.5rem;
+  }
+  .download-head h1 {
+    overflow-wrap: anywhere;
+  }
+  .manifest-row {
+    display: flex;
+    align-items: center;
+    gap: .9rem;
+    padding: .75rem .9rem .75rem 1.1rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .manifest-row:last-child {
+    border-bottom: 0;
+  }
+  .manifest-main {
+    display: grid;
+    flex: 1;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+  .manifest-main:hover .manifest-name {
+    color: var(--accent-ink);
+  }
+  .manifest-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 600;
+  }
+  .manifest-meta {
+    display: flex;
+    gap: .75rem;
+    color: var(--ink-3);
+    font-size: var(--text-xs);
+  }
+  .manifest-comment {
+    margin-top: .2rem;
+    color: var(--ink-2);
+    font-size: var(--text-sm);
+  }
+  .downloaded {
+    display: inline-flex;
+    align-items: center;
+    gap: .25rem;
+    color: var(--success);
+  }
+  .manifest-actions {
+    display: flex;
+    gap: .25rem;
+    flex: none;
+  }
+  .manifest-download {
+    color: var(--accent-ink);
+  }
+  .manifest-row.is-done .manifest-download {
+    color: var(--ink-3);
+  }
+</style>
