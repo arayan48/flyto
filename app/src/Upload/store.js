@@ -41,7 +41,7 @@ export const useUploadStore = defineStore('upload', {
   }),
 
   getters: {
-    shareUrl: state => document.head.getElementsByTagName('base')[0].href + state.sid,
+    shareUrl: state => (state.config.publicUrl || document.head.getElementsByTagName('base')[0].href) + state.sid,
     bytesUploaded: state => state.files.reduce((sum, file) => sum + file.progress.bytesUploaded, 0),
     bucketSize: state => state.files.reduce((sum, file) => sum + file._File.size, 0),
     percentUploaded() {
