@@ -1,66 +1,67 @@
 <template lang="pug">
   .download-app
-    .alert.alert-danger.max-w-xl(v-if="error", role="alert")
-      icon(name="exclamation-triangle")
-      div
-        p {{ error }}
-        p.mt-2
-          a(:href="$root.baseURI + '/'") {{ $root.lang.newUpload }}
+    template(v-if="error")
+      section.band
+        h1.title.max-w-3xl.rise {{ error }}
+        a.btn.btn-ink.btn-lg.mt-8(:href="$root.baseURI + '/'") {{ $root.lang.newUpload }}
 
-    form.unlock.card.card-body(v-else-if="needsPassword", @submit.prevent="password && fetchBucket()")
-      span.unlock-icon
-        icon(name="key")
-      h1.text-xl {{ $t('ui.download.lockedTitle') }}
-      p.muted.mt-1 {{ $t('ui.download.lockedText') }}
-      .field.mt-5
-        label.label(for="downloadPassword") {{ $root.lang.password }}
-        input#downloadPassword.input.input-mono(type="password", v-model="password", autocomplete="off", autofocus,
-          :aria-invalid="passwordWrong ? 'true' : null")
-        p.text-sm.text-danger(v-if="passwordWrong", role="alert")
-          strong {{ $root.lang.accessDenied }}
-      button.decrypt.btn.btn-primary.w-full.mt-4(type="submit", :disabled="!password")
-        icon(name="key")
-        | {{ $root.lang.decrypt }}
+    template(v-else-if="needsPassword")
+      section.band
+        h1.display.rise(v-html="$rich('ui.download.lockedHero')")
+        p.lede.mt-5.rise.rise-2 {{ $t('ui.download.lockedText') }}
+      .band-lift
+        form.unlock.card.card-raised.form-card(@submit.prevent="password && fetchBucket()")
+          .field
+            label.label(for="downloadPassword") {{ $root.lang.password }}
+            input#downloadPassword.input.input-mono(type="password", v-model="password", autocomplete="off", autofocus,
+              :aria-invalid="passwordWrong ? 'true' : null")
+            p.text-sm.text-danger(v-if="passwordWrong", role="alert")
+              strong {{ $root.lang.accessDenied }}
+          button.decrypt.btn.btn-ink.btn-lg.w-full(type="submit", :disabled="!password")
+            | {{ $root.lang.decrypt }}
+            icon.arrow(name="arrow-right")
 
-    p.muted(v-else-if="loading")
-      icon(name="spinner", spin)
-      |  {{ $t('ui.loading') }}
+    section.band(v-else-if="loading")
+      p.lede
+        icon(name="spinner", spin)
+        |  {{ $t('ui.loading') }}
 
     template(v-else)
-      header.download-head
-        div
-          h1.text-2xl {{ files.length === 1 ? files[0].metadata.name : $t('ui.download.title', { count: files.length }) }}
-          p.muted.tnum.mt-1
-            | {{ files.length === 1 ? $t('ui.upload.oneFile') : $t('ui.upload.manyFiles', { count: files.length }) }}
-            |  · {{ humanFileSize(totalSize) }}
-            template(v-if="oneTime")  · {{ $root.lang.retentions['one-time'] }}
-            template(v-else-if="expiresAt")  · {{ $t('ui.download.until', { date: $date(expiresAt) }) }}
-        .flex.flex-wrap.gap-2.btn-download-archive(v-if="downloadsAvailable && files.length > 1")
-          a.btn.btn-primary(:href="archiveUrl('zip')", :title="$root.lang.zipDownload", @click="markAll()")
-            icon(name="download")
-            | {{ $t('ui.download.all') }}
-          a.btn(:href="archiveUrl('tar.gz')", :title="$root.lang.tarGzDownload", @click="markAll()") .tar.gz
-
-      ul.manifest.card
-        li.manifest-row(v-for="file in files", :key="file.key", :class="{ 'is-done': file.downloaded }")
-          file-icon(:file="file")
-          button.manifest-main(type="button", @click="download(file)")
-            span.manifest-name {{ file.metadata.name }}
-            span.manifest-meta.tnum
-              template(v-if="isFinite(file.size)") {{ humanFileSize(file.size) }}
-              span.downloaded(v-if="file.downloaded")
-                icon(name="check")
-                | {{ $t('ui.download.done') }}
-            span.manifest-comment(v-if="file.metadata.comment") {{ file.metadata.comment }}
-          .manifest-actions
-            button.btn.btn-ghost.btn-icon(v-if="file.previewType", type="button", :title="$root.lang.preview",
-              :aria-label="$root.lang.preview", @click="preview = file")
-              icon(name="eye")
-            clipboard.btn-ghost(:value="$root.baseURI + file.url", icon-only, :title="$root.lang.copyToClipboard",
-              @change="copied(file, $event)")
-            button.btn.btn-icon.manifest-download(type="button", :title="$t('ui.download.one')", :aria-label="$t('ui.download.one')",
-              @click="download(file)")
+      section.band
+        .download-head
+          div
+            h1.display.rise(v-html="files.length === 1 ? $rich('ui.download.heroOne') : $rich('ui.download.hero', { count: files.length })")
+            p.lede.mt-5.tnum.rise.rise-2
+              | {{ humanFileSize(totalSize) }}
+              template(v-if="oneTime")  · {{ $root.lang.retentions['one-time'] }}
+              template(v-else-if="expiresAt")  · {{ $t('ui.download.until', { date: $date(expiresAt) }) }}
+          .flex.flex-wrap.gap-2.btn-download-archive.rise.rise-3(v-if="downloadsAvailable && files.length > 1")
+            a.btn.btn-ink.btn-lg(:href="archiveUrl('zip')", :title="$root.lang.zipDownload", @click="markAll()")
               icon(name="download")
+              | {{ $t('ui.download.all') }}
+            a.btn.btn-lg(:href="archiveUrl('tar.gz')", :title="$root.lang.tarGzDownload", @click="markAll()") .tar.gz
+
+      .band-lift
+        ul.manifest.card.card-raised
+          li.manifest-row(v-for="file in files", :key="file.key", :class="{ 'is-done': file.downloaded }")
+            file-icon(:file="file")
+            button.manifest-main(type="button", @click="download(file)")
+              span.manifest-name {{ file.metadata.name }}
+              span.manifest-meta.tnum
+                template(v-if="isFinite(file.size)") {{ humanFileSize(file.size) }}
+                span.downloaded(v-if="file.downloaded")
+                  icon(name="check")
+                  | {{ $t('ui.download.done') }}
+              span.manifest-comment(v-if="file.metadata.comment") {{ file.metadata.comment }}
+            .manifest-actions
+              button.btn.btn-ghost.btn-icon(v-if="file.previewType", type="button", :title="$root.lang.preview",
+                :aria-label="$root.lang.preview", @click="preview = file")
+                icon(name="eye")
+              clipboard.btn-ghost(:value="$root.baseURI + file.url", icon-only, :title="$root.lang.copyToClipboard",
+                @change="copied(file, $event)")
+              button.btn.btn-icon.manifest-download(type="button", :title="$t('ui.download.one')", :aria-label="$t('ui.download.one')",
+                @click="download(file)")
+                icon(name="download")
 
     preview-modal(:preview="preview", :files="previewFiles", :max-size="config.maxPreviewSize", @close="preview = false")
 </template>
@@ -196,37 +197,24 @@
 
 <style>
   .unlock {
-    max-width: 26rem;
-    margin: 2rem auto 0;
-  }
-  .unlock-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 2.75rem;
-    height: 2.75rem;
-    margin-bottom: 1rem;
-    border-radius: var(--radius-md);
-    background: var(--accent-soft);
-    color: var(--accent-ink);
-    font-size: 1.25rem;
+    max-width: 28rem;
   }
   .download-head {
     display: flex;
     flex-wrap: wrap;
     align-items: flex-end;
     justify-content: space-between;
-    gap: 1rem 2rem;
-    margin-bottom: 1.5rem;
+    gap: 1.5rem 2rem;
   }
   .download-head h1 {
+    max-width: 48rem;
     overflow-wrap: anywhere;
   }
   .manifest-row {
     display: flex;
     align-items: center;
-    gap: .9rem;
-    padding: .75rem .9rem .75rem 1.1rem;
+    gap: 1rem;
+    padding: 1rem 1.1rem 1rem 1.4rem;
     border-bottom: 1px solid var(--line);
   }
   .manifest-row:last-child {
@@ -251,7 +239,9 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    font-weight: 600;
+    font-size: var(--text-lg);
+    font-weight: 650;
+    letter-spacing: -0.015em;
   }
   .manifest-meta {
     display: flex;
@@ -276,9 +266,18 @@
     flex: none;
   }
   .manifest-download {
-    color: var(--accent-ink);
+    border-color: var(--ink);
+    background: var(--ink);
+    color: var(--bg);
+  }
+  .manifest-download:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
   }
   .manifest-row.is-done .manifest-download {
+    border-color: var(--line-strong);
+    background: transparent;
     color: var(--ink-3);
   }
 </style>

@@ -88,6 +88,9 @@ module.exports = {
     refresh: "Refresh",
     pages: "Pages",
     upload: {
+      hero: "Your files *take off* in one link.",
+      lede: "Drop, send, share the link. It expires on its own when you said so.",
+      badge: "drag · drop · send · ",
       title: "Send files",
       orBrowse: "or click to choose them",
       addFiles: "Add",
@@ -102,11 +105,16 @@ module.exports = {
       passwordRequired: "This server asks for a password on every upload.",
     },
     ticket: {
+      hero: "And *off* it goes.",
+      stamp: "Sent",
       title: "Your link is ready",
       size: "Size",
       scan: "Scan with a phone",
     },
     download: {
+      hero: "*{count} files* are waiting for you.",
+      heroOne: "A file is *waiting for you.*",
+      lockedHero: "A *protected* transfer.",
       title: "Files to download",
       lockedTitle: "Protected transfer",
       lockedText: "Enter the password you received with the link.",
@@ -114,6 +122,20 @@ module.exports = {
       all: "Download all",
       one: "Download",
       done: "Downloaded",
+    },
+    auth: {
+      login: "Welcome *back.*",
+      register: "Welcome *aboard.*",
+      forgot: "Forgot your *password?*",
+      reset: "A fresh *start.*",
+      verify: "Address *confirmed.*",
+      setup: "First *take-off.*",
+    },
+    account: {
+      title: "My *account*",
+    },
+    admin: {
+      title: "The *cockpit*",
     },
     preview: {
       wrap: "Wrap lines",

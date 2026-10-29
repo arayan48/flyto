@@ -1,14 +1,14 @@
 doctype html
 - const bundle = frontend('page')
+- const band = true
 html(lang=lang.langCode)
   head
     include partials/head
     include partials/head_custom
-  body
+  body(class='has-band')
     include partials/header
     main.page.site-main
-      .error-page
-        h1 #{error}
-        p
-          a.btn(href=uploadAppPath) #{lang.newUpload}
+      section.band.error-page
+        h1.title #{error}
+        a.btn.btn-ink.btn-lg(href=uploadAppPath) #{lang.newUpload}
     include partials/footer

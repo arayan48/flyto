@@ -1,4 +1,4 @@
-header.site-header
+header.site-header(class=band ? 'is-band' : null)
   .page.site-header-inner
     a.site-home(href=uploadAppPath title=site.siteName)
       include logo
@@ -11,11 +11,11 @@ header.site-header
           a.site-nav-link(href='admin') #{lang.nav.admin}
         form.site-logout(method='post' action='api/auth/logout')
           input(type='hidden' name='_csrf' value=csrf)
-          button.btn.btn-ghost.btn-sm(type='submit') #{lang.nav.logout}
+          button.btn.btn-sm(type='submit') #{lang.nav.logout}
       else
         a.site-nav-link(href='login') #{lang.nav.login}
         if site.registrationMode === 'open'
-          a.btn.btn-sm(href='register') #{lang.nav.register}
+          a.btn.btn-sm.btn-ink(href='register') #{lang.nav.register}
 if site.maintenanceMode || site.announcementText
   .page.site-banners
     if site.maintenanceMode

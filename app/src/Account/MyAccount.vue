@@ -1,9 +1,9 @@
 <template lang="pug">
   .my-account
-    header.mb-6
-      h1.text-2xl {{ $t('account.title') }}
-      p.muted.mt-1(v-if="me") {{ me.user.email }}
-    nav.tabs.mb-6(:aria-label="$t('account.title')")
+    header.mb-8
+      h1.title.rise(v-html="$rich('ui.account.title')")
+      p.muted.mt-3(v-if="me") {{ me.user.email }}
+    nav.tabs.mb-8(:aria-label="$t('account.title')")
       a(v-for="t in tabs", :key="t", :href="'account#' + t", :aria-current="tab === t ? 'page' : null") {{ $t('account.tabs.' + t) }}
     .alert.alert-danger.mb-4(v-if="error", role="alert") {{ error }}
     template(v-if="me")

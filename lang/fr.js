@@ -88,6 +88,9 @@ module.exports = {
     refresh: "Actualiser",
     pages: "Pages",
     upload: {
+      hero: "Vos fichiers *s'envolent* en un lien.",
+      lede: "Glissez, envoyez, partagez le lien. Il expire tout seul au bout du délai choisi.",
+      badge: "glisser · déposer · envoyer · ",
       title: "Envoyer des fichiers",
       orBrowse: "ou cliquez pour les choisir",
       addFiles: "Ajouter",
@@ -102,11 +105,16 @@ module.exports = {
       passwordRequired: "Ce serveur demande un mot de passe pour chaque envoi.",
     },
     ticket: {
+      hero: "C'est *parti.*",
+      stamp: "Envoyé",
       title: "Le lien est prêt",
       size: "Taille",
       scan: "À scanner avec un téléphone",
     },
     download: {
+      hero: "*{count} fichiers* vous attendent.",
+      heroOne: "Un fichier *vous attend.*",
+      lockedHero: "Un transfert *protégé.*",
       title: "Fichiers à télécharger",
       lockedTitle: "Transfert protégé",
       lockedText: "Saisissez le mot de passe reçu avec le lien.",
@@ -114,6 +122,20 @@ module.exports = {
       all: "Tout télécharger",
       one: "Télécharger",
       done: "Téléchargé",
+    },
+    auth: {
+      login: "Bon *retour.*",
+      register: "Bienvenue *à bord.*",
+      forgot: "Mot de passe *oublié ?*",
+      reset: "Un nouveau *départ.*",
+      verify: "Adresse *confirmée.*",
+      setup: "Premier *décollage.*",
+    },
+    account: {
+      title: "Mon *compte*",
+    },
+    admin: {
+      title: "Poste de *pilotage*",
     },
     preview: {
       wrap: "Retour à la ligne",

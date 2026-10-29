@@ -1,10 +1,11 @@
 doctype html
 - const bundle = frontend('upload')
+- const band = true
 html(lang=lang.langCode)
   head
     include partials/head
     include partials/head_custom
-  body
+  body(class=band ? 'has-band' : null)
     include partials/header
     main.page.site-main
       #upload

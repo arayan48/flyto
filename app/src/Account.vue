@@ -1,14 +1,17 @@
 <template lang="pug">
   .account-app
     .alert.alert-danger(v-if="$root.error") {{ $root.error }}
+    my-account(v-else-if="$root.session && $root.lang.auth && page === 'account'")
     template(v-else-if="$root.session && $root.lang.auth")
-      login(v-if="page === 'login'")
-      register(v-else-if="page === 'register'")
-      forgot(v-else-if="page === 'forgot'")
-      reset(v-else-if="page === 'reset'")
-      verify(v-else-if="page === 'verify'")
-      setup(v-else-if="page === 'setup'")
-      my-account(v-else-if="page === 'account'")
+      section.band.auth-band
+        h1.display.rise(v-html="$rich('ui.auth.' + page)")
+      .band-lift
+        login(v-if="page === 'login'")
+        register(v-else-if="page === 'register'")
+        forgot(v-else-if="page === 'forgot'")
+        reset(v-else-if="page === 'reset'")
+        verify(v-else-if="page === 'verify'")
+        setup(v-else-if="page === 'setup'")
     p.muted(v-else)
       icon(name="spinner", spin="")
 </template>
@@ -34,22 +37,27 @@
 </script>
 
 <style>
+  .auth-band {
+    padding-bottom: 8rem;
+  }
   .auth-box {
     display: grid;
     gap: 1rem;
-    max-width: 25rem;
-    margin: 1.5rem auto 0;
+    max-width: 28rem;
   }
   .auth-card {
     display: grid;
-    gap: 1rem;
-    padding: 1.75rem;
+    gap: 1.1rem;
+    padding: 2rem;
+    border-color: transparent;
+    box-shadow: var(--shadow-card);
   }
   .auth-card .btn-primary {
     width: 100%;
   }
   .auth-title {
     font-size: var(--text-xl);
+    letter-spacing: -0.03em;
   }
   .auth-links {
     display: flex;
@@ -86,6 +94,7 @@
   }
   .split {
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     grid-template-columns: minmax(0, 1fr);
     gap: 1.25rem;
     align-items: start;

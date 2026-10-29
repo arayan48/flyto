@@ -2,7 +2,7 @@
   .admin-app
     .alert.alert-danger(v-if="$root.error", role="alert") {{ $root.error }}
     template(v-else-if="$root.session && $root.lang.admin")
-      h1.text-2xl.mb-5 {{ $root.lang.nav.admin }}
+      h1.title.mb-8.rise(v-html="$rich('ui.admin.title')")
       .admin-layout
         nav.admin-tabs(:aria-label="$root.lang.nav.admin")
           a(v-for="t in tabs", :key="t", :href="'admin#/' + t", :aria-current="route.tab === t ? 'page' : null")
@@ -87,8 +87,8 @@
     display: flex;
     align-items: center;
     gap: .55rem;
-    padding: .45rem .7rem;
-    border-radius: var(--radius-md);
+    padding: .5rem .9rem;
+    border-radius: var(--radius-full);
     color: var(--ink-2);
     font-size: var(--text-sm);
     font-weight: 600;
@@ -100,8 +100,8 @@
     color: var(--ink);
   }
   .admin-tabs a[aria-current="page"] {
-    background: var(--accent-soft);
-    color: var(--accent-ink);
+    background: var(--ink);
+    color: var(--bg);
   }
   @media (min-width: 52rem) {
     .admin-tabs {
@@ -188,6 +188,7 @@
   }
   .grid-2, .grid-75, .grid-4, .grid-label {
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     grid-template-columns: minmax(0, 1fr);
     gap: 1rem 1.25rem;
   }

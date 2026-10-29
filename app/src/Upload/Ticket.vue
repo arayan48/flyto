@@ -1,49 +1,52 @@
 <template lang="pug">
-  section.ticket-wrap
-    .ticket
-      .ticket-main
-        p.ticket-status
-          icon(name="check")
-          | {{ $root.lang.uploadCompleted }}
-        h1.text-2xl.mb-5 {{ $t('ui.ticket.title') }}
+  div
+    section.band.ticket-band
+      p.eyebrow.rise
+        icon(name="check")
+        |  {{ $root.lang.uploadCompleted }}
+      h1.display.mt-3.rise.rise-2(v-html="$rich('ui.ticket.hero')")
+    .band-lift.ticket-wrap
+      .ticket.card-raised
+        .ticket-main
+          span.stamp.ticket-stamp {{ $t('ui.ticket.stamp') }}
+          p.label.mb-2 {{ $t('ui.ticket.title') }}
+          .share-link
+            span.sr-only {{ $root.lang.downloadLink }}
+            a.share-link-url.mono(:href="shareUrl", target="_blank", rel="noopener") {{ shareUrl }}
 
-        .share-link
-          span.sr-only {{ $root.lang.downloadLink }}
-          a.share-link-url.mono(:href="shareUrl", target="_blank", rel="noopener") {{ shareUrl }}
+          .flex.flex-wrap.gap-2.mt-5
+            clipboard.btn-ink.btn-lg(:value="shareUrl", :label="$root.lang.copyToClipboard")
+            a.btn.btn-lg(v-if="mailLink", :href="mailLink")
+              icon(name="envelope")
+              | {{ $root.lang.sendViaMail }}
+            button.btn.btn-ghost.btn-lg(type="button", @click="$emit('new-session')")
+              icon(name="plus")
+              | {{ $root.lang.newUpload }}
 
-        .flex.flex-wrap.gap-2.mt-4
-          clipboard.btn-primary(:value="shareUrl", :label="$root.lang.copyToClipboard")
-          a.btn(v-if="mailLink", :href="mailLink")
-            icon(name="envelope")
-            | {{ $root.lang.sendViaMail }}
-          button.btn.btn-ghost(type="button", @click="$emit('new-session')")
-            icon(name="plus")
-            | {{ $root.lang.newUpload }}
+          dl.ticket-facts
+            div
+              dt {{ $root.lang.files }}
+              dd.tnum {{ sent.length }}
+            div
+              dt {{ $t('ui.ticket.size') }}
+              dd.tnum {{ humanFileSize(sentSize) }}
+            div
+              dt {{ $root.lang.retention }}
+              dd {{ $root.lang.retentions[retention] || retention }}
+            div
+              dt {{ $root.lang.password }}
+              dd {{ password ? $t('ui.yes') : $t('ui.no') }}
 
-        dl.ticket-facts
-          div
-            dt {{ $root.lang.files }}
-            dd.tnum {{ sent.length }}
-          div
-            dt {{ $t('ui.ticket.size') }}
-            dd.tnum {{ humanFileSize(sentSize) }}
-          div
-            dt {{ $root.lang.retention }}
-            dd {{ $root.lang.retentions[retention] || retention }}
-          div
-            dt {{ $root.lang.password }}
-            dd {{ password ? $t('ui.yes') : $t('ui.no') }}
+        .ticket-stub(v-if="qrSrc")
+          img.ticket-qr(:src="qrSrc", :alt="$root.lang.qrCode", width="148", height="148")
+          p.hint.text-center {{ $t('ui.ticket.scan') }}
 
-      .ticket-stub(v-if="qrSrc")
-        img.ticket-qr(:src="qrSrc", :alt="$root.lang.qrCode", width="148", height="148")
-        p.hint.text-center {{ $t('ui.ticket.scan') }}
-
-    ul.ticket-files
-      li(v-for="file in files", :key="file.id", :class="{ 'is-failed': file.error }")
-        icon(:name="file.error ? 'times' : 'check'")
-        span.ticket-file-name {{ file.name }}
-        span.faint.tnum(v-if="!file.error") {{ file.humanSize }}
-        span.ticket-file-error(v-else) {{ file.error }}
+      ul.ticket-files
+        li(v-for="file in files", :key="file.id", :class="{ 'is-failed': file.error }")
+          icon(:name="file.error ? 'times' : 'check'")
+          span.ticket-file-name {{ file.name }}
+          span.faint.tnum(v-if="!file.error") {{ file.humanSize }}
+          span.ticket-file-error(v-else) {{ file.error }}
 </template>
 
 <script>
@@ -83,13 +86,17 @@
 
 <style>
   .ticket-wrap {
-    max-width: 50rem;
+    max-width: 56rem;
+  }
+  .ticket-band .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
   }
   /* a departure ticket: the stub with the QR code is torn along the perforation */
   .ticket {
     --notch: .7rem;
     display: grid;
-    border: 1px solid var(--line);
     border-radius: var(--radius-lg);
     background: var(--surface);
   }
@@ -99,8 +106,15 @@
     }
   }
   .ticket-main {
-    padding: 1.25rem;
+    position: relative;
+    padding: 1.5rem;
     min-width: 0;
+  }
+  .ticket-stamp {
+    position: absolute;
+    top: 1.25rem;
+    right: 1.25rem;
+    color: var(--accent);
   }
   .ticket-status {
     display: inline-flex;
@@ -112,9 +126,9 @@
     font-weight: 600;
   }
   .share-link {
-    padding: .8rem 1rem;
+    padding: 1rem 1.2rem;
     border-radius: var(--radius-md);
-    background: var(--surface-2);
+    background: var(--bg);
   }
   .share-link-url {
     display: block;
@@ -128,7 +142,7 @@
       font-size: var(--text-lg);
     }
     .ticket-main {
-      padding: 1.75rem;
+      padding: 2.25rem;
     }
   }
   .share-link-url:hover {
@@ -166,7 +180,6 @@
     top: calc(var(--notch) * -1 - 1px);
     width: calc(var(--notch) * 2);
     height: calc(var(--notch) * 2);
-    border: 1px solid var(--line);
     border-radius: 50%;
     background: var(--bg);
     clip-path: inset(50% 0 0 0);

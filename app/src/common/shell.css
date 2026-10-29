@@ -1,27 +1,45 @@
 /* header, footer and page frame rendered by the server (public/pug) */
 .site-header {
-  border-bottom: 1px solid var(--line);
-  background: var(--surface);
+  color: var(--ink);
+}
+.site-header.is-band {
+  background: var(--band);
+  color: #fff;
+}
+.site-header.is-band .btn {
+  border-color: rgb(255 255 255 / .55);
+  color: #fff;
+}
+.site-header.is-band .btn:hover {
+  border-color: #fff;
+  background: rgb(255 255 255 / .1);
+}
+.site-header.is-band .btn-ink {
+  border-color: #0e1420;
+  background: #0e1420;
 }
 .site-header-inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  min-height: 3.75rem;
+  min-height: 4.75rem;
 }
 .site-home {
   display: inline-flex;
-  color: var(--ink);
+  color: inherit;
+}
+.site-home:hover {
+  color: inherit;
 }
 .site-logo {
-  height: 1.9rem;
+  height: 2.1rem;
   width: auto;
 }
 .site-nav {
   display: flex;
   align-items: center;
-  gap: .25rem 1rem;
+  gap: .4rem 1.1rem;
   flex-wrap: wrap;
   justify-content: flex-end;
   min-width: 0;
@@ -31,27 +49,22 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: var(--ink-2);
+  color: inherit;
   font-size: var(--text-sm);
-  font-weight: 600;
+  font-weight: 650;
   text-decoration: none;
+  opacity: .85;
 }
 .site-nav-link:hover {
-  color: var(--ink);
+  color: inherit;
+  opacity: 1;
+  text-decoration: underline;
 }
 .site-logout {
   margin: 0;
 }
 .site-nav-short {
   display: none;
-}
-@media (max-width: 40rem) {
-  .site-nav-full {
-    display: none;
-  }
-  .site-nav-short {
-    display: inline;
-  }
 }
 .site-banners {
   display: grid;
@@ -60,11 +73,13 @@
 }
 .site-main {
   flex: 1;
-  padding-top: 2rem;
-  padding-bottom: 3rem;
+  padding-top: 2.5rem;
+  padding-bottom: 4rem;
+}
+.has-band .site-main {
+  padding-top: 0;
 }
 .site-footer {
-  border-top: 1px solid var(--line);
   color: var(--ink-3);
   font-size: var(--text-xs);
 }
@@ -79,25 +94,28 @@
   flex-wrap: wrap;
   justify-content: space-between;
   gap: .5rem 1.5rem;
-  padding-block: 1.1rem;
+  padding-block: 1.5rem;
+  border-top: 1px solid var(--line);
 }
 .site-footer-links {
   display: flex;
   gap: 1rem;
 }
-.error-page {
-  max-width: 34rem;
-  padding-block: 3rem;
-}
 .error-page h1 {
-  margin-bottom: 1.5rem;
-  font-size: var(--text-xl);
+  max-width: 40rem;
+  margin-bottom: 2rem;
 }
 @media (max-width: 40rem) {
   .site-logo {
-    height: 1.6rem;
+    height: 1.75rem;
+  }
+  .site-nav-full {
+    display: none;
+  }
+  .site-nav-short {
+    display: inline;
   }
   .site-main {
-    padding-top: 1.25rem;
+    padding-top: 1.5rem;
   }
 }

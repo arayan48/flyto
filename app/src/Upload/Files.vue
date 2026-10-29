@@ -1,5 +1,5 @@
 <template lang="pug">
-  section.upload-files.card
+  section.upload-files
     input#fileInput.sr-only(type="file", multiple, :disabled="disabled", tabindex="-1", aria-hidden="true",
       @change="onPick")
 
@@ -13,8 +13,9 @@
       svg.dropzone-mark(viewBox="-6 -16 122 122", aria-hidden="true")
         path.dropzone-sheet(d="M0 10Q0 0 10 0L51.8 0Q61.8 0 68.87 7.07L92.93 31.13Q100 38.2 100 48.2L100 90Q100 100 90 100L10 100Q0 100 0 90Z")
         path.dropzone-flap(d="M76.04 -5.76Q71.8 -10 77.8 -10L104 -10Q110 -10 110 -4L110 22.2Q110 28.2 105.76 23.96Z")
-      span.text-lg.font-semibold {{ $root.lang.dropFilesHere }}
-      span.text-sm.muted {{ $t('ui.upload.orBrowse') }}
+      span.dropzone-title {{ $root.lang.dropFilesHere }}
+      span.muted {{ $t('ui.upload.orBrowse') }}
+      spin-badge.dropzone-badge(:text="$t('ui.upload.badge')")
 
     template(v-else)
       .card-head
@@ -57,10 +58,11 @@
   import { mapState, mapActions } from 'pinia';
   import { useUploadStore } from './store';
   import FileIcon from '../common/FileIcon.vue';
+  import SpinBadge from '../common/SpinBadge.vue';
 
   export default {
     name: 'Files',
-    components: { FileIcon },
+    components: { FileIcon, SpinBadge },
 
     data() {
       return { dragging: false };
@@ -108,21 +110,23 @@
 
 <style>
   .dropzone {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: .35rem;
-    width: 100%;
-    min-height: 21rem;
+    gap: .4rem;
+    width: calc(100% - 2rem);
+    min-height: 22rem;
+    margin: 1rem;
     padding: 2.5rem 1.5rem;
-    border: 1.5px dashed var(--line-strong);
-    border-radius: inherit;
-    background: transparent;
+    border: 2px dashed var(--line-strong);
+    border-radius: calc(var(--radius-lg) - 6px);
+    background: var(--bg);
     color: var(--ink);
     text-align: center;
     cursor: pointer;
-    transition: border-color .15s, background-color .15s;
+    transition: border-color .2s, background-color .2s;
   }
   .dropzone:hover, .dropzone.is-dragging {
     border-color: var(--accent);
@@ -132,20 +136,25 @@
     cursor: not-allowed;
     opacity: .6;
   }
+  .dropzone-title {
+    font-size: clamp(1.5rem, 3vw, 2.1rem);
+    font-weight: 750;
+    letter-spacing: -0.03em;
+  }
   .dropzone-mark {
-    width: 4.5rem;
-    margin-bottom: 1rem;
+    width: 5.5rem;
+    margin-bottom: 1.25rem;
     overflow: visible;
   }
   .dropzone-sheet {
-    fill: var(--surface-2);
-    stroke: var(--line-strong);
-    stroke-width: 3;
+    fill: var(--surface);
+    stroke: var(--ink);
+    stroke-width: 3.5;
     transition: fill .2s, stroke .2s;
   }
   .dropzone-flap {
     fill: var(--sky);
-    transition: transform .35s cubic-bezier(.2, .8, .2, 1.2);
+    transition: transform .4s cubic-bezier(.2, .8, .2, 1.3);
   }
   /* the corner of the file takes off, as in the logo */
   .dropzone:hover .dropzone-sheet, .dropzone.is-dragging .dropzone-sheet {
@@ -153,7 +162,21 @@
     stroke: var(--accent);
   }
   .dropzone:hover .dropzone-flap, .dropzone.is-dragging .dropzone-flap {
-    transform: translate(9px, -9px);
+    transform: translate(14px, -14px) rotate(8deg);
+  }
+  .dropzone-badge {
+    position: absolute;
+    right: 1.25rem;
+    bottom: 1.25rem;
+    width: 6.5rem;
+  }
+  @media (max-width: 40rem) {
+    .dropzone {
+      min-height: 17rem;
+    }
+    .dropzone-badge {
+      display: none;
+    }
   }
 
   .file-list {
@@ -165,8 +188,8 @@
   .file-row {
     display: flex;
     align-items: flex-start;
-    gap: .85rem;
-    padding: .8rem 1.1rem;
+    gap: .9rem;
+    padding: .9rem 1.4rem;
     border-bottom: 1px solid var(--line);
   }
   .file-row:last-child {

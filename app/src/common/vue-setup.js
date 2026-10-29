@@ -27,6 +27,12 @@ export function mountApp(component, root) {
   g.$day = function(value) {
     return formatWhen(this.$root.lang, value, false);
   };
+  // *word* in a translation becomes an italic accent, the rest is escaped
+  g.$rich = function(key, vars) {
+    const text = translate(this.$root.lang, key, vars);
+    const escaped = text.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+    return escaped.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+  };
   g.$size = value => (value || value === 0 ? humanFileSize(value) : '–');
   window.FLYTO_VERSION = FLYTO_VERSION;
   return app;

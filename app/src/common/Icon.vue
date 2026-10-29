@@ -6,6 +6,7 @@
 <script>
   import ArrowLeft from '~icons/ph/arrow-left';
   import ArrowRight from '~icons/ph/arrow-right';
+  import ArrowUpRight from '~icons/ph/arrow-up-right';
   import ArrowUUpLeft from '~icons/ph/arrow-u-up-left';
   import ArrowsClockwise from '~icons/ph/arrows-clockwise';
   import CaretDown from '~icons/ph/caret-down';
@@ -46,6 +47,7 @@
   const icons = {
     'arrow-left': ArrowLeft,
     'arrow-right': ArrowRight,
+    'arrow-up-right': ArrowUpRight,
     'check': Check,
     'chevron-down': CaretDown,
     'chevron-up': CaretUp,
