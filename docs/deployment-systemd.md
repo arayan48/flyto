@@ -13,7 +13,7 @@ mkdir -p /opt/flyto
 cd /opt/flyto
 
 # Download and extract a prebuild
-curl -sL https://github.com/arayan48/flyto/releases/download/v0.4.1/flyto-v0.4.1.tar.gz | tar xz --strip 1
+curl -sL https://github.com/arayan48/flyto/releases/download/v0.5.0/flyto-v0.5.0.tar.gz | tar xz --strip 1
 
 # Install dependencies
 npm ci --omit=dev
