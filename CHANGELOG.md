@@ -5,6 +5,12 @@ et les versions suivent [SemVer](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+### Ajouté
+- Onglet « Stockage et limites » dans les réglages de `/admin` : l'espace occupé par les transferts et la place
+  libre sur le disque en haut, puis les limites rangées du serveur au fichier, avec ce que chacune compte.
+- Taille totale de tous les transferts : au-delà, les nouveaux envois sont refusés, administrateurs compris.
+- Espace à garder libre sur le disque, 1 Go par défaut : un envoi qui laisserait moins de place est refusé.
+
 ## [0.8.1] - 2026-10-29
 
 ### Corrigé

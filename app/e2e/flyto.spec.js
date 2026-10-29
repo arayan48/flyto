@@ -89,6 +89,11 @@ test('every admin tab renders', async ({ page }) => {
     await expect(page.locator('.admin-app > .alert-danger')).toHaveCount(0);
   }
 
+  await page.locator('.admin-tabs a[href="admin#/settings"]').click();
+  await page.locator('.settings-groups button', { hasText: 'Storage' }).click();
+  await expect(page.locator('.storage-summary')).toBeVisible();
+  await expect(page.locator('.settings-subhead', { hasText: 'Whole server' })).toBeVisible();
+
   await page.locator('.admin-tabs a[href="admin#/users"]').click();
   await page.locator('tr.clickable', { hasText: ADMIN.email }).click();
   await expect(page).toHaveURL(/\/admin#\/users\/\d+$/);
