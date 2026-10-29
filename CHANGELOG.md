@@ -5,6 +5,21 @@ et les versions suivent [SemVer](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+### Corrigé
+- Un gros envoi plus long que sa durée de conservation (par exemple 1 heure) n'est plus supprimé en cours de
+  route : tant qu'il n'est pas fini, seul l'abandon de plus de 48 h compte
+- Un fichier expiré n'est plus téléchargeable pendant la minute qui précède son nettoyage
+- Un transfert suspendu par un admin ne reçoit plus de nouveaux fichiers
+- Les liens de réinitialisation, de vérification et d'invitation n'apparaissent plus dans le journal d'accès
+- Un `FLYTO_ADMIN_PASSWORD` trop court ou une adresse invalide n'arrête plus le conteneur en boucle : Flyto le
+  signale et propose la page `/setup`
+- La suppression de son propre compte est bien inscrite au journal d'audit
+- Une langue inconnue (`constructor`, `toString`…) n'est plus acceptée comme langue d'un compte
+- Avec Redis, un compteur de tentatives ne peut plus rester sans expiration et bloquer pour toujours
+- Un envoi refusé ne laisse plus de transfert fantôme dans la base
+- Au démarrage, un dossier illisible dans `/data` est ignoré au lieu d'arrêter Flyto, et un réseau encore
+  injoignable (`EHOSTUNREACH`) fait attendre PostgreSQL comme les autres erreurs de connexion
+
 ## [0.4.0] - 2026-10-29
 
 ### Ajouté
