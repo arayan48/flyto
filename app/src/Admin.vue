@@ -66,6 +66,7 @@
 <style>
   .admin-layout {
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     gap: 1.25rem;
   }
   @media (min-width: 52rem) {
@@ -187,6 +188,7 @@
   }
   .grid-2, .grid-75, .grid-4, .grid-label {
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     gap: 1rem 1.25rem;
   }
   @media (min-width: 40rem) {
