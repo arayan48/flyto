@@ -1,10 +1,10 @@
-const { defineConfig, devices } = require('@playwright/test');
-const os = require('os');
-const path = require('path');
+import { defineConfig, devices } from '@playwright/test';
+import os from 'node:os';
+import path from 'node:path';
 
 const PORT = 3100;
 
-module.exports = defineConfig({
+export default defineConfig({
   testDir: './e2e',
   workers: 1,
   retries: process.env.CI ? 1 : 0,
