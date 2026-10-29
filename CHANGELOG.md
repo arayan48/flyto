@@ -5,6 +5,10 @@ et les versions suivent [SemVer](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+### Corrigé
+- Le tableau de bord de `/admin` renvoyait une erreur 500 quand la variable `TZ` du conteneur était vide ou
+  inconnue (cas de ZimaOS) : le fuseau retombe maintenant sur UTC au lieu de `Etc/Unknown`, refusé par PostgreSQL.
+
 ## [0.7.0] - 2026-10-29
 
 ### Ajouté
