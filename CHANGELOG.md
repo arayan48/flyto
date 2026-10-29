@@ -5,6 +5,12 @@ et les versions suivent [SemVer](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+### Modifié
+- Le front passe de Vue 2 (plus maintenu depuis fin 2023) à Vue 3 avec Pinia, construit par Vite au lieu de
+  webpack ; les fichiers servis portent un hash et sont mis en cache un an
+- Icônes Phosphor à la place de Font Awesome 4, seules celles utilisées sont embarquées
+- Internet Explorer n'est plus pris en charge (plus de polyfills)
+
 ### Corrigé
 - Les onglets et les liens internes de /admin et de /account ramenaient à la page d'envoi au lieu de changer
   d'onglet
