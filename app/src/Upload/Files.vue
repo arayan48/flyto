@@ -25,7 +25,7 @@
         button.btn.btn-sm(v-if="state === 'new'", type="button", :disabled="disabled", @click="triggerFileInput()")
           icon(name="plus")
           | {{ $t('ui.upload.addFiles') }}
-      ul.file-list(:class="{ 'is-dragging': dragging }")
+      transition-group.file-list(tag="ul", name="row", :class="{ 'is-dragging': dragging }")
         li.file-row(v-for="file in files", :key="file.id", :class="{ 'has-error': file.error }")
           file-icon.file-row-icon(:file="file._File")
           .min-w-0.flex-1
@@ -36,7 +36,7 @@
               icon(name="exclamation-triangle")
               | {{ file.error }}
             template(v-else-if="state === 'uploading' || state === 'uploaded'")
-              .progress.mt-2(v-if="!file.uploaded")
+              .progress.file-progress.mt-2(v-if="!file.uploaded")
                 span(:style="{ width: file.progress.percentage + '%' }")
               p.text-xs.mt-1.file-done(v-else)
                 icon(name="check")
@@ -164,6 +164,17 @@
   .dropzone:hover .dropzone-flap, .dropzone.is-dragging .dropzone-flap {
     transform: translate(14px, -14px) rotate(8deg);
   }
+  .dropzone.is-dragging {
+    animation: breathe 1.2s ease-in-out infinite alternate;
+  }
+  .dropzone.is-dragging .spin-badge svg {
+    animation-duration: 3s;
+  }
+  @keyframes breathe {
+    to {
+      transform: scale(1.012);
+    }
+  }
   .dropzone-badge {
     position: absolute;
     right: 1.25rem;
@@ -174,7 +185,18 @@
     .dropzone {
       min-height: 17rem;
     }
-    .dropzone-badge {
+    .dropzone.is-dragging {
+    animation: breathe 1.2s ease-in-out infinite alternate;
+  }
+  .dropzone.is-dragging .spin-badge svg {
+    animation-duration: 3s;
+  }
+  @keyframes breathe {
+    to {
+      transform: scale(1.012);
+    }
+  }
+  .dropzone-badge {
       display: none;
     }
   }
@@ -224,6 +246,36 @@
     box-shadow: none;
     border-bottom-color: var(--accent);
     color: var(--ink);
+  }
+  /* rows slide in when added and out when removed */
+  .row-enter-active, .row-leave-active {
+    transition: opacity .25s, transform .3s cubic-bezier(.22, 1, .36, 1);
+  }
+  .row-enter-from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  .row-leave-to {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+  .row-leave-active {
+    position: absolute;
+    width: 100%;
+  }
+  .row-move {
+    transition: transform .3s cubic-bezier(.22, 1, .36, 1);
+  }
+  .file-list {
+    position: relative;
+  }
+  .file-done .icon {
+    animation: pop .4s cubic-bezier(.3, 1.6, .5, 1) both;
+  }
+  @keyframes pop {
+    from {
+      transform: scale(0);
+    }
   }
   .file-error, .file-done {
     display: flex;

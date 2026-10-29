@@ -649,6 +649,15 @@
     }
   }
 
+  .icon-pop {
+    animation: icon-pop .4s cubic-bezier(.3, 1.6, .5, 1) both;
+  }
+  @keyframes icon-pop {
+    from {
+      transform: scale(0) rotate(-30deg);
+    }
+  }
+
   /* entrance of the first screen, once */
   .rise {
     animation: rise .7s cubic-bezier(.22, 1, .36, 1) both;

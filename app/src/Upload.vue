@@ -13,7 +13,7 @@
               template(v-if="limits.transfer") {{ $root.lang.quota.perTransfer }} {{ humanFileSize(limits.transfer) }}
               template(v-if="limits.transfer && limits.storage")  ·
               template(v-if="limits.storage") {{ $root.lang.quota.storage }} {{ humanFileSize(usage.storage) }} / {{ humanFileSize(limits.storage) }}
-          flight.hero-flight
+          flight.hero-flight(:moving="state === 'uploading'")
 
       .band-lift
         section.upload-login.card.card-raised.card-body(v-if="showLogin")
@@ -45,9 +45,9 @@
                 template(v-if="state === 'uploading'")
                   .flex.items-baseline.justify-between.gap-3.mb-2
                     span.font-semibold {{ $t('ui.upload.sending') }}
-                    span.text-2xl.font-bold.tnum {{ percentUploaded }} %
-                  .progress(role="progressbar", :aria-valuenow="percentUploaded", aria-valuemin="0", aria-valuemax="100")
-                    span(:style="{ width: percentUploaded + '%' }")
+                    span.upload-percent.tnum {{ percentUploaded }}
+                      small %
+                  flight-bar(:percent="percentUploaded")
                   p.hint.tnum.mt-2 {{ humanFileSize(bytesUploaded) }} / {{ humanFileSize(bucketSize) }}
                 template(v-else)
                   p.text-sm.muted.tnum.mb-3(v-if="files.length")
@@ -69,11 +69,12 @@
   import Files from './Upload/Files.vue';
   import Ticket from './Upload/Ticket.vue';
   import Flight from './common/Flight.vue';
+  import FlightBar from './common/FlightBar.vue';
   import { humanFileSize } from './common/format';
 
   export default {
     name: 'Upload',
-    components: { Settings, Files, Ticket, Flight },
+    components: { Settings, Files, Ticket, Flight, FlightBar },
 
     computed: {
       ...mapState(useUploadStore, ['state', 'files', 'password', 'disabled', 'percentUploaded', 'bucketSize',
@@ -162,6 +163,16 @@
     margin-top: auto;
     padding: 1.4rem;
     border-top: 1px solid var(--line);
+  }
+  .upload-percent {
+    font-size: 2.6rem;
+    font-weight: 750;
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+  .upload-percent small {
+    font-size: .45em;
+    margin-left: .1em;
   }
   .upload-login {
     max-width: 44rem;

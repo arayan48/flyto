@@ -8,7 +8,7 @@
           a(v-for="t in tabs", :key="t", :href="'admin#/' + t", :aria-current="route.tab === t ? 'page' : null")
             icon(:name="tabIcons[t]")
             span {{ $t('admin.tabs.' + t) }}
-        .admin-content
+        .admin-content(:key="route.tab + (route.id || '')")
           dashboard(v-if="route.tab === 'dashboard'")
           users(v-else-if="route.tab === 'users' && !route.id")
           user-detail(v-else-if="route.tab === 'users'", :id="route.id", :key="route.id")
@@ -112,6 +112,9 @@
       padding: 0;
       border-bottom: 0;
     }
+  }
+  .admin-content {
+    animation: rise .45s cubic-bezier(.22, 1, .36, 1) both;
   }
   .admin-toolbar {
     display: flex;

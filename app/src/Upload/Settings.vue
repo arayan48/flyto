@@ -12,6 +12,7 @@
       .input-group
         input#password.input.input-mono(
           type="text",
+          :class="{ 'is-fresh': fresh }",
           :value="password",
           :disabled="disabled",
           :required="config.requireBucketPassword",
@@ -22,7 +23,7 @@
         )
         button.btn.btn-icon(type="button", :disabled="disabled", :title="$root.lang.generateRandomPassword",
           :aria-label="$root.lang.generateRandomPassword", @click="generatePassword()")
-          icon(name="key")
+          icon(name="key", :key="generated", :class="{ 'icon-pop': generated }")
       p.hint {{ $t('ui.upload.passwordHint') }}
 </template>
 
@@ -48,6 +49,10 @@
   export default {
     name: 'Settings',
 
+    data() {
+      return { fresh: false, generated: 0 };
+    },
+
     computed: {
       ...mapStores(useUploadStore),
       ...mapState(useUploadStore, { config: 'config', disabled: 'inputsDisabled', retention: 'retention', password: 'password' }),
@@ -57,7 +62,25 @@
       generatePassword() {
         if (this.disabled) return;
         this.uploadStore.password = randomPassword(12);
+        this.generated++;
+        this.fresh = false;
+        requestAnimationFrame(() => { this.fresh = true; });
+        clearTimeout(this.freshTimer);
+        this.freshTimer = setTimeout(() => { this.fresh = false; }, 900);
       },
     },
   };
 </script>
+
+<style>
+  /* a generated password lights up for a moment */
+  #password.is-fresh {
+    animation: fresh-flash .9s ease-out;
+  }
+  @keyframes fresh-flash {
+    from {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+  }
+</style>

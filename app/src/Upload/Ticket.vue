@@ -180,6 +180,23 @@
       border-left: 2px dashed var(--line-strong);
     }
   }
+  .ticket .share-link, .ticket-facts > div, .ticket-qr {
+    animation: rise .6s cubic-bezier(.22, 1, .36, 1) both;
+  }
+  .ticket .share-link {
+    animation-delay: .15s;
+  }
+  .ticket-facts > div:nth-child(1) { animation-delay: .25s; }
+  .ticket-facts > div:nth-child(2) { animation-delay: .3s; }
+  .ticket-facts > div:nth-child(3) { animation-delay: .35s; }
+  .ticket-facts > div:nth-child(4) { animation-delay: .4s; }
+  .ticket-qr {
+    animation-delay: .5s;
+  }
+  .ticket-files li {
+    animation: rise .5s cubic-bezier(.22, 1, .36, 1) both;
+    animation-delay: .6s;
+  }
   .ticket-qr {
     padding: .5rem;
     border-radius: var(--radius-md);

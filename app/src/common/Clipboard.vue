@@ -5,7 +5,7 @@ Props: value, icon-only (no text, the title says it), label (text instead of "Co
 
 <template lang="pug">
   button.btn(type="button", :class="{ 'btn-icon': iconOnly }", :aria-label="iconOnly ? title : null", @click.stop="copy()")
-    icon(:name="state === 'copied' ? 'check' : state === 'error' ? 'exclamation-triangle' : 'copy'")
+    icon(:name="state === 'copied' ? 'check' : state === 'error' ? 'exclamation-triangle' : 'copy'", :key="state", :class="{ 'icon-pop': state !== 'pristine' }")
     span(v-if="!iconOnly", aria-live="polite") {{ state === 'copied' ? $t('ui.copied') : (label || $t('ui.copy')) }}
 </template>
 

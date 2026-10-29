@@ -43,7 +43,7 @@
 
       .band-lift
         ul.manifest.card.card-raised
-          li.manifest-row(v-for="file in files", :key="file.key", :class="{ 'is-done': file.downloaded }")
+          li.manifest-row(v-for="(file, i) in files", :key="file.key", :class="{ 'is-done': file.downloaded }", :style="{ '--i': i }")
             file-icon(:file="file")
             button.manifest-main(type="button", @click="download(file)")
               span.manifest-name {{ file.metadata.name }}
@@ -60,7 +60,7 @@
               clipboard.btn-ghost(:value="$root.baseURI + file.url", icon-only, :title="$root.lang.copyToClipboard",
                 @change="copied(file, $event)")
               button.btn.btn-icon.manifest-download(type="button", :title="$t('ui.download.one')", :aria-label="$t('ui.download.one')",
-                @click="download(file)")
+                :class="{ 'is-going': file.going }", @click="download(file)")
                 icon(name="download")
 
     preview-modal(:preview="preview", :files="previewFiles", :max-size="config.maxPreviewSize", @close="preview = false")
@@ -145,6 +145,10 @@
         a.click();
         a.remove();
         file.downloaded = true;
+        // the arrow drops into the tray, once per click
+        file.going = false;
+        requestAnimationFrame(() => { file.going = true; });
+        setTimeout(() => { file.going = false; }, 700);
       },
 
       archiveUrl(format) {
@@ -152,7 +156,11 @@
       },
 
       markAll() {
-        this.files.forEach(f => { f.downloaded = true; });
+        this.files.forEach(f => {
+          f.downloaded = true;
+          f.going = true;
+          setTimeout(() => { f.going = false; }, 700);
+        });
       },
 
       copied(file, state) {
@@ -177,6 +185,7 @@
           this.expiresAt = data.expiresAt || null;
           this.files = data.items.map(f => Object.assign(f, {
             downloaded: false,
+            going: false,
             previewType: getPreviewType(f, this.config.maxPreviewSize),
           }));
           this.needsPassword = false;
@@ -216,6 +225,32 @@
     gap: 1rem;
     padding: 1rem 1.1rem 1rem 1.4rem;
     border-bottom: 1px solid var(--line);
+  }
+  .manifest-row {
+    animation: rise .6s cubic-bezier(.22, 1, .36, 1) both;
+    animation-delay: calc(.15s + var(--i, 0) * .06s);
+  }
+  .manifest-download.is-going .icon {
+    animation: drop-in .7s cubic-bezier(.5, 0, .3, 1.4);
+  }
+  @keyframes drop-in {
+    40% {
+      opacity: 0;
+      transform: translateY(9px);
+    }
+    41% {
+      opacity: 0;
+      transform: translateY(-9px);
+    }
+  }
+  .downloaded {
+    animation: pop-in .35s cubic-bezier(.3, 1.6, .5, 1) both;
+  }
+  @keyframes pop-in {
+    from {
+      opacity: 0;
+      transform: scale(.6);
+    }
   }
   .manifest-row:last-child {
     border-bottom: 0;

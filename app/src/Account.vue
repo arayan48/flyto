@@ -37,6 +37,9 @@
 </script>
 
 <style>
+  .tab-panel {
+    animation: rise .45s cubic-bezier(.22, 1, .36, 1) both;
+  }
   .auth-band {
     padding-bottom: 8rem;
   }

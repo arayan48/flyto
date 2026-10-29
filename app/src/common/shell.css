@@ -58,10 +58,14 @@
   text-decoration: none;
   opacity: .85;
 }
+.site-nav-link {
+  background: linear-gradient(currentColor, currentColor) left bottom / 0 1.5px no-repeat;
+  transition: background-size .25s ease-out, opacity .2s;
+}
 .site-nav-link:hover {
   color: inherit;
   opacity: 1;
-  text-decoration: underline;
+  background-size: 100% 1.5px;
 }
 .site-logout {
   margin: 0;
