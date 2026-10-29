@@ -349,6 +349,16 @@ test('settings are validated', async () => {
   assert.strictEqual((await new Client().get('/api/session')).data.settings.siteName, 'Transferts');
 });
 
+test('share links use the public address when one is set', async () => {
+  assert.strictEqual((await new Client().get('/config.json')).data.publicUrl, null);
+  await app.ctx.settings.update({ publicUrl: 'https://files.example.com' });
+  try {
+    assert.strictEqual((await new Client().get('/config.json')).data.publicUrl, 'https://files.example.com/');
+  } finally {
+    await app.ctx.settings.update({ publicUrl: '' });
+  }
+});
+
 test('an admin without 2FA is sent to turn it on when it is required', async () => {
   await app.ctx.settings.update({ require2faForAdmins: true });
   try {
