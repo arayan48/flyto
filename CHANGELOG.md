@@ -5,6 +5,8 @@ et les versions suivent [SemVer](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+## [0.7.1] - 2026-10-29
+
 ### Corrigé
 - Le tableau de bord de `/admin` renvoyait une erreur 500 quand la variable `TZ` du conteneur était vide ou
   inconnue (cas de ZimaOS) : le fuseau retombe maintenant sur UTC au lieu de `Etc/Unknown`, refusé par PostgreSQL.
@@ -228,7 +230,8 @@ Première version de Flyto, basée sur PsiTransfer.
 - Le projet devient Flyto : nom, image Docker, variables d'environnement `FLYTO_*`
   (l'ancien préfixe `PSITRANSFER_` est encore lu)
 
-[Non publié]: https://github.com/arayan48/flyto/compare/v0.7.0...HEAD
+[Non publié]: https://github.com/arayan48/flyto/compare/v0.7.1...HEAD
+[0.7.1]: https://github.com/arayan48/flyto/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/arayan48/flyto/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/arayan48/flyto/compare/v0.5.1...v0.6.0
 [0.5.1]: https://github.com/arayan48/flyto/compare/v0.5.0...v0.5.1
