@@ -77,11 +77,10 @@
   }
   .admin-tabs {
     display: flex;
+    flex-wrap: wrap;
     gap: .25rem;
-    overflow-x: auto;
-    margin-inline: -1rem;
-    padding: 0 1rem .25rem;
-    scrollbar-width: none;
+    padding-bottom: .75rem;
+    border-bottom: 1px solid var(--line);
   }
   .admin-tabs a {
     display: flex;
@@ -108,8 +107,9 @@
       position: sticky;
       top: 1.5rem;
       flex-direction: column;
-      margin: 0;
+      flex-wrap: nowrap;
       padding: 0;
+      border-bottom: 0;
     }
   }
   .admin-toolbar {
