@@ -7,7 +7,8 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development webpack-dev-server",
     "build": "cross-env NODE_ENV=production webpack",
-    "analyze": "cross-env ANALYZE=true npm run build"
+    "analyze": "cross-env ANALYZE=true npm run build",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@nuintun/qrcode": "^5.0.2",
@@ -22,6 +23,7 @@
   "devDependencies": {
     "@babel/core": "^7.27.4",
     "@babel/preset-env": "^7.27.2",
+    "@playwright/test": "^1.64.1",
     "babel-loader": "^8.2.5",
     "cross-env": "^7.0.3",
     "css-loader": "^5.2.7",
