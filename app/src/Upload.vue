@@ -78,31 +78,24 @@
             template(v-if="limits.transfer && limits.storage")  · 
             template(v-if="limits.storage") {{ $root.lang.quota.storage }} {{ humanFileSize(usage.storage) }} / {{ humanFileSize(limits.storage) }}
           .text-right(v-show='showUploadBtn')
-            button#uploadBtn.btn.btn-lg.btn-success(@click="$store.dispatch('upload/upload')")
+            button#uploadBtn.btn.btn-lg.btn-success(@click="upload()")
               icon.fa-fw(name="upload")
               |  {{ $root.lang.upload }}
           .text-right(v-show="state === 'uploadError'")
-            button#uploadRetryBtn.btn.btn-lg.btn-success(@click="$store.dispatch('upload/upload')")
+            button#uploadRetryBtn.btn.btn-lg.btn-success(@click="upload()")
               icon.fa-fw(name="upload")
               |  {{ $root.lang.retry }}
 </template>
 
 <script type="text/babel">
   import { Encoder, Byte } from "@nuintun/qrcode";
-  import { mapState, mapGetters } from 'vuex';
+  import { mapState, mapActions } from 'pinia';
+  import { useUploadStore } from './Upload/store';
 
   import Settings from './Upload/Settings.vue';
   import Files from './Upload/Files.vue';
   import Clipboard from './common/Clipboard.vue'
-  import 'vue-awesome/icons/cloud-upload-alt';
-  import 'vue-awesome/icons/upload';
-  import 'vue-awesome/icons/check';
-  import 'vue-awesome/icons/spinner';
-  import 'vue-awesome/icons/envelope';
-  import 'vue-awesome/icons/qrcode';
-  import 'vue-awesome/icons/exclamation-triangle';
-  import 'vue-awesome/icons/sign-in-alt';
-  import { humanFileSize } from "./Upload/store/upload";
+  import { humanFileSize } from './common/format';
 
 
   export default {
@@ -118,16 +111,20 @@
     },
 
     computed: {
-      ...mapState(['state']),
-      ...mapState('config', ['loginRequired', 'maintenance', 'maintenanceMessage', 'registrationMode', 'user',
-        'limits', 'usage', 'requireBucketPassword', 'disableQrCode']),
-      ...mapState('upload', ['sid', 'files', 'password']),
-      ...mapGetters(['error', 'disabled']),
-      ...mapGetters('upload', ['percentUploaded', 'shareUrl', 'bucketSize', 'bytesUploaded']),
-      mailLnk: function() {
-        return this.$store.state.config
-          && this.$store.state.config.mailTemplate
-          && this.$store.state.config.mailTemplate.replace('%%URL%%', this.shareUrl);
+      ...mapState(useUploadStore, ['state', 'sid', 'files', 'password', 'disabled', 'percentUploaded', 'shareUrl',
+        'bucketSize', 'bytesUploaded', 'config']),
+      ...mapState(useUploadStore, { error: 'uploadError' }),
+      loginRequired() { return this.config.loginRequired; },
+      maintenance() { return this.config.maintenance; },
+      maintenanceMessage() { return this.config.maintenanceMessage; },
+      registrationMode() { return this.config.registrationMode; },
+      user() { return this.config.user; },
+      limits() { return this.config.limits; },
+      usage() { return this.config.usage; },
+      requireBucketPassword() { return this.config.requireBucketPassword; },
+      disableQrCode() { return this.config.disableQrCode; },
+      mailLnk() {
+        return this.config.mailTemplate && this.config.mailTemplate.replace('%%URL%%', this.shareUrl);
       },
       showLogin() {
         return this.loginRequired;
@@ -152,6 +149,7 @@
     },
 
     methods: {
+      ...mapActions(useUploadStore, ['upload']),
       newSession() {
         if (!confirm(this.$root.lang.createNewUploadSession)) return;
         document.location.reload();
@@ -159,7 +157,7 @@
       showQrCode() {
         const qrcode = new Encoder({level: 'H'}).encode(new Byte(this.shareUrl));
         const imgSrc = qrcode.toDataURL(7, 10);
-        const data = imgSrc.substr(imgSrc.indexOf(',') + 1);
+        const data = imgSrc.slice(imgSrc.indexOf(',') + 1);
         const byteCharacters = atob(data);
         const byteNumbers = new Array(byteCharacters.length);
         for (let i = 0; i < byteCharacters.length; i++) {

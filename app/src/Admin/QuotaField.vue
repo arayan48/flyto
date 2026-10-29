@@ -8,8 +8,8 @@
           option(value="unlimited") {{ $t('admin.quota.unlimited') }}
           option(value="custom") {{ $t('admin.quota.custom') }}
       .col-xs-7(v-if="mode === 'custom'")
-        byte-input(v-if="bytes", :value="value", @input="v => $emit('input', v || null)")
-        input.form-control(v-else, type="number", min="1", :value="value", @input="$emit('input', +$event.target.value || null)")
+        byte-input(v-if="bytes", :model-value="modelValue", @update:model-value="v => $emit('update:modelValue', v || null)")
+        input.form-control(v-else, type="number", min="1", :value="modelValue", @input="$emit('update:modelValue', +$event.target.value || null)")
       .col-xs-7.form-control-static.text-muted(v-else-if="mode === 'default'") {{ defaultLabel }}
 </template>
 
@@ -21,14 +21,15 @@
   export default {
     name: 'QuotaField',
     components: { ByteInput },
-    props: { value: { default: null }, label: String, bytes: Boolean, globalValue: { default: null } },
+    emits: ['update:modelValue'],
+    props: { modelValue: { default: null }, label: String, bytes: Boolean, globalValue: { default: null } },
     data() {
       return { custom: false };
     },
     computed: {
       mode() {
-        if (this.value === null || this.value === undefined) return this.custom ? 'custom' : 'default';
-        return this.value === 0 ? 'unlimited' : 'custom';
+        if (this.modelValue === null || this.modelValue === undefined) return this.custom ? 'custom' : 'default';
+        return this.modelValue === 0 ? 'unlimited' : 'custom';
       },
       defaultLabel() {
         if (!this.globalValue) return this.$t('admin.quota.unlimited');
@@ -38,9 +39,9 @@
     methods: {
       setMode(mode) {
         this.custom = mode === 'custom';
-        if (mode === 'default') this.$emit('input', null);
-        else if (mode === 'unlimited') this.$emit('input', 0);
-        else this.$emit('input', this.globalValue || (this.bytes ? Math.pow(2, 30) * 10 : 10));
+        if (mode === 'default') this.$emit('update:modelValue', null);
+        else if (mode === 'unlimited') this.$emit('update:modelValue', 0);
+        else this.$emit('update:modelValue', this.globalValue || (this.bytes ? Math.pow(2, 30) * 10 : 10));
       },
     },
   };

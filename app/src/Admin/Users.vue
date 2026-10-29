@@ -76,14 +76,13 @@
             span.label.label-danger(v-if="u.lockedUntil && u.lockedUntil > now") {{ $t('admin.users.locked') }}
             span.label.label-warning(v-if="!u.emailVerified") {{ $t('admin.users.unverified') }}
           td.text-right {{ u.usage ? u.usage.transfers : 0 }}
-          td.text-right {{ (u.usage ? u.usage.storage : 0) | size }}
-          td {{ u.lastLoginAt | date }}
-          td {{ u.createdAt | day }}
+          td.text-right {{ $size(u.usage ? u.usage.storage : 0) }}
+          td {{ $date(u.lastLoginAt) }}
+          td {{ $day(u.createdAt) }}
     pager(v-if="result", :page="page", :per-page="result.perPage", :total="result.total", @change="p => { page = p; load(); }")
 </template>
 
 <script>
-  import 'vue-awesome/icons/user-plus';
   import Pager from './Pager.vue';
   import Clipboard from '../common/Clipboard.vue';
   import { get, post, query } from '../common/api';

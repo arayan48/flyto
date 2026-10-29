@@ -26,7 +26,7 @@
           th.text-right {{ $t('account.downloads') }}
           th.text-right {{ $t('account.size') }}
           th
-      template(v-for="t in transfers")
+      template(v-for="t in transfers", :key="t.sid")
         tbody
           tr
             td
@@ -40,45 +40,40 @@
               span.label.label-warning(v-if="t.partial") {{ $t('account.partial') }}
               |
               span.label.label-danger(v-if="t.suspendedAt", :title="t.suspendedReason") {{ $t('account.suspended') }}
-            td {{ t.createdAt | date }}
+            td {{ $date(t.createdAt) }}
             td
               template(v-if="t.oneTime") {{ $root.lang.retentions['one-time'] }}
-              template(v-else) {{ t.expiresAt | date }}
+              template(v-else) {{ $date(t.expiresAt) }}
             td.text-right {{ t.downloads }}
-            td.text-right {{ t.size | size }}
+            td.text-right {{ $size(t.size) }}
             td.table-actions
-              clipboard.btn.btn-sm.btn-default(:value="t.url", :title="$root.lang.copyToClipboard")
-                span(slot="text")
+              clipboard.btn.btn-sm.btn-default(:value="t.url", :title="$root.lang.copyToClipboard", icon-only)
               button.btn.btn-sm.btn-default(@click="expanded = expanded === t.sid ? null : t.sid", :title="$t('account.details')")
                 icon(:name="expanded === t.sid ? 'chevron-up' : 'chevron-down'")
               button.btn.btn-sm.btn-danger(@click="remove(t)", :title="$t('account.delete')")
                 icon(name="trash")
-          tr(v-if="expanded === t.sid", v-for="f in t.items", :key="f.key")
-            td(colspan="3")
-              small {{ f.name }}
-              span.label.label-warning(v-if="f.partial")  {{ $t('account.partial') }}
-            td.text-right
-              small {{ f.downloads }}
-            td.text-right
-              small {{ f.size | size }}
-            td.table-actions
-              button.btn.btn-xs.btn-default(v-if="t.items.length > 1", @click="removeFile(t, f)", :title="$t('account.deleteFile')")
-                icon(name="times")
+          template(v-if="expanded === t.sid")
+            tr(v-for="f in t.items", :key="f.key")
+              td(colspan="3")
+                small {{ f.name }}
+                span.label.label-warning(v-if="f.partial")  {{ $t('account.partial') }}
+              td.text-right
+                small {{ f.downloads }}
+              td.text-right
+                small {{ $size(f.size) }}
+              td.table-actions
+                button.btn.btn-xs.btn-default(v-if="t.items.length > 1", @click="removeFile(t, f)", :title="$t('account.deleteFile')")
+                  icon(name="times")
 </template>
 
 <script>
-  import 'vue-awesome/icons/cloud-upload-alt';
-  import 'vue-awesome/icons/trash';
-  import 'vue-awesome/icons/times';
-  import 'vue-awesome/icons/chevron-down';
-  import 'vue-awesome/icons/chevron-up';
-  import 'vue-awesome/icons/key';
   import Clipboard from '../common/Clipboard.vue';
   import { get, del } from '../common/api';
   import { humanFileSize } from '../common/format';
 
   export default {
     name: 'MyTransfers',
+    emits: ['changed'],
     components: { Clipboard },
     props: ['me'],
     data() {

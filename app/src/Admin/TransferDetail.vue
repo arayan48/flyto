@@ -8,7 +8,7 @@
       h3
         span.mono {{ t.sid }}
         |
-        small {{ t.files }} {{ $t('admin.users.filesShort') }} · {{ t.size | size }}
+        small {{ t.files }} {{ $t('admin.users.filesShort') }} · {{ $size(t.size) }}
       .alert.alert-danger(v-if="t.suspendedAt")
         strong {{ $t('admin.transfers.suspendedOn', { date: $options.filters.date(t.suspendedAt) }) }}
         template(v-if="t.suspendedReason")  {{ t.suspendedReason }}
@@ -29,16 +29,16 @@
                   span.text-muted(v-else) {{ $t('admin.transfers.anonymous') }}
               tr
                 th {{ $t('admin.transfers.created') }}
-                td {{ t.createdAt | date }}
+                td {{ $date(t.createdAt) }}
               tr
                 th {{ $t('admin.transfers.expires') }}
                 td
                   template(v-if="t.oneTime") {{ $t('admin.transfers.status.oneTime') }} ·
-                  | {{ t.expiresAt | date }}
+                  | {{ $date(t.expiresAt) }}
               tr
                 th {{ $t('admin.transfers.downloads') }}
                 td {{ t.downloads }}
-                  span.text-muted(v-if="t.lastDownload")  · {{ $t('admin.transfers.last') }} {{ t.lastDownload | date }}
+                  span.text-muted(v-if="t.lastDownload")  · {{ $t('admin.transfers.last') }} {{ $date(t.lastDownload) }}
               tr
                 th {{ $t('admin.transfers.protection') }}
                 td
@@ -79,10 +79,10 @@
                 small.text-muted(v-if="f.comment") {{ f.comment }}
                 small.text-muted(v-if="f.type")  {{ f.type }}
                 span.label.label-warning(v-if="f.partial")  {{ $t('admin.transfers.received', { received: $options.filters.size(f.received), total: $options.filters.size(f.size) }) }}
-              td {{ f.createdAt | date }}
-              td {{ f.expiresAt | date }}
+              td {{ $date(f.createdAt) }}
+              td {{ $date(f.expiresAt) }}
               td.text-right {{ f.downloads }}
-              td.text-right {{ f.size | size }}
+              td.text-right {{ $size(f.size) }}
               td.table-actions
                 a.btn.btn-xs.btn-default(v-if="!f.partial && f.retention !== 'one-time'", :href="'files/' + encodeURIComponent(t.sid + '++' + f.key)",
                   :title="$t('admin.transfers.download')") ↓
@@ -96,7 +96,7 @@
           table.table.table-condensed(v-else)
             tbody
               tr(v-for="(d, i) in t.log", :key="i")
-                td {{ d.at | date }}
+                td {{ $date(d.at) }}
                 td {{ d.name }}
                 td {{ d.ip || '–' }}
                 td.small.text-muted {{ agent(d.userAgent) }}

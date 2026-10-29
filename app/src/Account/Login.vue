@@ -37,7 +37,6 @@
 </template>
 
 <script>
-  import 'vue-awesome/icons/sign-in-alt';
   import { post, setCsrf } from '../common/api';
 
   export default {

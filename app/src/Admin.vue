@@ -20,7 +20,6 @@
 </template>
 
 <script>
-  import 'vue-awesome/icons/spinner';
   import Dashboard from './Admin/Dashboard.vue';
   import Users from './Admin/Users.vue';
   import UserDetail from './Admin/UserDetail.vue';

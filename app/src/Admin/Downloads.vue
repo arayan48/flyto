@@ -20,7 +20,7 @@
         tr(v-if="!result.items.length")
           td.text-muted(colspan="7") {{ $t('admin.empty') }}
         tr(v-for="d in result.items", :key="d.id")
-          td(style="white-space: nowrap") {{ d.at | date }}
+          td(style="white-space: nowrap") {{ $date(d.at) }}
           td.break-all {{ d.name }}
           td
             a.mono(v-if="d.available", :href="'admin#/transfers/' + encodeURIComponent(d.sid)") {{ d.sid }}
@@ -30,7 +30,7 @@
             span.text-muted(v-else) –
           td {{ d.ip || '–' }}
           td.small.text-muted {{ agent(d.userAgent) }}
-          td.text-right {{ d.size | size }}
+          td.text-right {{ $size(d.size) }}
     pager(v-if="result", :page="page", :per-page="result.perPage", :total="result.total", @change="p => { page = p; load(); }")
 </template>
 

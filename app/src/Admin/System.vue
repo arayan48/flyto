@@ -32,10 +32,10 @@
                 td {{ sys.platform }} · {{ sys.cpus }} CPU
               tr
                 th {{ $t('admin.system.uptime') }}
-                td {{ duration(sys.uptime) }} ({{ sys.startedAt | date }})
+                td {{ duration(sys.uptime) }} ({{ $date(sys.startedAt) }})
               tr
                 th {{ $t('admin.system.memory') }}
-                td {{ sys.memory.rss | size }} · heap {{ sys.memory.heapUsed | size }} / {{ sys.memory.heapTotal | size }}
+                td {{ $size(sys.memory.rss) }} · heap {{ $size(sys.memory.heapUsed) }} / {{ $size(sys.memory.heapTotal) }}
               tr
                 th {{ $t('admin.system.load') }}
                 td {{ sys.load.map(l => l.toFixed(2)).join(' · ') }}
@@ -52,7 +52,7 @@
               tr(v-if="sys.disk")
                 th {{ $t('admin.system.disk') }}
                 td
-                  | {{ sys.disk.total - sys.disk.free | size }} / {{ sys.disk.total | size }}
+                  | {{ $size(sys.disk.total - sys.disk.free) }} / {{ $size(sys.disk.total) }}
                   .progress.usage-bar
                     .progress-bar(:style="{width: diskPercent + '%'}", :class="{'progress-bar-danger': diskPercent > 90}")
         .admin-section
@@ -81,7 +81,7 @@
                 td {{ sys.database.version }}
               tr
                 th {{ $t('admin.system.dbSize') }}
-                td {{ sys.database.size | size }} ({{ sys.database.name }})
+                td {{ $size(sys.database.size) }} ({{ sys.database.name }})
               tr
                 th {{ $t('admin.system.schema') }}
                 td v{{ sys.database.schemaVersion }}
@@ -95,7 +95,7 @@
               tr(v-for="t in sys.database.tables", :key="t.name")
                 td.mono {{ t.name }}
                 td.text-right {{ t.rows }}
-                td.text-right {{ t.size | size }}
+                td.text-right {{ $size(t.size) }}
         .admin-section
           h4 {{ $t('admin.system.configuration') }}
           table.table.table-condensed.kv-table
@@ -141,7 +141,7 @@
                 small
                   | {{ $t('admin.system.orphansFound', { files: orphans.files.length, missing: orphans.missing.length, directories: orphans.directories.length }) }}
                 ul.small.text-muted(v-if="orphans.files.length || orphans.missing.length")
-                  li(v-for="f in orphans.files.slice(0, 20)", :key="'f' + f.sid + f.name") {{ f.sid }}/{{ f.name }} ({{ f.size | size }})
+                  li(v-for="f in orphans.files.slice(0, 20)", :key="'f' + f.sid + f.name") {{ f.sid }}/{{ f.name }} ({{ $size(f.size) }})
                   li(v-for="f in orphans.missing.slice(0, 20)", :key="'m' + f.sid + f.key") {{ f.sid }} · {{ f.name }} ({{ $t('admin.system.missingFile') }})
             td.table-actions
               button.btn.btn-sm.btn-default(v-if="a.key === 'orphans'", @click="scanOrphans", :disabled="busy") {{ $t('admin.system.scan') }}

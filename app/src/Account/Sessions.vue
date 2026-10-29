@@ -17,8 +17,8 @@
             |
             span.label.label-success(v-if="s.current") {{ $t('account.thisDevice') }}
           td {{ s.ip || '–' }}
-          td {{ s.lastSeenAt | date }}
-          td {{ s.createdAt | date }}
+          td {{ $date(s.lastSeenAt) }}
+          td {{ $date(s.createdAt) }}
           td.table-actions
             button.btn.btn-sm.btn-default(@click="revoke(s)") {{ s.current ? $root.lang.nav.logout : $t('account.revoke') }}
     button.btn.btn-danger(v-if="sessions.length > 1", @click="revokeOthers") {{ $t('account.revokeOthers') }}

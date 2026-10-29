@@ -28,12 +28,12 @@
         td(v-if="showOwner")
           a(v-if="t.ownerId", :href="'admin#/users/' + t.ownerId", @click.stop="") {{ t.ownerEmail || '#' + t.ownerId }}
           span.text-muted(v-else) {{ $t('admin.transfers.anonymous') }}
-        td {{ t.createdAt | date }}
+        td {{ $date(t.createdAt) }}
         td
           template(v-if="t.oneTime") {{ $t('admin.transfers.status.oneTime') }}
-          template(v-else) {{ t.expiresAt | date }}
+          template(v-else) {{ $date(t.expiresAt) }}
         td.text-right {{ t.downloads }}
-        td.text-right {{ t.size | size }}
+        td.text-right {{ $size(t.size) }}
 </template>
 
 <script>

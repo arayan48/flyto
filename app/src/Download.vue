@@ -62,7 +62,7 @@
                       icon(name="copy")
                   a.btn.btn-sm.btn-default(:title="$root.lang.preview", @click.prevent.stop="preview=file", v-if="file.previewType")
                     icon(name="eye")
-                i.pull-right.fa.fa-check.text-success.downloaded(v-show='file.downloaded')
+                icon.pull-right.text-success.downloaded(name="check", v-show='file.downloaded')
                 p
                   strong {{ file.metadata.name }}
                   small.file-size(v-if="isFinite(file.size)") ({{ humanFileSize(file.size) }})
@@ -80,13 +80,6 @@
   import Clipboard from './common/Clipboard.vue';
   import PreviewModal from './Download/PreviewModal.vue';
 
-  import 'vue-awesome/icons/cloud-upload-alt';
-  import 'vue-awesome/icons/exclamation-triangle';
-  import 'vue-awesome/icons/copy';
-  import 'vue-awesome/icons/check';
-  import 'vue-awesome/icons/download';
-  import 'vue-awesome/icons/key';
-  import 'vue-awesome/icons/eye';
 
   function getPreviewType(file, maxSize) {
     if(!file || !file.metadata) return false;
