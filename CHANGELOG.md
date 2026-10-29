@@ -5,6 +5,8 @@ et les versions suivent [SemVer](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+## [0.8.0] - 2026-10-29
+
 ### Ajouté
 - Choix du service d'envoi dans l'onglet E-mail de `/admin` : Resend, Brevo, Mailjet ou Gmail remplissent le serveur
   SMTP, avec ce qu'il faut pour l'utilisateur, le mot de passe et le nom de domaine. Mailjet et Gmail marchent sans
@@ -235,7 +237,8 @@ Première version de Flyto, basée sur PsiTransfer.
 - Le projet devient Flyto : nom, image Docker, variables d'environnement `FLYTO_*`
   (l'ancien préfixe `PSITRANSFER_` est encore lu)
 
-[Non publié]: https://github.com/arayan48/flyto/compare/v0.7.1...HEAD
+[Non publié]: https://github.com/arayan48/flyto/compare/v0.8.0...HEAD
+[0.8.0]: https://github.com/arayan48/flyto/compare/v0.7.1...v0.8.0
 [0.7.1]: https://github.com/arayan48/flyto/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/arayan48/flyto/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/arayan48/flyto/compare/v0.5.1...v0.6.0
