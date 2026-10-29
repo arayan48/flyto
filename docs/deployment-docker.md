@@ -15,7 +15,7 @@ docker run -d -v $PWD/data:/data -p 3000:3000 \
   -e FLYTO_DB_URL=postgres://flyto:secret@db-host:5432/flyto \
   -e FLYTO_ADMIN_EMAIL=me@example.com -e FLYTO_ADMIN_PASSWORD='a long password' \
   -e FLYTO_PUBLIC_URL=https://files.example.com/ \
-  ghcr.io/arayan48/flyto:v0.5.1
+  ghcr.io/arayan48/flyto:v0.6.0
 ```
 The above command starts the Flyto Docker container and 
  * `-d` puts the process into background (daemon mode)
