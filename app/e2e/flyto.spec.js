@@ -8,6 +8,10 @@ const test = base.extend({
   page: async ({ page }, use) => {
     const errors = [];
     page.on('pageerror', e => errors.push(e.message));
+    // Vue reports render errors on the console, not as page errors
+    page.on('console', m => {
+      if (m.type() === 'error' && !m.text().startsWith('Failed to load resource')) errors.push(m.text());
+    });
     await use(page);
     expect(errors, 'errors in the page').toEqual([]);
   },

@@ -9,7 +9,7 @@
         button.btn.btn-xs.btn-warning(v-if="w.action", @click="w.action", style="margin-left: 8px") {{ w.link }}
 
       .admin-toolbar
-        span.text-muted.small {{ $t('admin.dashboard.generated', { date: $options.filters.date(stats.generatedAt) }) }}
+        span.text-muted.small {{ $t('admin.dashboard.generated', { date: $date(stats.generatedAt) }) }}
         select.form-control.input-sm(v-model.number="days", @change="load")
           option(:value="7") {{ $t('admin.dashboard.days', { count: 7 }) }}
           option(:value="30") {{ $t('admin.dashboard.days', { count: 30 }) }}

@@ -20,7 +20,7 @@
       button.btn.btn-sm.btn-default(@click="bulk('unsuspend')") {{ $t('admin.transfers.unsuspend') }}
       button.btn.btn-sm.btn-danger(@click="bulk('delete')") {{ $t('admin.transfers.delete') }}
 
-    p.text-muted.small(v-if="result") {{ $t('admin.transfers.summary', { count: result.total, size: $options.filters.size(result.size) }) }}
+    p.text-muted.small(v-if="result") {{ $t('admin.transfers.summary', { count: result.total, size: $size(result.size) }) }}
     transfer-table(v-if="result", :items="result.items", selectable, :selected="selected", @select="s => selected = s")
     pager(v-if="result", :page="page", :per-page="result.perPage", :total="result.total", @change="p => { page = p; load(); }")
 </template>

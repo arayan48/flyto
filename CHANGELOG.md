@@ -5,6 +5,10 @@ et les versions suivent [SemVer](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+### Corrigé
+- Le tableau de bord, la liste des transferts, la fiche d'un utilisateur ou d'un transfert, les invitations et
+  la page Système de /admin s'affichaient en partie vides depuis la v0.5.0
+
 ## [0.5.0] - 2026-10-29
 
 ### Modifié

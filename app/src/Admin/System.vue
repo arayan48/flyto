@@ -23,7 +23,7 @@
                   a(:href="'https://github.com/' + sys.update.repo + '/blob/main/docs/updating.md'", target="_blank", rel="noopener") {{ $root.lang.updateHowTo }}
               tr
                 th {{ $t('admin.system.lastCheck') }}
-                td {{ sys.update.enabled ? $options.filters.date(sys.update.checkedAt) : $t('admin.system.disabled') }}
+                td {{ sys.update.enabled ? $date(sys.update.checkedAt) : $t('admin.system.disabled') }}
               tr
                 th Node.js
                 td {{ sys.node }}

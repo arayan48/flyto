@@ -60,7 +60,7 @@
                 |
                 span.label.label-primary(v-if="i.role === 'admin'") {{ $t('admin.roles.admin') }}
                 br
-                small.text-muted {{ i.note }} {{ $t('admin.invites.by', { email: i.createdByEmail || '–', date: $options.filters.day(i.createdAt) }) }}
+                small.text-muted {{ i.note }} {{ $t('admin.invites.by', { email: i.createdByEmail || '–', date: $day(i.createdAt) }) }}
               td {{ i.uses }} / {{ i.maxUses || '∞' }}
               td {{ $date(i.expiresAt) }}
               td
