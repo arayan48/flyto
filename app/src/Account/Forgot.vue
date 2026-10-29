@@ -1,17 +1,17 @@
 <template lang="pug">
   .auth-box
-    .well(v-if="sent")
-      h3 {{ $t('auth.forgotTitle') }}
+    .card.card-body.auth-card(v-if="sent")
+      h1.auth-title {{ $t('auth.forgotTitle') }}
       p(v-if="mail") {{ $t('auth.forgotSent') }}
       p(v-else) {{ $t('auth.forgotNoMail') }}
-      a.btn.btn-default(href="login") {{ $t('auth.loginButton') }}
-    form.well(v-else, @submit.prevent="submit")
-      h3 {{ $t('auth.forgotTitle') }}
-      p.text-muted {{ $t('auth.forgotHelp') }}
-      .alert.alert-danger(v-if="error") {{ error }}
-      .form-group
-        label(for="email") {{ $t('auth.email') }}
-        input#email.form-control(type="email", v-model.trim="email", autocomplete="email", required, autofocus)
+      a.btn(href="login") {{ $t('auth.loginButton') }}
+    form.card.card-body.auth-card(v-else, @submit.prevent="submit")
+      h1.auth-title {{ $t('auth.forgotTitle') }}
+      p.muted {{ $t('auth.forgotHelp') }}
+      .alert.alert-danger(v-if="error", role="alert") {{ error }}
+      .field
+        label.label(for="email") {{ $t('auth.email') }}
+        input#email.input(type="email", v-model.trim="email", autocomplete="email", required, autofocus)
       button.btn.btn-primary(type="submit", :disabled="busy") {{ $t('auth.forgotButton') }}
       .auth-links
         a(href="login") {{ $t('auth.backToLogin') }}

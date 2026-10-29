@@ -4,8 +4,8 @@
       | {{ $t('auth.setupRequired') }}
       |
       a(href="setup") {{ $t('auth.setupLink') }}
-    form.well(@submit.prevent="submit")
-      h3 {{ mfa ? $t('auth.twoFactorTitle') : $t('auth.loginTitle') }}
+    form.card.card-body.auth-card(@submit.prevent="submit")
+      h1.auth-title {{ mfa ? $t('auth.twoFactorTitle') : $t('auth.loginTitle') }}
       .alert.alert-danger(v-if="error")
         | {{ error }}
         template(v-if="unverified")
@@ -13,24 +13,23 @@
           a(href="#", @click.prevent="resend") {{ $t('auth.resendVerification') }}
       .alert.alert-success(v-if="info") {{ info }}
       template(v-if="!mfa")
-        .form-group
-          label(for="email") {{ $t('auth.email') }}
-          input#email.form-control(type="email", v-model.trim="email", autocomplete="username", required, autofocus)
-        .form-group
-          label(for="password") {{ $t('auth.password') }}
-          input#password.form-control(type="password", v-model="password", autocomplete="current-password", required)
-        .checkbox
-          label
-            input(type="checkbox", v-model="remember")
-            |  {{ $t('auth.remember') }}
+        .field
+          label.label(for="email") {{ $t('auth.email') }}
+          input#email.input(type="email", v-model.trim="email", autocomplete="username", required, autofocus)
+        .field
+          label.label(for="password") {{ $t('auth.password') }}
+          input#password.input(type="password", v-model="password", autocomplete="current-password", required)
+        label.check
+          input(type="checkbox", v-model="remember")
+          span {{ $t('auth.remember') }}
       template(v-else)
-        p.text-muted {{ $t('auth.twoFactorHelp') }}
-        .form-group
-          input.form-control.totp-input(type="text", v-model.trim="code", autocomplete="one-time-code",
+        p.muted {{ $t('auth.twoFactorHelp') }}
+        .field
+          input.input.totp-input(type="text", v-model.trim="code", autocomplete="one-time-code",
             inputmode="numeric", maxlength="11", required, autofocus, ref="code")
       button.btn.btn-primary(type="submit", :disabled="busy")
-        icon.fa-fw(name="sign-in-alt")
-        |  {{ $t('auth.loginButton') }}
+        icon(name="sign-in-alt")
+        | {{ $t('auth.loginButton') }}
       .auth-links
         a(href="forgot") {{ $t('auth.forgotLink') }}
         a(href="register", v-if="registrationOpen") {{ $t('auth.registerLink') }}

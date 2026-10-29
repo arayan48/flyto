@@ -1,15 +1,15 @@
 <template lang="pug">
   .auth-box
-    .well
-      h3 {{ $t('auth.verifyTitle') }}
+    .card.card-body.auth-card
+      h1.auth-title {{ $t('auth.verifyTitle') }}
       p(v-if="state === 'pending'")
-        icon(name="spinner", spin="")
+        icon(name="spinner", spin)
       template(v-else-if="state === 'ok'")
-        p.text-success {{ $t('auth.verifyDone', { email }) }}
+        p.text-success.mb-4 {{ $t('auth.verifyDone', { email }) }}
         a.btn.btn-primary(:href="$root.session.user ? 'account' : 'login'") {{ $t('auth.continue') }}
       template(v-else)
         .alert.alert-danger {{ $t('errors.invalidToken') }}
-        a.btn.btn-default(href="login") {{ $t('auth.loginButton') }}
+        a.btn(href="login") {{ $t('auth.loginButton') }}
 </template>
 
 <script>

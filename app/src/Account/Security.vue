@@ -1,71 +1,70 @@
 <template lang="pug">
-  .row
-    .col-md-6
-      h4 {{ $t('account.changePassword') }}
-      form(@submit.prevent="changePassword")
-        .alert.alert-success(v-if="pwSaved") {{ pwSaved }}
-        .alert.alert-danger(v-if="pwError") {{ pwError }}
-        .form-group(v-if="me.user.hasPassword")
-          label(for="current") {{ $t('account.currentPassword') }}
-          input#current.form-control(type="password", v-model="current", autocomplete="current-password", required)
-        .form-group
-          label(for="new") {{ $t('auth.newPassword') }}
-          input#new.form-control(type="password", v-model="password", autocomplete="new-password", required)
-          p.help-block {{ $t('auth.passwordHint', { min: $root.session.settings.passwordMinLength }) }}
-        .form-group
-          label(for="new2") {{ $t('auth.passwordRepeat') }}
-          input#new2.form-control(type="password", v-model="password2", autocomplete="new-password", required)
-        button.btn.btn-primary(type="submit", :disabled="busy") {{ $t('account.changePassword') }}
-    .col-md-6
-      h4 {{ $t('account.twoFactor') }}
-      .alert.alert-danger(v-if="error") {{ error }}
+  .split
+    section.card.card-body
+      h2.text-lg.mb-4 {{ $t('account.changePassword') }}
+      form.form-stack(@submit.prevent="changePassword")
+        .alert.alert-success(v-if="pwSaved", role="status") {{ pwSaved }}
+        .alert.alert-danger(v-if="pwError", role="alert") {{ pwError }}
+        .field(v-if="me.user.hasPassword")
+          label.label(for="current") {{ $t('account.currentPassword') }}
+          input#current.input(type="password", v-model="current", autocomplete="current-password", required)
+        .field
+          label.label(for="new") {{ $t('auth.newPassword') }}
+          input#new.input(type="password", v-model="password", autocomplete="new-password", required)
+          p.hint {{ $t('auth.passwordHint', { min: $root.session.settings.passwordMinLength }) }}
+        .field
+          label.label(for="new2") {{ $t('auth.passwordRepeat') }}
+          input#new2.input(type="password", v-model="password2", autocomplete="new-password", required)
+        div
+          button.btn.btn-primary(type="submit", :disabled="busy") {{ $t('account.changePassword') }}
 
-      template(v-if="codes")
+    section.card.card-body
+      .flex.items-center.justify-between.gap-3.mb-4
+        h2.text-lg {{ $t('account.twoFactor') }}
+        span.badge.badge-success(v-if="me.user.totpEnabled && !codes") {{ $t('account.enabled') }}
+      .alert.alert-danger.mb-4(v-if="error", role="alert") {{ error }}
+
+      .form-stack(v-if="codes")
         .alert.alert-warning {{ $t('account.recoveryCodesHelp') }}
-        .recovery-codes
-          div(v-for="c in codes") {{ c }}
-        p(style="margin-top: 10px")
-          button.btn.btn-default.btn-sm(@click="downloadCodes") {{ $t('account.downloadCodes') }}
-          |
-          button.btn.btn-primary.btn-sm(@click="codes = null") {{ $t('account.codesSaved') }}
+        ol.recovery-codes
+          li(v-for="c in codes", :key="c") {{ c }}
+        .flex.flex-wrap.gap-2
+          button.btn(type="button", @click="downloadCodes") {{ $t('account.downloadCodes') }}
+          button.btn.btn-primary(type="button", @click="codes = null") {{ $t('account.codesSaved') }}
 
       template(v-else-if="me.user.totpEnabled")
-        p
-          span.label.label-success {{ $t('account.enabled') }}
-          |  {{ $t('account.recoveryLeft', { count: me.user.recoveryCodesLeft }) }}
-        form(@submit.prevent="disable")
-          .form-group
-            label {{ $t('auth.password') }}
-            input.form-control(type="password", v-model="confirmPassword", autocomplete="current-password", required)
-          .form-group
-            label {{ $t('account.codeOrRecovery') }}
-            input.form-control(type="text", v-model.trim="code", autocomplete="one-time-code")
-          button.btn.btn-danger(type="submit", :disabled="busy") {{ $t('account.disable2fa') }}
-          |
-          button.btn.btn-default(type="button", @click="regenerate", :disabled="busy") {{ $t('account.newCodes') }}
+        p.muted.mb-4 {{ $t('account.recoveryLeft', { count: me.user.recoveryCodesLeft }) }}
+        form.form-stack(@submit.prevent="disable")
+          .field
+            label.label(for="tfaPassword") {{ $t('auth.password') }}
+            input#tfaPassword.input(type="password", v-model="confirmPassword", autocomplete="current-password", required)
+          .field
+            label.label(for="tfaCode") {{ $t('account.codeOrRecovery') }}
+            input#tfaCode.input.input-mono(type="text", v-model.trim="code", autocomplete="one-time-code")
+          .flex.flex-wrap.gap-2
+            button.btn.btn-danger(type="submit", :disabled="busy") {{ $t('account.disable2fa') }}
+            button.btn(type="button", @click="regenerate", :disabled="busy") {{ $t('account.newCodes') }}
 
-      template(v-else-if="setup")
+      .form-stack(v-else-if="setup")
         p {{ $t('account.scanQr') }}
-        p
-          img(:src="qr", alt="QR code", width="220", height="220")
-        p.small.text-muted
+        img.totp-qr(:src="qr", alt="QR code", width="200", height="200")
+        p.text-sm.muted
           | {{ $t('account.manualKey') }}
-          br
-          code {{ setup.secret }}
-        form.form-inline(@submit.prevent="enable")
-          input.form-control.totp-input(type="text", v-model.trim="code", inputmode="numeric", maxlength="6",
-            autocomplete="one-time-code", required, placeholder="000000", style="width: 160px")
-          |
+          code.mono.block.mt-1.select-all {{ setup.secret }}
+        form.flex.flex-wrap.gap-2(@submit.prevent="enable")
+          input.input.totp-input(type="text", v-model.trim="code", inputmode="numeric", maxlength="6",
+            autocomplete="one-time-code", required, placeholder="000000", :aria-label="$t('account.codeOrRecovery')")
           button.btn.btn-primary(type="submit", :disabled="busy") {{ $t('account.enable2fa') }}
 
       template(v-else)
-        p.text-muted {{ $t('account.twoFactorHelp') }}
-        .alert.alert-warning(v-if="me.user.role === 'admin' && $root.session.settings.require2faForAdmins") {{ $t('errors.twoFactorRequired') }}
-        form(@submit.prevent="startSetup")
-          .form-group
-            label {{ $t('auth.password') }}
-            input.form-control(type="password", v-model="confirmPassword", autocomplete="current-password", required)
-          button.btn.btn-primary(type="submit", :disabled="busy") {{ $t('account.setup2fa') }}
+        p.muted.mb-4 {{ $t('account.twoFactorHelp') }}
+        .alert.alert-warning.mb-4(v-if="me.user.role === 'admin' && $root.session.settings.require2faForAdmins") {{ $t('errors.twoFactorRequired') }}
+        form.form-stack(@submit.prevent="startSetup")
+          .field
+            label.label(for="tfaSetupPassword") {{ $t('auth.password') }}
+            input#tfaSetupPassword.input(type="password", v-model="confirmPassword", autocomplete="current-password", required)
+          div
+            button.btn.btn-primary(type="submit", :disabled="busy") {{ $t('account.setup2fa') }}
 </template>
 
 <script>

@@ -1,35 +1,35 @@
 <template lang="pug">
   .auth-box
-    .well(v-if="done")
-      h3.text-success {{ $t('auth.registeredTitle') }}
+    .card.card-body.auth-card(v-if="done")
+      h1.auth-title.text-success {{ $t('auth.registeredTitle') }}
       p(v-if="done === 'pending'") {{ $t('auth.registeredPending') }}
       p(v-else-if="done === 'verify'") {{ $t('auth.registeredVerify') }}
-      a.btn.btn-default(href="login") {{ $t('auth.loginButton') }}
-    .well(v-else-if="closed")
-      h3 {{ $t('auth.registerTitle') }}
-      .alert.alert-danger(v-if="error") {{ error }}
+      a.btn(href="login") {{ $t('auth.loginButton') }}
+    .card.card-body.auth-card(v-else-if="closed")
+      h1.auth-title {{ $t('auth.registerTitle') }}
+      .alert.alert-danger(v-if="error", role="alert") {{ error }}
       p {{ mode === 'invite' ? $t('auth.inviteOnly') : $t('auth.registrationClosed') }}
-      a.btn.btn-default(href="login") {{ $t('auth.loginButton') }}
-    form.well(v-else, @submit.prevent="submit")
-      h3 {{ $t('auth.registerTitle') }}
-      p.text-muted(v-if="invite") {{ $t('auth.invited') }}
-      .alert.alert-danger(v-if="error") {{ error }}
-      .form-group
-        label(for="name") {{ $t('auth.name') }}
-        input#name.form-control(type="text", v-model.trim="name", autocomplete="name", maxlength="100")
-      .form-group
-        label(for="email") {{ $t('auth.email') }}
-        input#email.form-control(type="email", v-model.trim="email", autocomplete="email", required,
+      a.btn(href="login") {{ $t('auth.loginButton') }}
+    form.card.card-body.auth-card(v-else, @submit.prevent="submit")
+      h1.auth-title {{ $t('auth.registerTitle') }}
+      p.muted(v-if="invite") {{ $t('auth.invited') }}
+      .alert.alert-danger(v-if="error", role="alert") {{ error }}
+      .field
+        label.label(for="name") {{ $t('auth.name') }}
+        input#name.input(type="text", v-model.trim="name", autocomplete="name", maxlength="100")
+      .field
+        label.label(for="email") {{ $t('auth.email') }}
+        input#email.input(type="email", v-model.trim="email", autocomplete="email", required,
           :readonly="!!(invite && invite.email)")
-      .form-group
-        label(for="password") {{ $t('auth.password') }}
-        input#password.form-control(type="password", v-model="password", autocomplete="new-password", required,
+      .field
+        label.label(for="password") {{ $t('auth.password') }}
+        input#password.input(type="password", v-model="password", autocomplete="new-password", required,
           :minlength="minLength")
-        p.help-block {{ $t('auth.passwordHint', { min: minLength }) }}
-      .form-group
-        label(for="password2") {{ $t('auth.passwordRepeat') }}
-        input#password2.form-control(type="password", v-model="password2", autocomplete="new-password", required)
-      p.small.text-muted(v-if="settings.termsUrl || settings.privacyUrl")
+        p.hint {{ $t('auth.passwordHint', { min: minLength }) }}
+      .field
+        label.label(for="password2") {{ $t('auth.passwordRepeat') }}
+        input#password2.input(type="password", v-model="password2", autocomplete="new-password", required)
+      p.text-sm.muted(v-if="settings.termsUrl || settings.privacyUrl")
         | {{ $t('auth.termsNotice') }}
         |
         a(v-if="settings.termsUrl", :href="settings.termsUrl", target="_blank", rel="noopener") {{ $root.lang.nav.terms }}
