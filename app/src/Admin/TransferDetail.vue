@@ -10,7 +10,7 @@
         |
         small {{ t.files }} {{ $t('admin.users.filesShort') }} · {{ $size(t.size) }}
       .alert.alert-danger(v-if="t.suspendedAt")
-        strong {{ $t('admin.transfers.suspendedOn', { date: $options.filters.date(t.suspendedAt) }) }}
+        strong {{ $t('admin.transfers.suspendedOn', { date: $date(t.suspendedAt) }) }}
         template(v-if="t.suspendedReason")  {{ t.suspendedReason }}
       .row
         .col-md-7
@@ -78,7 +78,7 @@
                 br
                 small.text-muted(v-if="f.comment") {{ f.comment }}
                 small.text-muted(v-if="f.type")  {{ f.type }}
-                span.label.label-warning(v-if="f.partial")  {{ $t('admin.transfers.received', { received: $options.filters.size(f.received), total: $options.filters.size(f.size) }) }}
+                span.label.label-warning(v-if="f.partial")  {{ $t('admin.transfers.received', { received: $size(f.received), total: $size(f.size) }) }}
               td {{ $date(f.createdAt) }}
               td {{ $date(f.expiresAt) }}
               td.text-right {{ f.downloads }}

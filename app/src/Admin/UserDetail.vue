@@ -20,7 +20,7 @@
         span.label(:class="{active: 'label-success', pending: 'label-warning', disabled: 'label-default'}[user.status]") {{ $t('admin.users.statuses.' + user.status) }}
         span.label.label-success(v-if="user.totpEnabled") 2FA
         span.label.label-warning(v-if="!user.emailVerified") {{ $t('admin.users.unverified') }}
-        span.label.label-danger(v-if="locked") {{ $t('admin.users.lockedUntil', { date: $options.filters.date(user.lockedUntil) }) }}
+        span.label.label-danger(v-if="locked") {{ $t('admin.users.lockedUntil', { date: $date(user.lockedUntil) }) }}
 
       .row
         .col-md-7
