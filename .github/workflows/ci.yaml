@@ -144,6 +144,16 @@ jobs:
         env:
           FLYTO_TEST_DB_URL: postgres://flyto@localhost:5432/flyto_e2e
           FLYTO_TEST_REDIS_URL: redis://localhost:6379
+          FLYTO_SCREENSHOTS: 1
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: screens
+          path: app/screens
+          retention-days: 7
+          if-no-files-found: ignore
 
       - name: Upload report
         if: failure()

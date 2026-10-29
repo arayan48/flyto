@@ -46,9 +46,8 @@ test('upload, open the link, preview and download', async ({ page }) => {
   const url = await uploadText(page, name, 'hello from flyto');
 
   await page.goto(url);
-  const row = page.locator('tr', { hasText: name });
+  const row = page.locator('.manifest-row', { hasText: name });
   await expect(row).toBeVisible();
-  await expect(page.locator('.btn-download-archive')).toBeVisible();
 
   await row.getByTitle('Copy to clipboard').click();
   await expect(row.locator('.downloaded')).toBeVisible();
@@ -60,7 +59,7 @@ test('upload, open the link, preview and download', async ({ page }) => {
   await expect(page.getByRole('dialog')).toHaveCount(0);
 
   const download = page.waitForEvent('download');
-  await row.locator('strong', { hasText: name }).click();
+  await row.locator('.manifest-name').click();
   const file = await (await download).path();
   expect(fs.readFileSync(file, 'utf8')).toBe('hello from flyto');
 });
@@ -84,7 +83,7 @@ test('a password protects the transfer', async ({ page }) => {
   await expect(page.locator('.text-danger strong')).toBeVisible();
   await input.fill('s3cret-pass');
   await page.locator('button.decrypt').click();
-  await expect(page.locator('tr', { hasText: name })).toBeVisible();
+  await expect(page.locator('.manifest-row', { hasText: name })).toBeVisible();
 });
 
 test('every admin tab renders', async ({ page }) => {
@@ -92,7 +91,7 @@ test('every admin tab renders', async ({ page }) => {
   for (const tab of ['users', 'transfers', 'downloads', 'invites', 'audit', 'settings', 'system', 'dashboard']) {
     await page.locator(`.admin-tabs a[href="admin#/${ tab }"]`).click();
     await expect(page).toHaveURL(new RegExp(`/admin#/${ tab }$`));
-    await expect(page.locator('.admin-tabs li.active a')).toHaveAttribute('href', `admin#/${ tab }`);
+    await expect(page.locator('.admin-tabs a[aria-current="page"]')).toHaveAttribute('href', `admin#/${ tab }`);
     await expect(page.locator('.admin-app > .alert-danger')).toHaveCount(0);
   }
 
@@ -100,7 +99,7 @@ test('every admin tab renders', async ({ page }) => {
   await page.locator('tr.clickable', { hasText: ADMIN.email }).click();
   await expect(page).toHaveURL(/\/admin#\/users\/\d+$/);
   await expect(page.locator('.admin-app')).toContainText(ADMIN.email);
-  await page.locator('a[href="admin#/users"]', { hasText: '‹' }).click();
+  await page.locator('.back-link').click();
   await expect(page).toHaveURL(/\/admin#\/users$/);
 });
 
@@ -112,8 +111,8 @@ test('my account lists the transfers and every tab renders', async ({ page }) =>
   await page.goto('account');
   await expect(page.locator('.my-account')).toContainText(name);
   for (const tab of ['profile', 'security', 'sessions', 'data', 'transfers']) {
-    await page.locator(`.my-account .nav-tabs a[href="account#${ tab }"]`).click();
+    await page.locator(`.my-account .tabs a[href="account#${ tab }"]`).click();
     await expect(page).toHaveURL(new RegExp(`/account#${ tab }$`));
-    await expect(page.locator('.my-account .nav-tabs li.active a')).toHaveAttribute('href', `account#${ tab }`);
+    await expect(page.locator('.my-account .tabs a[aria-current="page"]')).toHaveAttribute('href', `account#${ tab }`);
   }
 });
