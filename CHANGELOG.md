@@ -5,6 +5,8 @@ et les versions suivent [SemVer](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+## [0.4.1] - 2026-10-29
+
 ### Corrigé
 - Un gros envoi plus long que sa durée de conservation (par exemple 1 heure) n'est plus supprimé en cours de
   route : tant qu'il n'est pas fini, seul l'abandon de plus de 48 h compte
@@ -177,7 +179,8 @@ Première version de Flyto, basée sur PsiTransfer.
 - Le projet devient Flyto : nom, image Docker, variables d'environnement `FLYTO_*`
   (l'ancien préfixe `PSITRANSFER_` est encore lu)
 
-[Non publié]: https://github.com/arayan48/flyto/compare/v0.4.0...HEAD
+[Non publié]: https://github.com/arayan48/flyto/compare/v0.4.1...HEAD
+[0.4.1]: https://github.com/arayan48/flyto/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/arayan48/flyto/compare/v0.3.2...v0.4.0
 [0.3.2]: https://github.com/arayan48/flyto/compare/v0.3.1...v0.3.2
 [0.3.1]: https://github.com/arayan48/flyto/compare/v0.3.0...v0.3.1
