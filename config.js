@@ -122,10 +122,10 @@ if (!config.uploadAppPath.endsWith('/')) config.uploadAppPath = config.uploadApp
 
 config.uploadAppPath = config.baseUrl.substr(0, config.baseUrl.length - 1) + config.uploadAppPath;
 
-// every language falls back to the default one for missing strings
-config.languages = {
-  [config.defaultLanguage]: require(`./lang/${ config.defaultLanguage }`) // default language
-};
+// every language falls back to the default one for missing strings; no prototype, a locale
+// such as "constructor" coming from a request must not be found
+config.languages = Object.create(null);
+config.languages[config.defaultLanguage] = require(`./lang/${ config.defaultLanguage }`);
 fs.readdirSync(path.resolve(__dirname, 'lang')).forEach(lang => {
   lang = lang.replace('.js', '');
   if (lang === config.defaultLanguage) return;

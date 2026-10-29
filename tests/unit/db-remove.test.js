@@ -101,3 +101,18 @@ test('updating a file of a removed bucket is a no-op', async () => {
   await db.updateMetadata('gone', KEY_A, { foo: 1 });
   fs.rmSync(dir, { recursive: true, force: true });
 });
+
+test('gc keeps an upload running past its retention, drops an expired file', async () => {
+  const { dir, db } = await setup();
+  try {
+    const hourAgo = Date.now() - 2 * 3600 * 1000;
+    db.get('bucket')[0].isPartial = true;
+    for (const f of db.get('bucket')) Object.assign(f.metadata, { createdAt: String(hourAgo), retention: '3600' });
+    assert.strictEqual(await db.gc(), 1);
+    assert.deepStrictEqual(db.get('bucket').map(f => f.key), [KEY_A]);
+    assert.strictEqual(DB.isExpired(db.get('bucket')[0]), false);
+    assert.strictEqual(DB.isExpired({ metadata: { createdAt: String(hourAgo), retention: '3600' } }), true);
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
