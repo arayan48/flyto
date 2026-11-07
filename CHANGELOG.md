@@ -5,6 +5,13 @@ et les versions suivent [SemVer](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+## [0.9.1] - 2026-11-07
+
+### Corrigé
+- Onglet E-mail de `/admin` : les liens des services mènent à la page des identifiants, et l'aide sous Utilisateur,
+  Mot de passe et Expéditeur dit quoi mettre pour Resend, Brevo, Mailjet ou Gmail (clé SMTP Brevo, expéditeur
+  validé, adresse imposée par Gmail, quotas gratuits).
+
 ## [0.9.0] - 2026-10-29
 
 ### Ajouté
@@ -251,7 +258,8 @@ Première version de Flyto, basée sur PsiTransfer.
 - Le projet devient Flyto : nom, image Docker, variables d'environnement `FLYTO_*`
   (l'ancien préfixe `PSITRANSFER_` est encore lu)
 
-[Non publié]: https://github.com/arayan48/flyto/compare/v0.9.0...HEAD
+[Non publié]: https://github.com/arayan48/flyto/compare/v0.9.1...HEAD
+[0.9.1]: https://github.com/arayan48/flyto/compare/v0.9.0...v0.9.1
 [0.9.0]: https://github.com/arayan48/flyto/compare/v0.8.1...v0.9.0
 [0.8.1]: https://github.com/arayan48/flyto/compare/v0.8.0...v0.8.1
 [0.8.0]: https://github.com/arayan48/flyto/compare/v0.7.1...v0.8.0
