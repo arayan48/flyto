@@ -78,9 +78,9 @@
 
   // SMTP relays that can be set up without running a mail server
   const SERVICES = {
-    resend: { smtpHost: 'smtp.resend.com', smtpPort: 465, smtpSecure: true, smtpUser: 'resend', signup: 'https://resend.com' },
-    brevo: { smtpHost: 'smtp-relay.brevo.com', smtpPort: 587, smtpSecure: false, signup: 'https://www.brevo.com' },
-    mailjet: { smtpHost: 'in-v3.mailjet.com', smtpPort: 587, smtpSecure: false, signup: 'https://www.mailjet.com' },
+    resend: { smtpHost: 'smtp.resend.com', smtpPort: 465, smtpSecure: true, smtpUser: 'resend', signup: 'https://resend.com/api-keys' },
+    brevo: { smtpHost: 'smtp-relay.brevo.com', smtpPort: 587, smtpSecure: false, signup: 'https://app.brevo.com/settings/keys/smtp' },
+    mailjet: { smtpHost: 'in-v3.mailjet.com', smtpPort: 587, smtpSecure: false, signup: 'https://app.mailjet.com/account/relay' },
     gmail: { smtpHost: 'smtp.gmail.com', smtpPort: 465, smtpSecure: true, signup: 'https://myaccount.google.com/apppasswords' },
   };
 
@@ -170,7 +170,13 @@
         return (this.$root.lang.admin.settings.fields[key] || key);
       },
       help(key) {
-        return (this.$root.lang.admin.settings.help || {})[key] || '';
+        const settings = this.$root.lang.admin.settings;
+        const service = this.group === 'email' && (settings.mailServices || {})[this.mailService];
+        const generic = (settings.help || {})[key] || '';
+        const specific = service && service.fields && service.fields[key];
+        if (!specific) return generic;
+        // keep the "leave the stars" note under the password
+        return key === 'smtpPass' ? specific + ' ' + generic : specific;
       },
       enumValues(key) {
         return this.schema[key].values.filter(v => key !== 'defaultRetention' || this.values.retentions.includes(v));
